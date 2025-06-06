@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Трекер артериального давления</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BP Tracker">
+    <meta name="description" content="Отслеживайте свое артериальное давление ежедневно">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogItCi0YDQtdC60LXRgCDQsNGA0YLQtdGA0LjQsNC70YzQvdC+0LPQviDQtNCw0LLQu9C10L3QuNGPIiwKICAic2hvcnRfbmFtZSI6ICJCUCBUcmFja2VyIiwKICAiZGVzY3JpcHRpb24iOiAi0J7RgtGB0LvQtdC20LjQstCw0LnRgtC1INGB0LLQvtGRINCw0YDRgtC10YDQuNCw0LvRjNC90L7QtSDQtNCw0LLQu9C10L3QuNC1INC10LbQtdC00L3QtdCy0L3QviIsCiAgInN0YXJ0X3VybCI6ICIvIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjNjY3ZWVhIiwKICAidGhlbWVfY29sb3IiOiAiIzY2N2VlYSIsCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTWpVMklpQm9aV2xuYUhROUlqSTFOaUlnZG1sbGQwSnZlRDBpTUNBd0lESTFOaUF5TlRZaUlHWnBiR3c5SW01dmJtVWlJSGh0Ykc1elBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF3TDNOMlp5SStQR1JsWm5NK1BHeHBibVZoY2tkeVlXUnBaVzUwSUdsa1BTSm5jbUZrSWlCNE1UMGlNQ1VpSUhreFBTSXdKU0lnZURJOUlqRXdNQ1VpSUhreFBTSXhNREFsSWo0OGMzUnZjQ0J2Wm1aelpYUTlJakFsSWlCemRIbHNaVDBpYzNSdmNDMWpiMnh2Y2pvMk5qZGxaV0U3YzNSdmNDMXZjR0ZqYVhSNU9qRWlJQzgrUEhOMGIzQWdiMlptYzJWMFBTSXhNREFsSWlCemRIbHNaVDBpYzNSdmNDMWpiMnh2Y2pvM05qUmlZVEk3YzNSdmNDMXZjR0ZqYVhSNU9qRWlJQzgrUEM5c2FXNWxZWEpIY21Ga2FXVnVkRDQ4TDJSbFpuTStQR05wY21Oc1pTQmplRDBpTVRJNElpQmplVDBpTVRJNElpQnlQU0l4TWpnaUlHWnBiR3c5SW5WeWJDZ2paMkpoWkNraUx6NDhkR1Y0ZENCNFBTSTJORE1pSUhrOUlqRTFOaUlnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJZ1ptbHNiRDBpZDJocGRHVWlJR1p2Ym5RdFptRnRhV3g1UFNKQmNtbGhiQ3dnYzJGdWN5MXpaWEpwWmlJZ1ptOXVkQzF6YVhwbFBTSTBPQ0lnWm05dWRDMTNaV2xuYUhROUltSnZiR1FpUGpnNFBDOTBaWGgwUGp3dmMzWm5QZz09IiwKICAgICAgInNpemVzIjogIjI1NngyNTYiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0sCiAgImNhdGVnb3JpZXMiOiBbImhlYWx0aCIsICJtZWRpY2FsIiwgImxpZmVzdHlsZSJdCn0=">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjo2NjdlZWE7c3RvcC1vcGFjaXR5OjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjo3NjRiYTI7c3RvcC1vcGFjaXR5OjEiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9InVybCgjZ3JhZCkiLz48dGV4dCB4PSI2NCIgeT0iMTU2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCI+ODg8L3RleHQ+PC9zdmc+">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .pwa-install-banner {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .pwa-install-banner button {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        .pwa-install-banner button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .offline-indicator {
+            background: #ef4444;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .online-indicator {
+            background: #10b981;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        h1 {
+            color: #4a5568;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+
+        .input-section {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .symptoms-group {
+            grid-column: 1 / -1;
+            margin-top: 10px;
+        }
+
+        .symptoms-title {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .symptoms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .symptom-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .symptom-item:hover {
+            border-color: #667eea;
+            background: #f8fafc;
+        }
+
+        .symptom-checkbox {
+            margin: 0;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .symptom-label {
+            font-size: 14px;
+            color: #4a5568;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .bp-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .bp-inputs input {
+            width: 80px;
+            text-align: center;
+        }
+
+        .separator {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .readings-section {
+            margin-top: 30px;
+        }
+
+        .readings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .notification-controls {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .notification-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .chart-section {
+            margin: 25px 0;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chart-toggle {
+            background: #10b981;
+            font-size: 14px;
+            padding: 8px 16px;
+            width: auto;
+        }
+
+        .chart-toggle:hover {
+            background: #059669;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 15px;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            width: auto;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #64748b;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        .bp-reading {
+            font-weight: bold;
+        }
+
+        .bp-normal { color: #10b981; }
+        .bp-elevated { color: #f59e0b; }
+        .bp-high { color: #ef4444; }
+
+        .secondary-btn {
+            background: #6b7280;
+            font-size: 14px;
+            padding: 8px 16px;
+            width: auto;
+        }
+
+        .secondary-btn:hover {
+            background: #4b5563;
+        }
+
+        .export-btn {
+            background: #059669;
+        }
+
+        .export-btn:hover {
+            background: #047857;
+        }
+
+        .import-btn {
+            background: #7c3aed;
+        }
+
+        .import-btn:hover {
+            background: #6d28d9;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .symptoms-display {
+            font-size: 12px;
+            color: #64748b;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .author-profile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .profile-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+            object-fit: cover;
+        }
+
+        .author-info {
+            text-align: left;
+        }
+
+        .author-name {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .author-email {
+            color: #64748b;
+            font-size: 14px;
+            margin: 2px 0 0 0;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .contact-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: auto;
+        }
+
+        .contact-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .copyright {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* PWA Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-spinner"></div>
+        <h2>Трекер Давления</h2>
+        <p>Загрузка данных...</p>
+    </div>
+
+    <div class="container">
+        <!-- PWA Install Banner -->
+        <div class="pwa-install-banner" id="install-banner">
+            <div>📱 Установите приложение на устройство для лучшего опыта!</div>
+            <div style="margin-top: 10px;">
+                <button onclick="installPWA()">Установить</button>
+                <button onclick="dismissInstallBanner()">Не сейчас</button>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="offline-indicator" id="offline-indicator">
+            📡 Нет соединения - работаем в автономном режиме
+        </div>
+        <div class="online-indicator" id="online-indicator">
+            ✅ Соединение восстановлено - данные синхронизированы
+        </div>
+
+        <h1>🩺 Трекер артериального давления</h1>
+
+        <!-- Notification Controls -->
+        <div class="notification-controls">
+            <div class="notification-toggle">
+                <input type="checkbox" id="notifications-enabled">
+                <label for="notifications-enabled">Включить напоминания о измерениях</label>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <select id="reminder-time" style="padding: 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                    <option value="09:00">09:00</option>
+                    <option value="18:00">18:00</option>
+                    <option value="21:00">21:00</option>
+                </select>
+                <button onclick="testNotification()" style="padding: 6px 12px; font-size: 12px; width: auto;">Тест уведомления</button>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <div>
+                    <label for="date">Дата:</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div>
+                    <label for="time">Время:</label>
+                    <input type="time" id="time" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div>
+                    <label>Артериальное давление (мм рт. ст.):</label>
+                    <div class="bp-inputs">
+                        <input type="number" id="systolic" placeholder="120" min="50" max="300" required>
+                        <span class="separator">/</span>
+                        <input type="number" id="diastolic" placeholder="80" min="30" max="200" required>
+                    </div>
+                </div>
+                <div>
+                    <label for="pulse">Пульс (уд/мин):</label>
+                    <input type="number" id="pulse" placeholder="75" min="30" max="200">
+                </div>
+            </div>
+
+            <div class="symptoms-group">
+                <label class="symptoms-title">Сопутствующие факторы и симптомы:</label>
+                <div class="symptoms-grid">
+                    <div class="symptom-item">
+                        <input type="checkbox" id="headache" class="symptom-checkbox">
+                        <label for="headache" class="symptom-label">Головная боль</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="tinnitus" class="symptom-checkbox">
+                        <label for="tinnitus" class="symptom-label">Шум в ушах</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="dizziness" class="symptom-checkbox">
+                        <label for="dizziness" class="symptom-label">Головокружение</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="anxiety" class="symptom-checkbox">
+                        <label for="anxiety" class="symptom-label">Тревожность</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="poor_sleep" class="symptom-checkbox">
+                        <label for="poor_sleep" class="symptom-label">Плохой сон</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="alcohol" class="symptom-checkbox">
+                        <label for="alcohol" class="symptom-label">Алкоголь накануне</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="exercise" class="symptom-checkbox">
+                        <label for="exercise" class="symptom-label">После нагрузки</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="stress" class="symptom-checkbox">
+                        <label for="stress" class="symptom-label">Стресс</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="fatigue" class="symptom-checkbox">
+                        <label for="fatigue" class="symptom-label">Усталость</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="medication" class="symptom-checkbox">
+                        <label for="medication" class="symptom-label">Забыл лекарство</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div>
+                    <label for="notes">Дополнительные заметки:</label>
+                    <input type="text" id="notes" placeholder="другие важные детали...">
+                </div>
+            </div>
+
+            <button onclick="addReading()">📊 Добавить измерение</button>
+        </div>
+
+        <div class="readings-section">
+            <div class="readings-header">
+                <h2>Ваши измерения</h2>
+                <div class="controls-group">
+                    <input type="file" id="csvFileInput" class="file-input" accept=".csv" onchange="importCSV(event)">
+                    <button class="secondary-btn import-btn" onclick="document.getElementById('csvFileInput').click()">📤 Импорт CSV</button>
+                    <button class="secondary-btn export-btn" onclick="exportData('csv')">📥 Экспорт CSV</button>
+                    <button class="secondary-btn" onclick="clearAllReadings()">🗑️ Очистить все</button>
+                </div>
+            </div>
+
+            <div class="stats" id="stats"></div>
+
+            <div class="chart-section" id="chart-section">
+                <div class="chart-header">
+                    <h3>График трендов</h3>
+                    <button class="chart-toggle" id="chart-toggle" onclick="toggleChart()">📈 Показать график</button>
+                </div>
+                <div class="chart-container hidden" id="chart-container">
+                    <canvas class="chart-canvas" id="chart-canvas"></canvas>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ef4444;"></div>
+                            <span>Систолическое</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #3b82f6;"></div>
+                            <span>Диастолическое</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #10b981;"></div>
+                            <span>Пульс</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="readings-table"></div>
+        </div>
+
+        <div class="footer">
+            <div class="author-profile">
+                <img id="profile-photo"
+                     alt="Alexandre Barilov"
+                     class="profile-photo"
+                     src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNjY3ZWVhO3N0b3Atb3BhY2l0eToxIiAvPgo8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM3NjRiYTI7c3RvcC1vcGFjaXR5OjEiIC8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMDAiIGZpbGw9InVybCgjZ3JhZCkiLz4KPHN2ZyB4PSI0MCIgeT0iNDAiIHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIj4KPHRleHQgeD0iNjAiIHk9Ijc1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPkE8L3RleHQ+Cjx0ZXh0IHg9IjYwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSJib2xkIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCI+QjwvdGV4dD4KPC9zdmc+Cjwvc3ZnPg==">
+
+                <!-- Try to load real photo if available -->
+                <script>
+                // You can replace this URL with actual photo URL when available
+                const actualPhotoUrl = ''; // Add real photo URL here
+
+                if (actualPhotoUrl) {
+                    const img = new Image();
+                    img.onload = function() {
+                        document.getElementById('profile-photo').src = actualPhotoUrl;
+                    };
+                    img.src = actualPhotoUrl;
+                }
+                </script>
+                <div class="author-info">
+                    <div class="author-name">Alexandre Barilov</div>
+                    <div class="author-email">ab2005@gmail.com</div>
+                </div>
+            </div>
+
+            <div class="contact-links">
+                <a href="https://www.facebook.com/alexandre.barilov" target="_blank" class="contact-btn">
+                    <span>📘</span>
+                    Facebook
+                </a>
+                <a href="https://m.me/alexandre.barilov" target="_blank" class="contact-btn">
+                    <span>💬</span>
+                    Messenger
+                </a>
+            </div>
+
+            <div class="copyright">
+                Made with ❤️ by ab2005@gmail.com | © 2025 Blood Pressure Tracker
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PWA and Storage Variables
+        let readings = [];
+        let chartVisible = false;
+        let deferredPrompt;
+        let db;
+        const dbName = 'BPTrackerDB';
+        const dbVersion = 1;
+
+        const symptomLabels = {
+            headache: 'Головная боль',
+            tinnitus: 'Шум в ушах',
+            dizziness: 'Головокружение',
+            anxiety: 'Тревожность',
+            poor_sleep: 'Плохой сон',
+            alcohol: 'Алкоголь накануне',
+            exercise: 'После нагрузки',
+            stress: 'Стресс',
+            fatigue: 'Усталость',
+            medication: 'Забыл лекарство'
+        };
+
+        // Initialize PWA
+        window.addEventListener('load', async () => {
+            await initDB();
+            await loadReadings();
+            hideLoadingScreen();
+            setupPWA();
+            setupNotifications();
+            updateConnectionStatus();
+            setDefaultDateTime();
+            updateDisplay();
+        });
+
+        // Hide loading screen
+        function hideLoadingScreen() {
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.display = 'none';
+            }, 1000);
+        }
+
+        // IndexedDB Setup
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName, dbVersion);
+
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve();
+                };
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+
+                    // Create readings store
+                    if (!db.objectStoreNames.contains('readings')) {
+                        const store = db.createObjectStore('readings', { keyPath: 'id' });
+                        store.createIndex('timestamp', 'timestamp', { unique: false });
+                    }
+
+                    // Create settings store
+                    if (!db.objectStoreNames.contains('settings')) {
+                        db.createObjectStore('settings', { keyPath: 'key' });
+                    }
+                };
+            });
+        }
+
+        // Load readings from IndexedDB
+        async function loadReadings() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['readings'], 'readonly');
+                const store = transaction.objectStore('readings');
+                const request = store.getAll();
+
+                request.onsuccess = () => {
+                    readings = request.result || [];
+                    readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    resolve();
+                };
+
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Save reading to IndexedDB
+        async function saveReading(reading) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['readings'], 'readwrite');
+                const store = transaction.objectStore('readings');
+                const request = store.add(reading);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Delete reading from IndexedDB
+        async function deleteReadingFromDB(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['readings'], 'readwrite');
+                const store = transaction.objectStore('readings');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Clear all readings from IndexedDB
+        async function clearAllReadingsFromDB() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['readings'], 'readwrite');
+                const store = transaction.objectStore('readings');
+                const request = store.clear();
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Service Worker Registration
+        function setupPWA() {
+            if ('serviceWorker' in navigator) {
+                // Register service worker with inline code
+                const swCode = `
+                    const CACHE_NAME = 'bp-tracker-v1';
+                    const urlsToCache = ['/'];
+
+                    self.addEventListener('install', (event) => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then((cache) => cache.addAll(urlsToCache))
+                        );
+                    });
+
+                    self.addEventListener('fetch', (event) => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then((response) => response || fetch(event.request))
+                        );
+                    });
+
+                    self.addEventListener('notificationclick', (event) => {
+                        event.notification.close();
+                        event.waitUntil(
+                            clients.openWindow('/')
+                        );
+                    });
+                `;
+
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+
+                navigator.serviceWorker.register(swUrl)
+                    .then(() => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            }
+
+            // PWA Install Banner
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallBanner();
+            });
+        }
+
+        function showInstallBanner() {
+            document.getElementById('install-banner').style.display = 'block';
+        }
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        dismissInstallBanner();
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        function dismissInstallBanner() {
+            document.getElementById('install-banner').style.display = 'none';
+        }
+
+        // Notifications Setup
+        function setupNotifications() {
+            const notificationsEnabled = document.getElementById('notifications-enabled');
+            const reminderTime = document.getElementById('reminder-time');
+
+            // Load saved settings
+            loadSetting('notifications-enabled').then(enabled => {
+                if (enabled !== null) {
+                    notificationsEnabled.checked = enabled;
+                }
+            });
+
+            loadSetting('reminder-time').then(time => {
+                if (time) {
+                    reminderTime.value = time;
+                }
+            });
+
+            // Save settings on change
+            notificationsEnabled.addEventListener('change', () => {
+                saveSetting('notifications-enabled', notificationsEnabled.checked);
+                if (notificationsEnabled.checked) {
+                    requestNotificationPermission();
+                    scheduleNotifications();
+                }
+            });
+
+            reminderTime.addEventListener('change', () => {
+                saveSetting('reminder-time', reminderTime.value);
+                if (notificationsEnabled.checked) {
+                    scheduleNotifications();
+                }
+            });
+        }
+
+        async function requestNotificationPermission() {
+            if ('Notification' in window) {
+                const permission = await Notification.requestPermission();
+                return permission === 'granted';
+            }
+            return false;
+        }
+
+        function scheduleNotifications() {
+            // This is a simplified version - in a real PWA you'd use the Push API
+            // For now, we'll show reminders when the app is open
+            const reminderTime = document.getElementById('reminder-time').value;
+            console.log(`Напоминания настроены на ${reminderTime}`);
+        }
+
+        function testNotification() {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Трекер давления', {
+                    body: 'Время измерить артериальное давление!',
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjo2NjdlZWE7c3RvcC1vcGFjaXR5OjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjo3NjRiYTI7c3RvcC1vcGFjaXR5OjEiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9InVybCgjZ3JhZCkiLz48dGV4dCB4PSI2NCIgeT0iMTU2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCI+ODg8L3RleHQ+PC9zdmc+',
+                    badge: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjo2NjdlZWE7c3RvcC1vcGFjaXR5OjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjo3NjRiYTI7c3RvcC1vcGFjaXR5OjEiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9InVybCgjZ3JhZCkiLz48dGV4dCB4PSI2NCIgeT0iMTU2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCI+ODg8L3RleHQ+PC9zdmc+'
+                });
+            } else {
+                alert('Уведомления не поддерживаются или не разрешены');
+            }
+        }
+
+        // Settings Storage
+        async function saveSetting(key, value) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['settings'], 'readwrite');
+                const store = transaction.objectStore('settings');
+                const request = store.put({ key, value });
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function loadSetting(key) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['settings'], 'readonly');
+                const store = transaction.objectStore('settings');
+                const request = store.get(key);
+
+                request.onsuccess = () => {
+                    resolve(request.result ? request.result.value : null);
+                };
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Connection Status
+        function updateConnectionStatus() {
+            const offlineIndicator = document.getElementById('offline-indicator');
+            const onlineIndicator = document.getElementById('online-indicator');
+
+            function updateStatus() {
+                if (navigator.onLine) {
+                    offlineIndicator.style.display = 'none';
+                    onlineIndicator.style.display = 'block';
+                    setTimeout(() => {
+                        onlineIndicator.style.display = 'none';
+                    }, 3000);
+                } else {
+                    offlineIndicator.style.display = 'block';
+                    onlineIndicator.style.display = 'none';
+                }
+            }
+
+            window.addEventListener('online', updateStatus);
+            window.addEventListener('offline', updateStatus);
+
+            if (!navigator.onLine) {
+                offlineIndicator.style.display = 'block';
+            }
+        }
+
+        // Set default date and time
+        function setDefaultDateTime() {
+            document.getElementById('date').valueAsDate = new Date();
+
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').value = `${hours}:${minutes}`;
+        }
+
+        function getSelectedSymptoms() {
+            const symptoms = [];
+            Object.keys(symptomLabels).forEach(id => {
+                if (document.getElementById(id).checked) {
+                    symptoms.push(id);
+                }
+            });
+            return symptoms;
+        }
+
+        function clearSymptoms() {
+            Object.keys(symptomLabels).forEach(id => {
+                document.getElementById(id).checked = false;
+            });
+        }
+
+        async function addReading() {
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const systolic = parseInt(document.getElementById('systolic').value);
+            const diastolic = parseInt(document.getElementById('diastolic').value);
+            const pulseInput = document.getElementById('pulse').value;
+            const pulse = pulseInput ? parseInt(pulseInput) : null;
+            const notes = document.getElementById('notes').value;
+            const symptoms = getSelectedSymptoms();
+
+            if (!date || !time || !systolic || !diastolic) {
+                alert('Пожалуйста, заполните все обязательные поля (Дата, Время, Артериальное давление)');
+                return;
+            }
+
+            if (systolic <= diastolic) {
+                alert('Систолическое давление должно быть выше диастолического');
+                return;
+            }
+
+            const reading = {
+                id: Date.now(),
+                date,
+                time,
+                systolic,
+                diastolic,
+                pulse,
+                notes: notes || '',
+                symptoms,
+                timestamp: new Date(`${date}T${time}`)
+            };
+
+            try {
+                await saveReading(reading);
+                readings.push(reading);
+                readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                updateDisplay();
+                clearForm();
+
+                // Show success message
+                showToast('Измерение сохранено!', 'success');
+            } catch (error) {
+                console.error('Error saving reading:', error);
+                showToast('Ошибка при сохранении', 'error');
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('systolic').value = '';
+            document.getElementById('diastolic').value = '';
+            document.getElementById('pulse').value = '';
+            document.getElementById('notes').value = '';
+            clearSymptoms();
+
+            // Reset to current time for next entry
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').value = `${hours}:${minutes}`;
+        }
+
+        async function deleteReading(id) {
+            if (confirm('Вы уверены, что хотите удалить это измерение?')) {
+                try {
+                    await deleteReadingFromDB(id);
+                    readings = readings.filter(r => r.id !== id);
+                    updateDisplay();
+                    showToast('Измерение удалено', 'success');
+                } catch (error) {
+                    console.error('Error deleting reading:', error);
+                    showToast('Ошибка при удалении', 'error');
+                }
+            }
+        }
+
+        async function clearAllReadings() {
+            if (readings.length === 0) return;
+
+            if (confirm('Вы уверены, что хотите удалить все измерения? Это действие нельзя отменить.')) {
+                try {
+                    await clearAllReadingsFromDB();
+                    readings = [];
+                    updateDisplay();
+                    showToast('Все измерения удалены', 'success');
+                } catch (error) {
+                    console.error('Error clearing readings:', error);
+                    showToast('Ошибка при очистке данных', 'error');
+                }
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                ${type === 'success' ? 'background: #10b981;' : ''}
+                ${type === 'error' ? 'background: #ef4444;' : ''}
+                ${type === 'info' ? 'background: #3b82f6;' : ''}
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.style.opacity = '1', 100);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        function exportData(format) {
+            if (readings.length === 0) {
+                alert('Нет данных для экспорта');
+                return;
+            }
+
+            const headers = ['Дата', 'Время', 'Систолическое', 'Диастолическое', 'Пульс', 'Симптомы', 'Заметки'];
+            const csvContent = [
+                headers.join(','),
+                ...readings.map(r => {
+                    const symptomsText = r.symptoms ? r.symptoms.map(s => symptomLabels[s]).join('; ') : '';
+                    return [
+                        r.date,
+                        r.time,
+                        r.systolic,
+                        r.diastolic,
+                        r.pulse || '',
+                        `"${symptomsText}"`,
+                        `"${r.notes.replace(/"/g, '""')}"`
+                    ].join(',');
+                })
+            ].join('\n');
+
+            const content = '\uFEFF' + csvContent; // BOM for Excel compatibility
+            const filename = `blood_pressure_${new Date().toISOString().split('T')[0]}.csv`;
+            const mimeType = 'text/csv;charset=utf-8;';
+
+            const blob = new Blob([content], { type: mimeType });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(link.href);
+
+            showToast('Данные экспортированы!', 'success');
+        }
+
+        async function importCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const csv = e.target.result;
+                    const lines = csv.split('\n');
+
+                    if (lines.length < 2) {
+                        alert('CSV файл пуст или неверный формат');
+                        return;
+                    }
+
+                    // Skip header line
+                    const dataLines = lines.slice(1).filter(line => line.trim());
+                    let importedCount = 0;
+
+                    for (const line of dataLines) {
+                        const values = parseCSVLine(line);
+                        if (values.length >= 4) {
+                            const [date, time, systolic, diastolic, pulse, symptomsText, notes] = values;
+
+                            if (date && time && systolic && diastolic) {
+                                // Parse symptoms
+                                const symptoms = [];
+                                if (symptomsText) {
+                                    const symptomTexts = symptomsText.split(';').map(s => s.trim());
+                                    symptomTexts.forEach(symptomText => {
+                                        const symptomKey = Object.keys(symptomLabels).find(key =>
+                                            symptomLabels[key] === symptomText
+                                        );
+                                        if (symptomKey) {
+                                            symptoms.push(symptomKey);
+                                        }
+                                    });
+                                }
+
+                                const reading = {
+                                    id: Date.now() + Math.random(), // Unique ID
+                                    date,
+                                    time,
+                                    systolic: parseInt(systolic),
+                                    diastolic: parseInt(diastolic),
+                                    pulse: pulse ? parseInt(pulse) : null,
+                                    notes: notes || '',
+                                    symptoms,
+                                    timestamp: new Date(`${date}T${time}`)
+                                };
+
+                                // Check if reading already exists (same date/time)
+                                const exists = readings.some(r =>
+                                    r.date === reading.date && r.time === reading.time
+                                );
+
+                                if (!exists) {
+                                    await saveReading(reading);
+                                    readings.push(reading);
+                                    importedCount++;
+                                }
+                            }
+                        }
+                    }
+
+                    if (importedCount > 0) {
+                        readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                        updateDisplay();
+                        showToast(`Импортировано ${importedCount} измерений`, 'success');
+                    } else {
+                        alert('Не удалось импортировать данные. Проверьте формат CSV файла.');
+                    }
+
+                } catch (error) {
+                    console.error('Import error:', error);
+                    alert('Ошибка при импорте CSV файла: ' + error.message);
+                }
+            };
+
+            reader.readAsText(file, 'utf-8');
+            event.target.value = ''; // Reset file input
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+
+                if (char === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i++; // Skip next quote
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+
+            result.push(current.trim());
+            return result;
+        }
+
+        function toggleChart() {
+            const container = document.getElementById('chart-container');
+            const button = document.getElementById('chart-toggle');
+
+            chartVisible = !chartVisible;
+
+            if (chartVisible) {
+                container.classList.remove('hidden');
+                button.textContent = '📉 Скрыть график';
+                drawChart();
+            } else {
+                container.classList.add('hidden');
+                button.textContent = '📈 Показать график';
+            }
+        }
+
+        function drawChart() {
+            if (readings.length < 2) return;
+
+            const canvas = document.getElementById('chart-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size
+            const container = canvas.parentElement;
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Sort readings chronologically for chart
+            const sortedReadings = [...readings].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+            // Calculate chart dimensions
+            const margin = { top: 20, right: 20, bottom: 50, left: 50 };
+            const chartWidth = canvas.width - margin.left - margin.right;
+            const chartHeight = canvas.height - margin.top - margin.bottom;
+
+            // Find data ranges
+            const systolicValues = sortedReadings.map(r => r.systolic);
+            const diastolicValues = sortedReadings.map(r => r.diastolic);
+            const pulseValues = sortedReadings.filter(r => r.pulse).map(r => r.pulse);
+
+            const minValue = Math.min(...systolicValues, ...diastolicValues, ...pulseValues) - 10;
+            const maxValue = Math.max(...systolicValues, ...diastolicValues, ...pulseValues) + 10;
+
+            // Draw grid
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+
+            // Horizontal grid lines
+            for (let i = 0; i <= 10; i++) {
+                const y = margin.top + (chartHeight * i / 10);
+                ctx.beginPath();
+                ctx.moveTo(margin.left, y);
+                ctx.lineTo(margin.left + chartWidth, y);
+                ctx.stroke();
+
+                // Y-axis labels
+                const value = Math.round(maxValue - ((maxValue - minValue) * i / 10));
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(value, margin.left - 5, y + 4);
+            }
+
+            // Vertical grid lines
+            for (let i = 0; i < sortedReadings.length; i++) {
+                const x = margin.left + (chartWidth * i / (sortedReadings.length - 1));
+                ctx.strokeStyle = '#e5e7eb';
+                ctx.beginPath();
+                ctx.moveTo(x, margin.top);
+                ctx.lineTo(x, margin.top + chartHeight);
+                ctx.stroke();
+
+                // X-axis labels (dates)
+                if (i % Math.ceil(sortedReadings.length / 5) === 0) {
+                    const date = new Date(sortedReadings[i].timestamp).toLocaleDateString('ru-RU', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    ctx.fillStyle = '#6b7280';
+                    ctx.font = '12px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(date, x, canvas.height - 15);
+                }
+            }
+
+            // Draw lines
+            function drawLine(values, color, getData) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+
+                let started = false;
+                for (let i = 0; i < sortedReadings.length; i++) {
+                    const reading = sortedReadings[i];
+                    const value = getData(reading);
+
+                    if (value !== null && value !== undefined) {
+                        const x = margin.left + (chartWidth * i / (sortedReadings.length - 1));
+                        const y = margin.top + chartHeight - ((value - minValue) / (maxValue - minValue)) * chartHeight;
+
+                        if (!started) {
+                            ctx.moveTo(x, y);
+                            started = true;
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+
+                        // Draw points
+                        ctx.fillStyle = color;
+                        ctx.beginPath();
+                        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                }
+                ctx.stroke();
+            }
+
+            // Draw systolic line
+            drawLine(systolicValues, '#ef4444', r => r.systolic);
+
+            // Draw diastolic line
+            drawLine(diastolicValues, '#3b82f6', r => r.diastolic);
+
+            // Draw pulse line
+            drawLine(pulseValues, '#10b981', r => r.pulse);
+        }
+
+        function getBPCategory(systolic, diastolic) {
+            if (systolic < 120 && diastolic < 80) return { category: 'Нормальное', class: 'bp-normal' };
+            if ((systolic >= 120 && systolic <= 129) && diastolic < 80) return { category: 'Повышенное', class: 'bp-elevated' };
+            if ((systolic >= 130 && systolic <= 139) || (diastolic >= 80 && diastolic <= 89)) return { category: 'Высокое 1 ст.', class: 'bp-high' };
+            if (systolic >= 140 || diastolic >= 90) return { category: 'Высокое 2 ст.', class: 'bp-high' };
+            if (systolic > 180 || diastolic > 120) return { category: 'Критическое', class: 'bp-high' };
+            return { category: 'Неизвестно', class: '' };
+        }
+
+        function updateDisplay() {
+            updateStats();
+            updateTable();
+            if (chartVisible) {
+                setTimeout(drawChart, 100); // Small delay to ensure DOM is updated
+            }
+        }
+
+        function updateStats() {
+            const statsDiv = document.getElementById('stats');
+
+            if (readings.length === 0) {
+                statsDiv.innerHTML = '';
+                return;
+            }
+
+            const avgSystolic = Math.round(readings.reduce((sum, r) => sum + r.systolic, 0) / readings.length);
+            const avgDiastolic = Math.round(readings.reduce((sum, r) => sum + r.diastolic, 0) / readings.length);
+
+            // Fixed pulse calculation - only include readings that have pulse values
+            const readingsWithPulse = readings.filter(r => r.pulse !== null && r.pulse !== undefined);
+            const avgPulse = readingsWithPulse.length > 0 ?
+                Math.round(readingsWithPulse.reduce((sum, r) => sum + r.pulse, 0) / readingsWithPulse.length) : 'Н/Д';
+
+            const latest = readings[0];
+            const latestCategory = getBPCategory(latest.systolic, latest.diastolic);
+
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${readings.length}</div>
+                    <div class="stat-label">Всего измерений</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${avgSystolic}/${avgDiastolic}</div>
+                    <div class="stat-label">Среднее АД</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${avgPulse}</div>
+                    <div class="stat-label">Средний пульс</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value ${latestCategory.class}">${latestCategory.category}</div>
+                    <div class="stat-label">Последняя категория</div>
+                </div>
+            `;
+        }
+
+        function updateTable() {
+            const tableDiv = document.getElementById('readings-table');
+
+            if (readings.length === 0) {
+                tableDiv.innerHTML = '<div class="no-data">Измерения ещё не записаны. Добавьте ваше первое измерение выше!</div>';
+                return;
+            }
+
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>АД</th>
+                            <th>Категория</th>
+                            <th>Пульс</th>
+                            <th>Симптомы</th>
+                            <th>Заметки</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            readings.forEach(reading => {
+                const category = getBPCategory(reading.systolic, reading.diastolic);
+                const formattedDate = new Date(reading.timestamp).toLocaleDateString('ru-RU');
+                const symptomsText = reading.symptoms && reading.symptoms.length > 0
+                    ? reading.symptoms.map(s => symptomLabels[s]).join(', ')
+                    : '-';
+
+                tableHTML += `
+                    <tr>
+                        <td>${formattedDate}</td>
+                        <td>${reading.time}</td>
+                        <td class="bp-reading ${category.class}">${reading.systolic}/${reading.diastolic}</td>
+                        <td><span class="${category.class}">${category.category}</span></td>
+                        <td>${reading.pulse || '-'}</td>
+                        <td class="symptoms-display" title="${symptomsText}">${symptomsText}</td>
+                        <td>${reading.notes || '-'}</td>
+                        <td><button class="delete-btn" onclick="deleteReading(${reading.id})">Удалить</button></td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            tableDiv.innerHTML = tableHTML;
+        }
+
+        // Redraw chart on window resize
+        window.addEventListener('resize', () => {
+            if (chartVisible) {
+                setTimeout(drawChart, 100);
+            }
+        });
+    </script>
+</body>
+</html>
