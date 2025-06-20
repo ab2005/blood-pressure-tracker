@@ -117,50 +117,6 @@
             display: none;
         }
 
-        /* Navigation */
-        .nav-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 24px;
-        }
-
-        .nav-title {
-            color: #4a5568;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .nav-button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .nav-button:hover {
-            background: #5a67d8;
-            transform: translateY(-1px);
-        }
-
-        .nav-button:active {
-            transform: translateY(0);
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
 
         h1 {
             color: #4a5568;
@@ -171,9 +127,6 @@
         }
 
         @media (min-width: 768px) {
-            .nav-title {
-                font-size: 1.75rem;
-            }
             
             h1 {
                 font-size: 2.2rem;
@@ -772,235 +725,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Configuration Page Styles */
-        .config-section {
-            padding: 0;
-        }
-
-        .config-group {
-            background: #f8fafc;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .config-group h2 {
-            color: #4a5568;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        .config-group h3 {
-            color: #667eea;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .config-item {
-            margin-bottom: 16px;
-        }
-
-        .config-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .config-item label {
-            display: block;
-            font-weight: 500;
-            color: #4a5568;
-            margin-bottom: 8px;
-        }
-
-        /* Toggle Switch */
-        .toggle-label {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            font-weight: 500;
-            padding: 12px 0;
-        }
-
-        .toggle-checkbox {
-            display: none;
-        }
-
-        .toggle-slider {
-            position: relative;
-            width: 50px;
-            height: 26px;
-            background: #cbd5e0;
-            border-radius: 26px;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .toggle-slider::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 22px;
-            height: 22px;
-            background: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .toggle-checkbox:checked + .toggle-slider {
-            background: #667eea;
-        }
-
-        .toggle-checkbox:checked + .toggle-slider::before {
-            transform: translateX(24px);
-        }
-
-        /* Time Inputs */
-        .time-inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .time-input-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .time-input-group label {
-            min-width: 80px;
-            margin-bottom: 0;
-            font-size: 14px;
-        }
-
-        .time-input-group input {
-            flex: 1;
-            max-width: 140px;
-        }
-
-        @media (min-width: 480px) {
-            .time-inputs {
-                flex-direction: row;
-                gap: 20px;
-            }
-        }
-
-        /* Medication List */
-        .medication-list {
-            margin-bottom: 16px;
-        }
-
-        .medication-item {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .medication-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .medication-name {
-            font-weight: 600;
-            color: #4a5568;
-        }
-
-        .medication-times {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .medication-time {
-            background: #667eea;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .delete-medication {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            width: auto;
-            min-height: auto;
-        }
-
-        .delete-medication:hover {
-            background: #dc2626;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* App Info */
-        .app-info {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .app-info p {
-            margin-bottom: 8px;
-            color: #4a5568;
-        }
-
-        .app-info p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Enhanced Button Styles */
-        .secondary-btn {
-            background: #6b7280;
-            font-size: 14px;
-            padding: 12px 20px;
-            width: 100%;
-            margin-top: 8px;
-        }
-
-        .secondary-btn:hover {
-            background: #4b5563;
-        }
-
-        /* Enhanced Animations */
-        .page {
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         /* Improved spacing and visual hierarchy */
         .readings-section {
             margin-top: 24px;
@@ -1014,10 +738,6 @@
         }
 
         @media (min-width: 768px) {
-            .config-group {
-                padding: 24px;
-            }
-            
             .readings-header h2 {
                 font-size: 1.5rem;
             }
@@ -1043,11 +763,7 @@
             </div>
         </div>
 
-        <!-- Navigation Header -->
-        <div class="nav-header">
-            <h1 class="nav-title" id="page-title">🩺 Трекер давления</h1>
-            <button class="nav-button" id="nav-button" onclick="togglePage()">⚙️ Настройки</button>
-        </div>
+        <h1>🩺 Трекер артериального давления</h1>
 
         <!-- Connection Status -->
         <div class="offline-indicator" id="offline-indicator">
@@ -1125,10 +841,6 @@
                         <input type="checkbox" id="fatigue" class="symptom-checkbox">
                         <div class="symptom-icon">😮‍💨</div>
                     </div>
-                    <div class="symptom-item" onclick="toggleSymptom('medication')" title="Забыл лекарство">
-                        <input type="checkbox" id="medication" class="symptom-checkbox">
-                        <div class="symptom-icon">💊</div>
-                    </div>
                 </div>
             </div>
 
@@ -1142,9 +854,7 @@
             <button onclick="addReading()">📊 Добавить измерение</button>
         </div>
 
-        <!-- Main Page -->
-        <div id="main-page" class="page active">
-            <div class="readings-section">
+        <div class="readings-section">
                 <div class="readings-header">
                     <h2>Ваши измерения</h2>
                 <div class="controls-group">
@@ -1184,7 +894,6 @@
             <div class="table-container">
                 <div id="readings-table"></div>
             </div>
-            </div>
         </div>
 
         <elevenlabs-convai agent-id="agent_01jy58kznwf6ct6g8j0mvwmxh3">
@@ -1192,113 +901,6 @@
         </elevenlabs-convai>
         <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
         
-        
-        <!-- Configuration Page -->
-        <div id="config-page" class="page">
-            <div class="config-section">
-                <h2>⚙️ Настройки приложения</h2>
-                
-                <!-- Measurement Reminders -->
-                <div class="config-group">
-                    <h3>📊 Напоминания об измерениях</h3>
-                    <div class="config-item">
-                        <label class="toggle-label">
-                            <input type="checkbox" id="measurement-reminders" class="toggle-checkbox">
-                            <span class="toggle-slider"></span>
-                            Включить напоминания об измерениях
-                        </label>
-                    </div>
-                    
-                    <div class="config-item">
-                        <label for="measurement-times">Время напоминаний:</label>
-                        <div class="time-inputs">
-                            <div class="time-input-group">
-                                <label>Утром:</label>
-                                <input type="time" id="morning-time" value="08:00">
-                            </div>
-                            <div class="time-input-group">
-                                <label>Вечером:</label>
-                                <input type="time" id="evening-time" value="20:00">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Medication Reminders -->
-                <div class="config-group">
-                    <h3>💊 Напоминания о лекарствах</h3>
-                    <div class="config-item">
-                        <label class="toggle-label">
-                            <input type="checkbox" id="medication-reminders" class="toggle-checkbox">
-                            <span class="toggle-slider"></span>
-                            Включить напоминания о приеме лекарств
-                        </label>
-                    </div>
-                    
-                    <div class="medication-list" id="medication-list">
-                        <!-- Medications will be added here dynamically -->
-                    </div>
-                    
-                    <button onclick="addMedication()" class="secondary-btn">➕ Добавить лекарство</button>
-                </div>
-
-                <!-- Data Management -->
-                <div class="config-group">
-                    <h3>📁 Управление данными</h3>
-                    <div class="config-item">
-                        <label for="auto-backup">Автоматическое резервное копирование:</label>
-                        <select id="auto-backup">
-                            <option value="disabled">Отключено</option>
-                            <option value="daily">Ежедневно</option>
-                            <option value="weekly">Еженедельно</option>
-                        </select>
-                    </div>
-                    
-                    <div class="config-item">
-                        <label for="data-retention">Хранить данные:</label>
-                        <select id="data-retention">
-                            <option value="forever">Всегда</option>
-                            <option value="1year">1 год</option>
-                            <option value="6months">6 месяцев</option>
-                            <option value="3months">3 месяца</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Display Settings -->
-                <div class="config-group">
-                    <h3>🎨 Настройки отображения</h3>
-                    <div class="config-item">
-                        <label for="theme">Тема:</label>
-                        <select id="theme">
-                            <option value="light">Светлая</option>
-                            <option value="dark">Темная</option>
-                            <option value="auto">Автоматическая</option>
-                        </select>
-                    </div>
-                    
-                    <div class="config-item">
-                        <label for="chart-default">График по умолчанию:</label>
-                        <select id="chart-default">
-                            <option value="hidden">Скрыт</option>
-                            <option value="visible">Показан</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- App Info -->
-                <div class="config-group">
-                    <h3>ℹ️ О приложении</h3>
-                    <div class="config-item">
-                        <div class="app-info">
-                            <p><strong>Версия:</strong> 2.0</p>
-                            <p><strong>Последнее обновление:</strong> <span id="last-update">2025-01-20</span></p>
-                            <p><strong>Разработчик:</strong> ab2005@gmail.com</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="footer">
             <div class="copyright">
@@ -1316,8 +918,6 @@
         let db;
         const dbName = 'BPTrackerDB';
         const dbVersion = 1;
-        let currentPage = 'main';
-        let medications = [];
 
         const symptomLabels = {
             headache: 'Головная боль',
@@ -1329,23 +929,22 @@
             exercise: 'После нагрузки',
             stress: 'Стресс',
             fatigue: 'Усталость',
-            medication: 'Забыл лекарство'
         };
 
         // Initialize PWA
         window.addEventListener('load', async () => {
-            await initDB();
-            await loadReadings();
-            await loadMedications();
-            await loadConfigSettings();
-            hideLoadingScreen();
-            setupPWA();
-            setupNotifications();
-            updateConnectionStatus();
-            setDefaultDateTime();
-            updateDisplay();
-            setupConfigPage();
-            initializeSymptoms();
+            try {
+                await initDB();
+                await loadReadings();
+                hideLoadingScreen();
+                setupPWA();
+                setupNotifications();
+                setDefaultDateTime();
+                updateDisplay();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                hideLoadingScreen(); // Hide loading screen even if there's an error
+            }
         });
 
         // Hide loading screen
@@ -1375,16 +974,7 @@
                         store.createIndex('timestamp', 'timestamp', { unique: false });
                     }
 
-                    // Create settings store
-                    if (!db.objectStoreNames.contains('settings')) {
-                        db.createObjectStore('settings', { keyPath: 'key' });
-                    }
 
-                    // Create medications store
-                    if (!db.objectStoreNames.contains('medications')) {
-                        const medStore = db.createObjectStore('medications', { keyPath: 'id' });
-                        medStore.createIndex('name', 'name', { unique: false });
-                    }
                 };
             });
         }
@@ -1392,6 +982,11 @@
         // Load readings from IndexedDB
         async function loadReadings() {
             return new Promise((resolve, reject) => {
+                if (!db) {
+                    resolve(); // If no db, just resolve with empty readings
+                    return;
+                }
+                
                 const transaction = db.transaction(['readings'], 'readonly');
                 const store = transaction.objectStore('readings');
                 const request = store.getAll();
@@ -1402,7 +997,10 @@
                     resolve();
                 };
 
-                request.onerror = () => reject(request.error);
+                request.onerror = () => {
+                    console.error('Error loading readings:', request.error);
+                    resolve(); // Resolve anyway to continue initialization
+                };
             });
         }
 
@@ -1510,12 +1108,10 @@
 
         // Notifications Setup
         function setupNotifications() {
-            // Request permission on first load if measurement reminders are enabled
-            loadSetting('measurement-reminders').then(enabled => {
-                if (enabled) {
-                    requestNotificationPermission();
-                }
-            });
+            // Basic notification setup
+            if ('Notification' in window) {
+                Notification.requestPermission();
+            }
         }
 
         async function requestNotificationPermission() {
@@ -1539,56 +1135,6 @@
             }
         }
 
-        // Settings Storage
-        async function saveSetting(key, value) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['settings'], 'readwrite');
-                const store = transaction.objectStore('settings');
-                const request = store.put({ key, value });
-
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        async function loadSetting(key) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['settings'], 'readonly');
-                const store = transaction.objectStore('settings');
-                const request = store.get(key);
-
-                request.onsuccess = () => {
-                    resolve(request.result ? request.result.value : null);
-                };
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        // Connection Status
-        function updateConnectionStatus() {
-            const offlineIndicator = document.getElementById('offline-indicator');
-            const onlineIndicator = document.getElementById('online-indicator');
-
-            function updateStatus() {
-                if (navigator.onLine) {
-                    offlineIndicator.style.display = 'none';
-                    onlineIndicator.style.display = 'block';
-                    setTimeout(() => {
-                        onlineIndicator.style.display = 'none';
-                    }, 3000);
-                } else {
-                    offlineIndicator.style.display = 'block';
-                    onlineIndicator.style.display = 'none';
-                }
-            }
-
-            window.addEventListener('online', updateStatus);
-            window.addEventListener('offline', updateStatus);
-
-            if (!navigator.onLine) {
-                offlineIndicator.style.display = 'block';
-            }
-        }
 
         // Set default date and time
         function setDefaultDateTime() {
@@ -2112,260 +1658,6 @@
             tableDiv.innerHTML = tableHTML;
         }
 
-        // Navigation Functions
-        function togglePage() {
-            const mainPage = document.getElementById('main-page');
-            const configPage = document.getElementById('config-page');
-            const navButton = document.getElementById('nav-button');
-            const pageTitle = document.getElementById('page-title');
-
-            if (currentPage === 'main') {
-                mainPage.classList.remove('active');
-                configPage.classList.add('active');
-                navButton.textContent = '📊 Главная';
-                pageTitle.textContent = '⚙️ Настройки';
-                currentPage = 'config';
-            } else {
-                configPage.classList.remove('active');
-                mainPage.classList.add('active');
-                navButton.textContent = '⚙️ Настройки';
-                pageTitle.textContent = '🩺 Трекер давления';
-                currentPage = 'main';
-            }
-        }
-
-        // Configuration Page Setup
-        function setupConfigPage() {
-            // Set up event listeners for config items
-            document.getElementById('measurement-reminders').addEventListener('change', saveMeasurementSettings);
-            document.getElementById('morning-time').addEventListener('change', saveMeasurementSettings);
-            document.getElementById('evening-time').addEventListener('change', saveMeasurementSettings);
-            document.getElementById('medication-reminders').addEventListener('change', saveMedicationSettings);
-            document.getElementById('auto-backup').addEventListener('change', saveGeneralSettings);
-            document.getElementById('data-retention').addEventListener('change', saveGeneralSettings);
-            document.getElementById('theme').addEventListener('change', saveGeneralSettings);
-            document.getElementById('chart-default').addEventListener('change', saveGeneralSettings);
-        }
-
-        // Load Configuration Settings
-        async function loadConfigSettings() {
-            try {
-                const measurementReminders = await loadSetting('measurement-reminders') || false;
-                const morningTime = await loadSetting('morning-time') || '08:00';
-                const eveningTime = await loadSetting('evening-time') || '20:00';
-                const medicationReminders = await loadSetting('medication-reminders') || false;
-                const autoBackup = await loadSetting('auto-backup') || 'disabled';
-                const dataRetention = await loadSetting('data-retention') || 'forever';
-                const theme = await loadSetting('theme') || 'light';
-                const chartDefault = await loadSetting('chart-default') || 'hidden';
-
-                document.getElementById('measurement-reminders').checked = measurementReminders;
-                document.getElementById('morning-time').value = morningTime;
-                document.getElementById('evening-time').value = eveningTime;
-                document.getElementById('medication-reminders').checked = medicationReminders;
-                document.getElementById('auto-backup').value = autoBackup;
-                document.getElementById('data-retention').value = dataRetention;
-                document.getElementById('theme').value = theme;
-                document.getElementById('chart-default').value = chartDefault;
-
-                // Apply chart default setting
-                if (chartDefault === 'visible' && readings.length > 0) {
-                    setTimeout(() => {
-                        if (!chartVisible) {
-                            toggleChart();
-                        }
-                    }, 1000);
-                }
-            } catch (error) {
-                console.error('Error loading config settings:', error);
-            }
-        }
-
-        // Save Measurement Settings
-        async function saveMeasurementSettings() {
-            const measurementReminders = document.getElementById('measurement-reminders').checked;
-            const morningTime = document.getElementById('morning-time').value;
-            const eveningTime = document.getElementById('evening-time').value;
-
-            await saveSetting('measurement-reminders', measurementReminders);
-            await saveSetting('morning-time', morningTime);
-            await saveSetting('evening-time', eveningTime);
-
-            if (measurementReminders) {
-                scheduleNotifications();
-            }
-        }
-
-        // Save Medication Settings
-        async function saveMedicationSettings() {
-            const medicationReminders = document.getElementById('medication-reminders').checked;
-            await saveSetting('medication-reminders', medicationReminders);
-        }
-
-        // Save General Settings
-        async function saveGeneralSettings() {
-            const autoBackup = document.getElementById('auto-backup').value;
-            const dataRetention = document.getElementById('data-retention').value;
-            const theme = document.getElementById('theme').value;
-            const chartDefault = document.getElementById('chart-default').value;
-
-            await saveSetting('auto-backup', autoBackup);
-            await saveSetting('data-retention', dataRetention);
-            await saveSetting('theme', theme);
-            await saveSetting('chart-default', chartDefault);
-        }
-
-        // Medication Management
-        async function loadMedications() {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['medications'], 'readonly');
-                const store = transaction.objectStore('medications');
-                const request = store.getAll();
-
-                request.onsuccess = () => {
-                    medications = request.result || [];
-                    updateMedicationList();
-                    resolve();
-                };
-
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        async function saveMedication(medication) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['medications'], 'readwrite');
-                const store = transaction.objectStore('medications');
-                const request = store.add(medication);
-
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        async function deleteMedicationFromDB(id) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['medications'], 'readwrite');
-                const store = transaction.objectStore('medications');
-                const request = store.delete(id);
-
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function addMedication() {
-            const name = prompt('Название лекарства:');
-            if (!name) return;
-
-            const timesStr = prompt('Время приема (через запятую, например: 08:00, 14:00, 20:00):');
-            if (!timesStr) return;
-
-            const times = timesStr.split(',').map(t => t.trim()).filter(t => t);
-            if (times.length === 0) return;
-
-            const medication = {
-                id: Date.now(),
-                name: name.trim(),
-                times: times,
-                enabled: true
-            };
-
-            saveMedication(medication).then(() => {
-                medications.push(medication);
-                updateMedicationList();
-                showToast('Лекарство добавлено', 'success');
-            }).catch(error => {
-                console.error('Error saving medication:', error);
-                showToast('Ошибка при сохранении', 'error');
-            });
-        }
-
-        async function deleteMedication(id) {
-            if (confirm('Удалить это лекарство?')) {
-                try {
-                    await deleteMedicationFromDB(id);
-                    medications = medications.filter(m => m.id !== id);
-                    updateMedicationList();
-                    showToast('Лекарство удалено', 'success');
-                } catch (error) {
-                    console.error('Error deleting medication:', error);
-                    showToast('Ошибка при удалении', 'error');
-                }
-            }
-        }
-
-        // Symptom Toggle Function
-        function toggleSymptom(symptomId) {
-            const checkbox = document.getElementById(symptomId);
-            const item = checkbox.closest('.symptom-item');
-            
-            checkbox.checked = !checkbox.checked;
-            
-            if (checkbox.checked) {
-                item.classList.add('selected');
-            } else {
-                item.classList.remove('selected');
-            }
-        }
-
-        // Initialize symptom states on page load
-        function initializeSymptoms() {
-            Object.keys(symptomLabels).forEach(id => {
-                const checkbox = document.getElementById(id);
-                const item = checkbox.closest('.symptom-item');
-                
-                if (checkbox.checked) {
-                    item.classList.add('selected');
-                } else {
-                    item.classList.remove('selected');
-                }
-            });
-        }
-
-        function clearSymptoms() {
-            Object.keys(symptomLabels).forEach(id => {
-                const checkbox = document.getElementById(id);
-                const item = checkbox.closest('.symptom-item');
-                
-                checkbox.checked = false;
-                item.classList.remove('selected');
-            });
-        }
-
-        function updateMedicationList() {
-            const list = document.getElementById('medication-list');
-            
-            if (medications.length === 0) {
-                list.innerHTML = '<p style="color: #64748b; font-style: italic; text-align: center; padding: 20px;">Лекарства не добавлены</p>';
-                return;
-            }
-
-            list.innerHTML = medications.map(med => `
-                <div class="medication-item">
-                    <div class="medication-header">
-                        <span class="medication-name">${med.name}</span>
-                        <button class="delete-medication" onclick="deleteMedication(${med.id})" title="Удалить">×</button>
-                    </div>
-                    <div class="medication-times">
-                        ${med.times.map(time => `<span class="medication-time">${time}</span>`).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Enhanced Notifications
-        function scheduleNotifications() {
-            if ('Notification' in window && Notification.permission === 'granted') {
-                const morningTime = document.getElementById('morning-time').value;
-                const eveningTime = document.getElementById('evening-time').value;
-                
-                console.log(`Напоминания об измерениях настроены на ${morningTime} и ${eveningTime}`);
-                
-                // Here you would implement actual notification scheduling
-                // For a real app, you'd use service worker notifications or web push
-            }
-        }
 
         // Redraw chart on window resize
         window.addEventListener('resize', () => {
