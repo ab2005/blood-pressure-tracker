@@ -925,6 +925,166 @@
         .loading-content .loading-spinner {
             margin: 0 auto 16px;
         }
+
+        /* Voice Input Styles */
+        .voice-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .voice-section h3 {
+            color: #4a5568;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+
+        .voice-instruction {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .voice-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .voice-controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 44px;
+        }
+
+        .voice-controls button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .voice-controls button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .voice-feedback {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #d1d5db;
+            text-align: center;
+        }
+
+        .voice-visualizer {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .voice-wave {
+            width: 100px;
+            height: 40px;
+            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .voice-wave::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-50%);
+            animation: wave 1.5s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        #voice-status {
+            color: #4a5568;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .voice-result {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #d1d5db;
+        }
+
+        .voice-result h4 {
+            color: #4a5568;
+            margin-bottom: 16px;
+        }
+
+        #voice-transcript {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-family: monospace;
+            color: #374151;
+            white-space: pre-wrap;
+        }
+
+        #voice-readings {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .voice-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .voice-actions button {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .voice-actions button:hover {
+            background: #047857;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -1035,6 +1195,34 @@
             </div>
 
             <button onclick="addReading()">📊 Добавить измерение</button>
+            
+            <!-- Voice Input Section -->
+            <div class="voice-section">
+                <h3>🎤 Голосовой ввод</h3>
+                <p class="voice-instruction">Нажмите кнопку и произнесите показания, например: "120 на 80, пульс 75"</p>
+                
+                <div class="voice-controls">
+                    <button id="voice-btn" onclick="startVoiceInput()">🎤 Начать запись</button>
+                    <button id="stop-voice-btn" onclick="stopVoiceInput()" style="display: none;">⏹️ Остановить запись</button>
+                </div>
+                
+                <div class="voice-feedback" id="voice-feedback" style="display: none;">
+                    <div class="voice-visualizer">
+                        <div class="voice-wave"></div>
+                    </div>
+                    <p id="voice-status">Слушаю...</p>
+                </div>
+                
+                <div class="voice-result" id="voice-result" style="display: none;">
+                    <h4>Распознанный текст:</h4>
+                    <div id="voice-transcript"></div>
+                    <div id="voice-readings"></div>
+                    <div class="voice-actions">
+                        <button onclick="useVoiceReadings()">📝 Заполнить форму</button>
+                        <button onclick="saveVoiceReadings()" style="background: #10b981;">💾 Сохранить сразу</button>
+                    </div>
+                </div>
+            </div>
             
             <!-- Camera Section -->
             <div class="camera-section">
@@ -1432,6 +1620,29 @@
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             document.getElementById('time').value = `${hours}:${minutes}`;
+        }
+
+        function clearSymptoms() {
+            Object.keys(symptomLabels).forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) {
+                    checkbox.checked = false;
+                    checkbox.parentElement.classList.remove('selected');
+                }
+            });
+        }
+
+        function toggleSymptom(symptomId) {
+            const checkbox = document.getElementById(symptomId);
+            const symptomItem = checkbox.parentElement;
+            
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                symptomItem.classList.add('selected');
+            } else {
+                symptomItem.classList.remove('selected');
+            }
         }
 
         async function deleteReading(id) {
@@ -2121,6 +2332,305 @@
                 loadingDiv.remove();
             }
         }
+
+        // Voice Input Functionality
+        let recognition = null;
+        let isListening = false;
+        let voiceReadings = null;
+
+        // Initialize speech recognition
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                
+                recognition.lang = 'ru-RU';
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = () => {
+                    isListening = true;
+                    document.getElementById('voice-btn').style.display = 'none';
+                    document.getElementById('stop-voice-btn').style.display = 'inline-block';
+                    document.getElementById('voice-feedback').style.display = 'block';
+                    document.getElementById('voice-result').style.display = 'none';
+                    document.getElementById('voice-status').textContent = 'Слушаю...';
+                };
+
+                recognition.onresult = (event) => {
+                    let finalTranscript = '';
+                    let interimTranscript = '';
+
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcript + ' ';
+                        } else {
+                            interimTranscript += transcript;
+                        }
+                    }
+
+                    if (finalTranscript) {
+                        document.getElementById('voice-status').textContent = 'Обработка...';
+                        processVoiceInput(finalTranscript);
+                    } else if (interimTranscript) {
+                        document.getElementById('voice-status').textContent = 'Слушаю: ' + interimTranscript;
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    let errorMessage = 'Ошибка распознавания';
+                    
+                    switch(event.error) {
+                        case 'no-speech':
+                            errorMessage = 'Речь не обнаружена';
+                            break;
+                        case 'audio-capture':
+                            errorMessage = 'Микрофон не найден';
+                            break;
+                        case 'not-allowed':
+                            errorMessage = 'Доступ к микрофону запрещен';
+                            break;
+                    }
+                    
+                    document.getElementById('voice-status').textContent = errorMessage;
+                    setTimeout(() => stopVoiceInput(), 2000);
+                };
+
+                recognition.onend = () => {
+                    isListening = false;
+                    document.getElementById('voice-btn').style.display = 'inline-block';
+                    document.getElementById('stop-voice-btn').style.display = 'none';
+                };
+
+            } else {
+                console.error('Speech recognition not supported');
+            }
+        }
+
+        function startVoiceInput() {
+            if (!recognition) {
+                initSpeechRecognition();
+            }
+
+            if (!recognition) {
+                alert('Голосовой ввод не поддерживается в вашем браузере. Попробуйте использовать Chrome, Safari или Edge.');
+                return;
+            }
+
+            // Request microphone permission
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(() => {
+                    recognition.start();
+                })
+                .catch((error) => {
+                    console.error('Microphone access error:', error);
+                    alert('Не удалось получить доступ к микрофону. Убедитесь, что разрешение предоставлено.');
+                });
+        }
+
+        function stopVoiceInput() {
+            if (recognition && isListening) {
+                recognition.stop();
+                document.getElementById('voice-feedback').style.display = 'none';
+            }
+        }
+
+        function processVoiceInput(transcript) {
+            // Display the transcript
+            document.getElementById('voice-transcript').textContent = transcript;
+            
+            // Parse the transcript to extract blood pressure readings
+            const parsedReadings = parseVoiceTranscript(transcript);
+            
+            if (parsedReadings) {
+                voiceReadings = parsedReadings;
+                displayVoiceReadings(parsedReadings);
+                document.getElementById('voice-result').style.display = 'block';
+                stopVoiceInput();
+            } else {
+                document.getElementById('voice-status').textContent = 'Не удалось распознать показания. Попробуйте еще раз.';
+            }
+        }
+
+        function parseVoiceTranscript(transcript) {
+            // Normalize the transcript
+            const normalized = transcript.toLowerCase().replace(/[,\.]/g, ' ');
+            
+            // Pattern matching for blood pressure readings
+            // Common patterns: "120 на 80", "давление 120 80", "систолическое 120 диастолическое 80"
+            let systolic = null;
+            let diastolic = null;
+            let pulse = null;
+            const symptoms = [];
+
+            // Pattern 1: "X на Y" (most common in Russian)
+            const bpPattern1 = /(\d{2,3})\s*на\s*(\d{2,3})/;
+            const bpMatch1 = normalized.match(bpPattern1);
+            if (bpMatch1) {
+                systolic = parseInt(bpMatch1[1]);
+                diastolic = parseInt(bpMatch1[2]);
+            }
+
+            // Pattern 2: "давление X Y" or just "X Y"
+            if (!systolic) {
+                const bpPattern2 = /(?:давление\s*)?(\d{2,3})\s+(\d{2,3})(?:\s|$)/;
+                const bpMatch2 = normalized.match(bpPattern2);
+                if (bpMatch2) {
+                    systolic = parseInt(bpMatch2[1]);
+                    diastolic = parseInt(bpMatch2[2]);
+                }
+            }
+
+            // Pattern for pulse
+            const pulsePattern = /пульс\s*(\d{2,3})|(\d{2,3})\s*(?:удар|ударов)/;
+            const pulseMatch = normalized.match(pulsePattern);
+            if (pulseMatch) {
+                pulse = parseInt(pulseMatch[1] || pulseMatch[2]);
+            }
+
+            // Check for symptoms
+            const symptomKeywords = {
+                'headache': ['головная боль', 'болит голова', 'голова болит'],
+                'tinnitus': ['шум в ушах', 'звон в ушах', 'ушах шум'],
+                'dizziness': ['головокружение', 'кружится голова', 'голова кружится'],
+                'anxiety': ['тревожность', 'тревога', 'беспокойство'],
+                'poor_sleep': ['плохой сон', 'не выспался', 'не спал', 'бессонница'],
+                'alcohol': ['алкоголь', 'выпивал', 'пил вчера'],
+                'exercise': ['нагрузка', 'тренировка', 'упражнения', 'физическая активность'],
+                'stress': ['стресс', 'нервничал', 'переживал'],
+                'fatigue': ['усталость', 'устал', 'утомление']
+            };
+
+            for (const [symptomKey, keywords] of Object.entries(symptomKeywords)) {
+                if (keywords.some(keyword => normalized.includes(keyword))) {
+                    symptoms.push(symptomKey);
+                }
+            }
+
+            // Validate readings
+            if (systolic && diastolic && systolic > diastolic && 
+                systolic >= 50 && systolic <= 300 && 
+                diastolic >= 30 && diastolic <= 200) {
+                return {
+                    systolic,
+                    diastolic,
+                    pulse: (pulse && pulse >= 30 && pulse <= 200) ? pulse : null,
+                    symptoms
+                };
+            }
+
+            return null;
+        }
+
+        function displayVoiceReadings(readings) {
+            const symptomsText = readings.symptoms && readings.symptoms.length > 0
+                ? readings.symptoms.map(s => symptomLabels[s]).join(', ')
+                : 'Не указаны';
+            
+            const readingsText = `
+Систолическое: ${readings.systolic}
+Диастолическое: ${readings.diastolic}
+${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указан'}
+Симптомы: ${symptomsText}
+            `;
+            document.getElementById('voice-readings').textContent = readingsText.trim();
+        }
+
+        function useVoiceReadings() {
+            if (!voiceReadings) {
+                alert('Нет распознанных показаний');
+                return;
+            }
+
+            // Fill form fields
+            document.getElementById('systolic').value = voiceReadings.systolic;
+            document.getElementById('diastolic').value = voiceReadings.diastolic;
+            if (voiceReadings.pulse) {
+                document.getElementById('pulse').value = voiceReadings.pulse;
+            }
+
+            // Clear and set symptoms
+            clearSymptoms();
+            if (voiceReadings.symptoms && voiceReadings.symptoms.length > 0) {
+                voiceReadings.symptoms.forEach(symptom => {
+                    const checkbox = document.getElementById(symptom);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        checkbox.parentElement.classList.add('selected');
+                    }
+                });
+            }
+
+            // Hide voice result
+            document.getElementById('voice-result').style.display = 'none';
+            
+            // Scroll to form
+            document.getElementById('systolic').scrollIntoView({ behavior: 'smooth' });
+            
+            showToast('Показания перенесены в форму', 'success');
+        }
+
+        async function saveVoiceReadings() {
+            if (!voiceReadings) {
+                alert('Нет распознанных показаний');
+                return;
+            }
+
+            // Get current date and time
+            const now = new Date();
+            const date = now.toISOString().split('T')[0];
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const time = `${hours}:${minutes}`;
+
+            // Create reading object
+            const reading = {
+                id: Date.now(),
+                date,
+                time,
+                systolic: voiceReadings.systolic,
+                diastolic: voiceReadings.diastolic,
+                pulse: voiceReadings.pulse,
+                notes: 'Добавлено через голосовой ввод',
+                symptoms: voiceReadings.symptoms || [],
+                timestamp: new Date(`${date}T${time}`)
+            };
+
+            try {
+                // Save to database
+                await saveReading(reading);
+                readings.push(reading);
+                readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                // Update display
+                updateDisplay();
+
+                // Hide voice result
+                document.getElementById('voice-result').style.display = 'none';
+                
+                // Clear voice readings
+                voiceReadings = null;
+
+                // Show success message
+                showToast('Измерение сохранено через голосовой ввод!', 'success');
+                
+                // Update form date/time for next entry
+                document.getElementById('date').value = date;
+                document.getElementById('time').value = time;
+                
+            } catch (error) {
+                console.error('Error saving voice reading:', error);
+                showToast('Ошибка при сохранении', 'error');
+            }
+        }
+
+        // Initialize speech recognition on page load
+        window.addEventListener('load', () => {
+            initSpeechRecognition();
+        });
     </script>
 </body>
 </html>
