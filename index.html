@@ -1128,6 +1128,182 @@
             background: #047857;
             transform: translateY(-1px);
         }
+
+        /* Voice Assistant Styles */
+        .voice-assistant-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .voice-assistant-section h3 {
+            color: #4a5568;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+
+        .assistant-instruction {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .assistant-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 480px) {
+            .assistant-controls {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+
+        .assistant-controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 44px;
+        }
+
+        .assistant-controls button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .assistant-controls button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .assistant-status {
+            text-align: center;
+            margin: 10px 0;
+            padding: 8px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .assistant-conversation {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #d1d5db;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .conversation-messages {
+            min-height: 200px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.assistant {
+            background: #f1f5f9;
+            color: #4a5568;
+            margin-right: auto;
+        }
+
+        .conversation-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .conversation-controls button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .conversation-controls button:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .conversation-controls button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .assistant-suggestions {
+            margin-top: 20px;
+        }
+
+        .assistant-suggestions p {
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .suggestion-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .suggestion-buttons {
+                flex-direction: row;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+        .suggestion-btn {
+            background: #f1f5f9;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .suggestion-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -1263,6 +1439,39 @@
                     <div class="voice-actions">
                         <button onclick="useVoiceReadings()">📝 Заполнить форму</button>
                         <button onclick="saveVoiceReadings()" style="background: #10b981;">💾 Сохранить сразу</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Voice Assistant Section -->
+            <div class="voice-assistant-section">
+                <h3>🤖 Голосовой помощник</h3>
+                <p class="assistant-instruction">Интерактивный помощник для вопросов о давлении, анализа данных и рекомендаций</p>
+                
+                <div class="assistant-controls">
+                    <button id="assistant-btn" onclick="startVoiceAssistant()">🎙️ Начать разговор</button>
+                    <button id="stop-assistant-btn" onclick="stopVoiceAssistant()" style="display: none;">⏹️ Остановить</button>
+                    <button id="assistant-settings-btn" onclick="configureAssistant()" style="background: #6b7280;">⚙️ Настройки</button>
+                </div>
+                
+                <div id="assistant-status" class="assistant-status" style="display: none;">
+                    <small>Статус: <span id="assistant-current-status">Готов</span></small>
+                </div>
+                
+                <div class="assistant-conversation" id="assistant-conversation" style="display: none;">
+                    <div class="conversation-messages" id="conversation-messages"></div>
+                    <div class="conversation-controls">
+                        <button id="assistant-speak-btn" onclick="speakToAssistant()" disabled>🎤 Говорить</button>
+                        <button id="assistant-mute-btn" onclick="muteAssistant()">🔇 Отключить звук</button>
+                    </div>
+                </div>
+                
+                <div class="assistant-suggestions">
+                    <p><strong>Примеры вопросов:</strong></p>
+                    <div class="suggestion-buttons">
+                        <button onclick="askAssistant('Как мое давление за последнюю неделю?')" class="suggestion-btn">📊 Анализ недели</button>
+                        <button onclick="askAssistant('Какие факторы влияют на мое давление?')" class="suggestion-btn">🔍 Факторы влияния</button>
+                        <button onclick="askAssistant('Дай рекомендации по снижению давления')" class="suggestion-btn">💡 Рекомендации</button>
                     </div>
                 </div>
             </div>
@@ -3291,9 +3500,756 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             }
         }
 
+        // Voice Assistant with ElevenLabs Conversation API
+        let voiceAssistant = null;
+        let isAssistantActive = false;
+        let isSpeechEnabled = true;
+        let speechSynthesis = window.speechSynthesis;
+        let assistantVoice = null;
+        let assistantConfig = {
+            apiKey: '',
+            agentId: '',
+            voiceSettings: {
+                stability: 0.7,
+                similarityBoost: 0.8,
+                style: 0.5,
+                useSpeakerBoost: true
+            },
+            tts: {
+                enabled: true,
+                rate: 0.9,
+                pitch: 1.0,
+                volume: 0.8,
+                voice: 'ru-RU'
+            }
+        };
+
+        // Load assistant configuration from localStorage
+        function loadAssistantConfig() {
+            try {
+                const savedConfig = localStorage.getItem('assistant_config');
+                if (savedConfig) {
+                    assistantConfig = { ...assistantConfig, ...JSON.parse(savedConfig) };
+                }
+            } catch (error) {
+                console.error('Error loading assistant config:', error);
+            }
+            initializeTTS();
+            isSpeechEnabled = assistantConfig.tts.enabled;
+            updateAssistantStatus();
+        }
+
+        // Initialize Text-to-Speech
+        function initializeTTS() {
+            if ('speechSynthesis' in window) {
+                // Wait for voices to load
+                if (speechSynthesis.getVoices().length === 0) {
+                    speechSynthesis.addEventListener('voiceschanged', selectBestVoice);
+                } else {
+                    selectBestVoice();
+                }
+            } else {
+                console.warn('Speech synthesis not supported');
+                assistantConfig.tts.enabled = false;
+            }
+        }
+
+        function selectBestVoice() {
+            const voices = speechSynthesis.getVoices();
+            
+            // Try to find Russian voice
+            assistantVoice = voices.find(voice => 
+                voice.lang.startsWith('ru') || 
+                voice.name.toLowerCase().includes('russian') ||
+                voice.name.toLowerCase().includes('yandex')
+            );
+            
+            // Fallback to any available voice
+            if (!assistantVoice && voices.length > 0) {
+                assistantVoice = voices[0];
+            }
+            
+            console.log('Selected voice:', assistantVoice ? assistantVoice.name : 'None available');
+        }
+
+        function saveAssistantConfig() {
+            try {
+                localStorage.setItem('assistant_config', JSON.stringify(assistantConfig));
+            } catch (error) {
+                console.error('Error saving assistant config:', error);
+            }
+        }
+
+        function updateAssistantStatus() {
+            const statusSpan = document.getElementById('assistant-current-status');
+            const statusDiv = document.getElementById('assistant-status');
+            
+            if (assistantConfig.apiKey && assistantConfig.agentId) {
+                statusDiv.style.display = 'block';
+                statusSpan.textContent = isAssistantActive ? 'Активен' : 'Готов';
+            } else {
+                statusDiv.style.display = 'block';
+                statusSpan.textContent = 'Требуется настройка';
+            }
+        }
+
+        function configureAssistant() {
+            const currentApiKey = assistantConfig.apiKey || '';
+            const currentAgentId = assistantConfig.agentId || '';
+            
+            const htmlContent = `
+                <div style="padding: 20px; max-width: 500px;">
+                    <h3 style="margin-top: 0;">⚙️ Настройки голосового помощника</h3>
+                    <p>Настройте ElevenLabs Conversation API для интерактивного голосового помощника</p>
+                    
+                    <div style="margin: 15px 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">API Key:</label>
+                        <input type="password" id="assistant-api-key" value="${currentApiKey}" 
+                               placeholder="sk-..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <small style="color: #666;">Получите API ключ в <a href="https://elevenlabs.io/app/conversational-ai" target="_blank">ElevenLabs Dashboard</a></small>
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Agent ID:</label>
+                        <input type="text" id="assistant-agent-id" value="${currentAgentId}" 
+                               placeholder="agent_..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <small style="color: #666;">ID агента из вашей панели ElevenLabs</small>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <h4>Настройки голоса (ElevenLabs):</h4>
+                        <div style="margin: 10px 0;">
+                            <label>Стабильность: <span id="stability-value">${assistantConfig.voiceSettings.stability}</span></label>
+                            <input type="range" id="stability" min="0" max="1" step="0.1" value="${assistantConfig.voiceSettings.stability}" 
+                                   style="width: 100%;" oninput="document.getElementById('stability-value').textContent = this.value">
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <label>Similarity Boost: <span id="similarity-value">${assistantConfig.voiceSettings.similarityBoost}</span></label>
+                            <input type="range" id="similarity" min="0" max="1" step="0.1" value="${assistantConfig.voiceSettings.similarityBoost}"
+                                   style="width: 100%;" oninput="document.getElementById('similarity-value').textContent = this.value">
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 20px 0; border-top: 1px solid #ddd; padding-top: 15px;">
+                        <h4>Настройки речи (локальный TTS):</h4>
+                        <div style="margin: 10px 0;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="checkbox" id="tts-enabled" ${assistantConfig.tts.enabled ? 'checked' : ''} style="margin-right: 8px;">
+                                Включить озвучивание ответов
+                            </label>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <label>Скорость речи: <span id="tts-rate-value">${assistantConfig.tts.rate}</span></label>
+                            <input type="range" id="tts-rate" min="0.5" max="2" step="0.1" value="${assistantConfig.tts.rate}" 
+                                   style="width: 100%;" oninput="document.getElementById('tts-rate-value').textContent = this.value">
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <label>Громкость: <span id="tts-volume-value">${assistantConfig.tts.volume}</span></label>
+                            <input type="range" id="tts-volume" min="0" max="1" step="0.1" value="${assistantConfig.tts.volume}"
+                                   style="width: 100%;" oninput="document.getElementById('tts-volume-value').textContent = this.value">
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <button onclick="testTTS()" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px;">🔊 Тест голоса</button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 20px 0; text-align: center;">
+                        <button onclick="saveAssistantSettings()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-right: 10px;">💾 Сохранить</button>
+                        <button onclick="closeAssistantConfig()" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 5px;">❌ Отмена</button>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #f3f4f6; border-radius: 8px;">
+                        <p style="margin: 0; font-size: 14px; color: #374151;">
+                            <strong>Инструкции:</strong><br>
+                            1. Создайте учетную запись на <a href="https://elevenlabs.io" target="_blank">ElevenLabs.io</a><br>
+                            2. Перейдите в раздел "Conversational AI"<br>
+                            3. Создайте агента с промптом для анализа данных артериального давления<br>
+                            4. Скопируйте API Key и Agent ID сюда
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            showModal(htmlContent);
+        }
+
+        function saveAssistantSettings() {
+            const apiKey = document.getElementById('assistant-api-key').value.trim();
+            const agentId = document.getElementById('assistant-agent-id').value.trim();
+            const stability = parseFloat(document.getElementById('stability').value);
+            const similarity = parseFloat(document.getElementById('similarity').value);
+            
+            // TTS settings
+            const ttsEnabled = document.getElementById('tts-enabled').checked;
+            const ttsRate = parseFloat(document.getElementById('tts-rate').value);
+            const ttsVolume = parseFloat(document.getElementById('tts-volume').value);
+
+            // API settings are optional - assistant works without them
+            assistantConfig.apiKey = apiKey;
+            assistantConfig.agentId = agentId;
+            assistantConfig.voiceSettings.stability = stability;
+            assistantConfig.voiceSettings.similarityBoost = similarity;
+            
+            // TTS settings
+            assistantConfig.tts.enabled = ttsEnabled;
+            assistantConfig.tts.rate = ttsRate;
+            assistantConfig.tts.volume = ttsVolume;
+            
+            isSpeechEnabled = ttsEnabled;
+
+            saveAssistantConfig();
+            updateAssistantStatus();
+            closeModal();
+            
+            showToast('Настройки голосового помощника сохранены', 'success');
+        }
+
+        function testTTS() {
+            const rate = parseFloat(document.getElementById('tts-rate').value);
+            const volume = parseFloat(document.getElementById('tts-volume').value);
+            
+            speakText('Привет! Это тест голосового помощника для трекера артериального давления.', rate, volume);
+        }
+
+        function closeAssistantConfig() {
+            closeModal();
+        }
+
+        async function startVoiceAssistant() {
+            // Assistant works without configuration using local analysis
+            // ElevenLabs configuration is optional for enhanced features
+
+            if (isAssistantActive) {
+                showToast('Голосовой помощник уже активен', 'info');
+                return;
+            }
+
+            try {
+                // Show conversation container
+                document.getElementById('assistant-conversation').style.display = 'block';
+                document.getElementById('assistant-btn').style.display = 'none';
+                document.getElementById('stop-assistant-btn').style.display = 'inline-block';
+                
+                isAssistantActive = true;
+                updateAssistantStatus();
+
+                // Initialize conversation with context about user's BP data
+                const userContext = generateUserContext();
+                const welcomeMessage = `Голосовой помощник активирован. Говорите или используйте кнопки с примерами вопросов.${assistantConfig.tts.enabled ? ' Ответы будут озвучены.' : ' Звук отключен.'}`;
+                addMessage('system', welcomeMessage);
+                
+                // Speak welcome message if TTS enabled
+                if (assistantConfig.tts.enabled && isSpeechEnabled) {
+                    speakText('Голосовой помощник активирован. Чем могу помочь?');
+                }
+                
+                // Enable speak button
+                document.getElementById('assistant-speak-btn').disabled = false;
+                
+                showToast('Голосовой помощник активирован', 'success');
+
+            } catch (error) {
+                console.error('Error starting voice assistant:', error);
+                showToast('Ошибка запуска голосового помощника: ' + error.message, 'error');
+                stopVoiceAssistant();
+            }
+        }
+
+        function stopVoiceAssistant() {
+            if (voiceAssistant) {
+                try {
+                    voiceAssistant.disconnect();
+                } catch (error) {
+                    console.error('Error stopping assistant:', error);
+                }
+                voiceAssistant = null;
+            }
+
+            isAssistantActive = false;
+            updateAssistantStatus();
+
+            // Reset UI
+            document.getElementById('assistant-conversation').style.display = 'none';
+            document.getElementById('assistant-btn').style.display = 'inline-block';
+            document.getElementById('stop-assistant-btn').style.display = 'none';
+            document.getElementById('assistant-speak-btn').disabled = true;
+
+            // Clear messages
+            document.getElementById('conversation-messages').innerHTML = '';
+            
+            showToast('Голосовой помощник остановлен', 'info');
+        }
+
+        function generateUserContext() {
+            if (readings.length === 0) {
+                return "У пользователя пока нет записанных измерений артериального давления.";
+            }
+
+            const recent = readings.slice(0, 5);
+            const avgSystolic = Math.round(readings.reduce((sum, r) => sum + r.systolic, 0) / readings.length);
+            const avgDiastolic = Math.round(readings.reduce((sum, r) => sum + r.diastolic, 0) / readings.length);
+            
+            const readingsWithPulse = readings.filter(r => r.pulse !== null && r.pulse !== undefined);
+            const avgPulse = readingsWithPulse.length > 0 ? 
+                Math.round(readingsWithPulse.reduce((sum, r) => sum + r.pulse, 0) / readingsWithPulse.length) : null;
+
+            let context = `Контекст пользователя:
+- Всего измерений: ${readings.length}
+- Среднее давление: ${avgSystolic}/${avgDiastolic}`;
+            
+            if (avgPulse) {
+                context += `
+- Средний пульс: ${avgPulse}`;
+            }
+
+            context += `
+- Последние измерения:`;
+            
+            recent.forEach((reading, i) => {
+                const category = getBPCategory(reading.systolic, reading.diastolic);
+                const symptomsText = reading.symptoms && reading.symptoms.length > 0 
+                    ? reading.symptoms.map(s => symptomLabels[s]).join(', ') 
+                    : 'нет';
+                    
+                context += `
+  ${i + 1}. ${reading.date} ${reading.time}: ${reading.systolic}/${reading.diastolic} (${category.category})`;
+                if (reading.pulse) context += `, пульс ${reading.pulse}`;
+                if (symptomsText !== 'нет') context += `, симптомы: ${symptomsText}`;
+            });
+
+            return context;
+        }
+
+        function addMessage(type, content, timestamp = new Date()) {
+            const messagesContainer = document.getElementById('conversation-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const timeStr = timestamp.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">${content}</div>
+                <div class="message-time">${timeStr}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function speakToAssistant() {
+            if (!isAssistantActive) {
+                alert('Голосовой помощник не активен');
+                return;
+            }
+
+            // Disable speak button during recording
+            const speakBtn = document.getElementById('assistant-speak-btn');
+            speakBtn.disabled = true;
+            speakBtn.textContent = '🎤 Слушаю...';
+
+            try {
+                // Use Web Speech API for voice input
+                if (!recognition) {
+                    initSpeechRecognition();
+                }
+
+                const transcript = await new Promise((resolve, reject) => {
+                    let fullTranscript = '';
+                    
+                    const tempRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                    tempRecognition.lang = 'ru-RU';
+                    tempRecognition.continuous = false;
+                    tempRecognition.interimResults = false;
+                    tempRecognition.maxAlternatives = 1;
+
+                    tempRecognition.onresult = (event) => {
+                        fullTranscript = event.results[0][0].transcript;
+                        resolve(fullTranscript);
+                    };
+
+                    tempRecognition.onerror = (event) => {
+                        reject(new Error('Ошибка распознавания речи: ' + event.error));
+                    };
+
+                    tempRecognition.onend = () => {
+                        if (!fullTranscript) {
+                            reject(new Error('Речь не распознана'));
+                        }
+                    };
+
+                    tempRecognition.start();
+                });
+
+                // Add user message to conversation
+                addMessage('user', transcript);
+
+                // Send to assistant (simulate with local processing for now)
+                await processAssistantQuery(transcript);
+
+            } catch (error) {
+                console.error('Voice input error:', error);
+                showToast('Ошибка голосового ввода: ' + error.message, 'error');
+            } finally {
+                // Re-enable speak button
+                speakBtn.disabled = false;
+                speakBtn.textContent = '🎤 Говорить';
+            }
+        }
+
+        async function askAssistant(question) {
+            if (!isAssistantActive) {
+                await startVoiceAssistant();
+            }
+
+            // Add user message
+            addMessage('user', question);
+            
+            // Process the question
+            await processAssistantQuery(question);
+        }
+
+        async function processAssistantQuery(query) {
+            try {
+                // Use local analysis for immediate functionality
+                const response = await generateLocalResponse(query);
+                
+                // Add assistant response
+                addMessage('assistant', response);
+                
+                // Speak the response if TTS is enabled
+                if (assistantConfig.tts.enabled && isSpeechEnabled) {
+                    speakText(response);
+                }
+
+            } catch (error) {
+                console.error('Error processing assistant query:', error);
+                const errorMessage = 'Извините, произошла ошибка при обработке вашего запроса.';
+                addMessage('assistant', errorMessage);
+                
+                if (assistantConfig.tts.enabled && isSpeechEnabled) {
+                    speakText(errorMessage);
+                }
+            }
+        }
+
+        function speakText(text, customRate = null, customVolume = null) {
+            if (!assistantVoice || !('speechSynthesis' in window)) {
+                console.warn('Speech synthesis not available');
+                return;
+            }
+
+            // Stop any currently speaking utterance
+            speechSynthesis.cancel();
+
+            // Clean text for better speech
+            const cleanText = text
+                .replace(/\n/g, '. ') // Replace newlines with periods
+                .replace(/•/g, '') // Remove bullet points
+                .replace(/[🔴🟡🟢📊📈📉💓🏷️⚠️]/g, '') // Remove emojis
+                .replace(/\s+/g, ' ') // Normalize whitespace
+                .trim();
+
+            if (!cleanText) return;
+
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            
+            // Use custom settings or config defaults
+            utterance.rate = customRate || assistantConfig.tts.rate;
+            utterance.volume = customVolume || assistantConfig.tts.volume;
+            utterance.pitch = assistantConfig.tts.pitch || 1.0;
+            utterance.voice = assistantVoice;
+
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event.error);
+            };
+
+            utterance.onstart = () => {
+                // Update mute button to show speech is active
+                const muteBtn = document.getElementById('assistant-mute-btn');
+                if (muteBtn && isSpeechEnabled) {
+                    muteBtn.textContent = '🔊 Говорит...';
+                }
+            };
+
+            utterance.onend = () => {
+                // Reset mute button
+                const muteBtn = document.getElementById('assistant-mute-btn');
+                if (muteBtn) {
+                    muteBtn.textContent = isSpeechEnabled ? '🔇 Отключить звук' : '🔊 Включить звук';
+                }
+            };
+
+            speechSynthesis.speak(utterance);
+        }
+
+        function generateLocalResponse(query) {
+            const lowerQuery = query.toLowerCase();
+            
+            if (readings.length === 0) {
+                return "У вас пока нет записанных измерений артериального давления. Добавьте первое измерение, чтобы я мог помочь с анализом.";
+            }
+
+            // Analyze for specific questions
+            if (lowerQuery.includes('неделю') || lowerQuery.includes('недели')) {
+                return analyzeWeeklyTrend();
+            }
+            
+            if (lowerQuery.includes('фактор') || lowerQuery.includes('влия')) {
+                return analyzeFactors();
+            }
+            
+            if (lowerQuery.includes('рекомендац') || lowerQuery.includes('совет')) {
+                return generateRecommendations();
+            }
+            
+            if (lowerQuery.includes('статистик') || lowerQuery.includes('средн')) {
+                return generateStatistics();
+            }
+            
+            if (lowerQuery.includes('последн') || lowerQuery.includes('сейчас')) {
+                return analyzeLatestReading();
+            }
+
+            // Default response with general analysis
+            return generateGeneralAnalysis();
+        }
+
+        function analyzeWeeklyTrend() {
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            
+            const weeklyReadings = readings.filter(r => new Date(r.timestamp) >= weekAgo);
+            
+            if (weeklyReadings.length === 0) {
+                return "За последнюю неделю у вас нет записанных измерений.";
+            }
+            
+            const avgSystolic = Math.round(weeklyReadings.reduce((sum, r) => sum + r.systolic, 0) / weeklyReadings.length);
+            const avgDiastolic = Math.round(weeklyReadings.reduce((sum, r) => sum + r.diastolic, 0) / weeklyReadings.length);
+            
+            const trend = weeklyReadings.length >= 2 ? 
+                (weeklyReadings[0].systolic - weeklyReadings[weeklyReadings.length - 1].systolic) : 0;
+            
+            let response = `За последнюю неделю у вас ${weeklyReadings.length} измерений. Среднее давление: ${avgSystolic}/${avgDiastolic}. `;
+            
+            if (trend > 5) {
+                response += "Наблюдается тенденция к снижению давления. ";
+            } else if (trend < -5) {
+                response += "Наблюдается тенденция к повышению давления. ";
+            } else {
+                response += "Давление относительно стабильно. ";
+            }
+            
+            const category = getBPCategory(avgSystolic, avgDiastolic);
+            response += `Ваше давление находится в категории "${category.category}".`;
+            
+            return response;
+        }
+
+        function analyzeFactors() {
+            const symptomsCount = {};
+            readings.forEach(reading => {
+                if (reading.symptoms && reading.symptoms.length > 0) {
+                    reading.symptoms.forEach(symptom => {
+                        symptomsCount[symptom] = (symptomsCount[symptom] || 0) + 1;
+                    });
+                }
+            });
+            
+            const topSymptoms = Object.entries(symptomsCount)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3)
+                .map(([symptom, count]) => `${symptomLabels[symptom]} (${count} раз)`);
+            
+            let response = "Анализ факторов, влияющих на ваше давление:\n\n";
+            
+            if (topSymptoms.length > 0) {
+                response += `Наиболее частые сопутствующие симптомы: ${topSymptoms.join(', ')}.\n\n`;
+            }
+            
+            response += "Общие рекомендации:\n";
+            response += "• Ведите регулярные измерения\n";
+            response += "• Отмечайте связь с питанием, сном и стрессом\n";
+            response += "• Обратитесь к врачу для детального анализа";
+            
+            return response;
+        }
+
+        function generateRecommendations() {
+            const latest = readings[0];
+            const avgSystolic = Math.round(readings.reduce((sum, r) => sum + r.systolic, 0) / readings.length);
+            const category = getBPCategory(avgSystolic, Math.round(readings.reduce((sum, r) => sum + r.diastolic, 0) / readings.length));
+            
+            let recommendations = "Рекомендации на основе ваших показаний:\n\n";
+            
+            if (category.class === 'bp-high') {
+                recommendations += "🔴 Высокое давление:\n";
+                recommendations += "• Срочно обратитесь к врачу\n";
+                recommendations += "• Ограничьте соль в рационе\n";
+                recommendations += "• Избегайте стрессов\n";
+                recommendations += "• Увеличьте физическую активность постепенно\n\n";
+            } else if (category.class === 'bp-elevated') {
+                recommendations += "🟡 Повышенное давление:\n";
+                recommendations += "• Консультация с врачом рекомендуется\n";
+                recommendations += "• Контролируйте вес\n";
+                recommendations += "• Регулярные умеренные физические нагрузки\n\n";
+            } else {
+                recommendations += "🟢 Нормальное давление:\n";
+                recommendations += "• Продолжайте здоровый образ жизни\n";
+                recommendations += "• Регулярные измерения для контроля\n\n";
+            }
+            
+            recommendations += "Общие советы:\n";
+            recommendations += "• Измеряйте давление в одно время\n";
+            recommendations += "• Ведите дневник питания и симптомов\n";
+            recommendations += "• Достаточный сон (7-8 часов)";
+            
+            return recommendations;
+        }
+
+        function generateStatistics() {
+            const avgSystolic = Math.round(readings.reduce((sum, r) => sum + r.systolic, 0) / readings.length);
+            const avgDiastolic = Math.round(readings.reduce((sum, r) => sum + r.diastolic, 0) / readings.length);
+            
+            const readingsWithPulse = readings.filter(r => r.pulse !== null && r.pulse !== undefined);
+            const avgPulse = readingsWithPulse.length > 0 ? 
+                Math.round(readingsWithPulse.reduce((sum, r) => sum + r.pulse, 0) / readingsWithPulse.length) : null;
+            
+            const maxSystolic = Math.max(...readings.map(r => r.systolic));
+            const minSystolic = Math.min(...readings.map(r => r.systolic));
+            
+            let stats = `Статистика ваших измерений (всего: ${readings.length}):\n\n`;
+            stats += `📊 Среднее давление: ${avgSystolic}/${avgDiastolic}\n`;
+            stats += `📈 Максимальное систолическое: ${maxSystolic}\n`;
+            stats += `📉 Минимальное систолическое: ${minSystolic}\n`;
+            
+            if (avgPulse) {
+                stats += `💓 Средний пульс: ${avgPulse}\n`;
+            }
+            
+            const category = getBPCategory(avgSystolic, avgDiastolic);
+            stats += `\n🏷️ Средняя категория: ${category.category}`;
+            
+            return stats;
+        }
+
+        function analyzeLatestReading() {
+            const latest = readings[0];
+            const category = getBPCategory(latest.systolic, latest.diastolic);
+            
+            let analysis = `Ваше последнее измерение (${latest.date} в ${latest.time}):\n\n`;
+            analysis += `📊 Давление: ${latest.systolic}/${latest.diastolic}\n`;
+            analysis += `🏷️ Категория: ${category.category}\n`;
+            
+            if (latest.pulse) {
+                analysis += `💓 Пульс: ${latest.pulse}\n`;
+            }
+            
+            if (latest.symptoms && latest.symptoms.length > 0) {
+                const symptomsText = latest.symptoms.map(s => symptomLabels[s]).join(', ');
+                analysis += `⚠️ Симптомы: ${symptomsText}\n`;
+            }
+            
+            if (readings.length > 1) {
+                const previous = readings[1];
+                const systolicDiff = latest.systolic - previous.systolic;
+                const diastolicDiff = latest.diastolic - previous.diastolic;
+                
+                analysis += `\n📈 По сравнению с предыдущим измерением:\n`;
+                analysis += `Систолическое: ${systolicDiff > 0 ? '+' : ''}${systolicDiff}\n`;
+                analysis += `Диастолическое: ${diastolicDiff > 0 ? '+' : ''}${diastolicDiff}`;
+            }
+            
+            return analysis;
+        }
+
+        function generateGeneralAnalysis() {
+            if (readings.length < 3) {
+                return "У вас пока мало измерений для полного анализа. Продолжайте регулярно измерять давление, чтобы я мог дать более точные рекомендации.";
+            }
+            
+            const analysis = generateStatistics() + "\n\n" + generateRecommendations();
+            return analysis;
+        }
+
+        function muteAssistant() {
+            const muteBtn = document.getElementById('assistant-mute-btn');
+            
+            // Toggle speech enabled state
+            isSpeechEnabled = !isSpeechEnabled;
+            
+            // Stop any current speech
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+            
+            // Update button text and show feedback
+            if (isSpeechEnabled) {
+                muteBtn.textContent = '🔇 Отключить звук';
+                showToast('Звук помощника включен', 'info');
+            } else {
+                muteBtn.textContent = '🔊 Включить звук';
+                showToast('Звук помощника отключен', 'info');
+            }
+            
+            // Update config
+            assistantConfig.tts.enabled = isSpeechEnabled;
+            saveAssistantConfig();
+        }
+
+        // Modal utility functions
+        function showModal(htmlContent) {
+            // Remove existing modal if any
+            closeModal();
+            
+            const modalOverlay = document.createElement('div');
+            modalOverlay.id = 'modal-overlay';
+            modalOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 10px;
+                max-width: 90vw;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            `;
+            modalContent.innerHTML = htmlContent;
+            
+            modalOverlay.appendChild(modalContent);
+            document.body.appendChild(modalOverlay);
+            
+            // Close modal when clicking overlay
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+        }
+
+        function closeModal() {
+            const existingModal = document.getElementById('modal-overlay');
+            if (existingModal) {
+                existingModal.remove();
+            }
+        }
+
         // Initialize speech recognition on page load
         window.addEventListener('load', () => {
             initSpeechRecognition();
+            loadAssistantConfig();
         });
     </script>
 </body>
