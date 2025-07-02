@@ -127,7 +127,7 @@
         }
 
         @media (min-width: 768px) {
-            
+
             h1 {
                 font-size: 2.2rem;
                 margin-bottom: 32px;
@@ -254,7 +254,7 @@
                 min-height: 60px;
                 padding: 16px 12px;
             }
-            
+
             .symptom-icon {
                 font-size: 28px;
             }
@@ -265,7 +265,7 @@
                 min-height: 70px;
                 padding: 18px 14px;
             }
-            
+
             .symptom-icon {
                 font-size: 32px;
             }
@@ -379,7 +379,7 @@
                 flex-wrap: wrap;
                 gap: 12px;
             }
-            
+
             .controls-group button {
                 width: auto;
                 flex: 1;
@@ -1414,24 +1414,24 @@
             </div>
 
             <button onclick="addReading()">📊 Добавить измерение</button>
-            
+
             <!-- Voice Input Section -->
             <div class="voice-section">
                 <h3>🎤 Голосовой ввод</h3>
                 <p class="voice-instruction">Нажмите кнопку и произнесите показания, например: "120 на 80, пульс 75, головная боль, стресс". Система ждет 4 секунды после определения давления для добавления пульса и симптомов.</p>
-                
+
                 <div class="voice-controls">
                     <button id="voice-btn" onclick="startVoiceInput()">🎤 Начать запись</button>
                     <button id="stop-voice-btn" onclick="stopVoiceInput()" style="display: none;">⏹️ Остановить запись</button>
                 </div>
-                
+
                 <div class="voice-feedback" id="voice-feedback" style="display: none;">
                     <div class="voice-visualizer">
                         <div class="voice-wave"></div>
                     </div>
                     <p id="voice-status">Слушаю...</p>
                 </div>
-                
+
                 <div class="voice-result" id="voice-result" style="display: none;">
                     <h4>Распознанный текст:</h4>
                     <div id="voice-transcript"></div>
@@ -1442,22 +1442,22 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Voice Assistant Section -->
             <div class="voice-assistant-section">
                 <h3>🤖 Голосовой помощник</h3>
                 <p class="assistant-instruction">Интерактивный помощник для вопросов о давлении, анализа данных и рекомендаций</p>
-                
+
                 <div class="assistant-controls">
                     <button id="assistant-btn" onclick="startVoiceAssistant()">🎙️ Начать разговор</button>
                     <button id="stop-assistant-btn" onclick="stopVoiceAssistant()" style="display: none;">⏹️ Остановить</button>
                     <button id="assistant-settings-btn" onclick="configureAssistant()" style="background: #6b7280;">⚙️ Настройки</button>
                 </div>
-                
+
                 <div id="assistant-status" class="assistant-status" style="display: none;">
                     <small>Статус: <span id="assistant-current-status">Готов</span></small>
                 </div>
-                
+
                 <div class="assistant-conversation" id="assistant-conversation" style="display: none;">
                     <div class="conversation-messages" id="conversation-messages"></div>
                     <div class="conversation-controls">
@@ -1465,7 +1465,7 @@
                         <button id="assistant-mute-btn" onclick="muteAssistant()">🔇 Отключить звук</button>
                     </div>
                 </div>
-                
+
                 <div class="assistant-suggestions">
                     <p><strong>Примеры вопросов:</strong></p>
                     <div class="suggestion-buttons">
@@ -1475,7 +1475,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Camera Section -->
             <div class="camera-section">
                 <h3>📷 Сканировать показания тонометра</h3>
@@ -1483,7 +1483,7 @@
                 <div id="api-status" class="api-status" style="display: none;">
                     <small>API: <span id="current-api">Не настроен</span></small>
                 </div>
-                
+
                 <div class="camera-controls">
                     <button id="camera-btn" onclick="startCamera()">📷 Включить камеру</button>
                     <button id="capture-btn" onclick="captureImage()" style="display: none;">📸 Сделать снимок</button>
@@ -1491,12 +1491,12 @@
                     <button id="api-settings-btn" onclick="configureApi()" style="background: #6b7280;">⚙️ Настройки API</button>
                     <button id="test-api-btn" onclick="testApiConnection()" style="background: #059669;">🧪 Тест API</button>
                 </div>
-                
+
                 <div class="camera-container" id="camera-container" style="display: none;">
                     <video id="camera-stream" autoplay playsinline></video>
                     <canvas id="capture-canvas" style="display: none;"></canvas>
                 </div>
-                
+
                 <div class="captured-image" id="captured-image" style="display: none;">
                     <h4>Снятое изображение:</h4>
                     <img id="captured-img" style="max-width: 100%; border-radius: 8px;">
@@ -1505,7 +1505,7 @@
                         <button onclick="retakePhoto()">🔄 Переснять</button>
                     </div>
                 </div>
-                
+
                 <div class="ocr-result" id="ocr-result" style="display: none;">
                     <h4>Распознанные показания:</h4>
                     <div id="ocr-readings"></div>
@@ -1560,10 +1560,20 @@
         </div>
 
         <elevenlabs-convai agent-id="agent_01jy58kznwf6ct6g8j0mvwmxh3">
-            
+
         </elevenlabs-convai>
-        <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
-        
+        <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript">
+            const conversation = await Conversation.startSession({
+  // ...
+  clientTools: {
+    logMessage: async ({message}) => {
+      console.log(message);
+    }
+  },
+  // ...
+});
+        </script>
+
 
         <div class="footer">
             <div class="copyright">
@@ -1660,14 +1670,14 @@
                     resolve(); // If no db, just resolve
                     return;
                 }
-                
+
                 const transaction = db.transaction(['readings'], 'readonly');
                 const store = transaction.objectStore('readings');
                 const request = store.getAll();
 
                 request.onsuccess = () => {
                     readings = request.result || [];
-                    
+
                     // Also check localStorage for any missing readings
                     try {
                         const backup = localStorage.getItem('bp_readings_backup');
@@ -1683,7 +1693,7 @@
                     } catch (e) {
                         console.warn('Could not merge localStorage backup:', e);
                     }
-                    
+
                     readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                     resolve();
                 };
@@ -1706,6 +1716,22 @@
 
         // Save reading to IndexedDB
         async function saveReading(reading) {
+            // Client tools configuration
+            const clientTools = {
+                getCustomerDetails: async () => {
+                    // Fetch customer details (e.g., from an API)
+                    const customerData = {
+                        id: 123,
+                        name: "Alice",
+                        subscription: "Pro"
+                    };
+                    // Return data directly to the agent.
+                    return customerData;
+                }
+            };
+            // Start the conversation with client tools configured.
+            const conversation = await Conversation.startSession({ clientTools });
+
             return new Promise((resolve, reject) => {
                 // Check if database is initialized
                 if (!db) {
@@ -1723,7 +1749,7 @@
                         console.log('Reading saved successfully');
                         resolve();
                     };
-                    
+
                     request.onerror = () => {
                         console.error('Error saving reading:', request.error);
                         reject(request.error);
@@ -1925,7 +1951,7 @@
                 } else {
                     console.warn('Database not available, saving to memory only');
                 }
-                
+
                 // Always add to in-memory array
                 readings.push(reading);
                 readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -1944,21 +1970,21 @@
                 showToast('Измерение сохранено!', 'success');
             } catch (error) {
                 console.error('Error saving reading:', error);
-                
+
                 // If IndexedDB fails, still try to save in memory
                 if (!readings.some(r => r.id === reading.id)) {
                     readings.push(reading);
                     readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                     updateDisplay();
                     clearForm();
-                    
+
                     // Try localStorage backup
                     try {
                         localStorage.setItem('bp_readings_backup', JSON.stringify(readings));
                     } catch (e) {
                         console.warn('Could not save to localStorage:', e);
                     }
-                    
+
                     showToast('Измерение сохранено временно (проблема с базой данных)', 'info');
                 } else {
                     showToast('Ошибка при сохранении', 'error');
@@ -1993,9 +2019,9 @@
         function toggleSymptom(symptomId) {
             const checkbox = document.getElementById(symptomId);
             const symptomItem = checkbox.parentElement;
-            
+
             checkbox.checked = !checkbox.checked;
-            
+
             if (checkbox.checked) {
                 symptomItem.classList.add('selected');
             } else {
@@ -2420,11 +2446,11 @@
             readings.forEach(reading => {
                 const category = getBPCategory(reading.systolic, reading.diastolic);
                 const formattedDate = new Date(reading.timestamp).toLocaleDateString('ru-RU');
-                
+
                 // Debug logging for symptoms
                 console.log('Reading symptoms:', reading.symptoms);
                 console.log('Symptom labels available:', symptomLabels);
-                
+
                 const symptomsText = reading.symptoms && reading.symptoms.length > 0
                     ? reading.symptoms.map(s => {
                         const label = symptomLabels[s];
@@ -2548,23 +2574,23 @@
             try {
                 // Get API configuration
                 const apiConfig = await getApiConfiguration();
-                
+
                 // Prepare the request based on API provider
                 const requestData = prepareApiRequest(apiConfig, capturedImageData);
-                
+
                 // Handle Google API key in URL
                 let endpoint = apiConfig.endpoint;
                 if (apiConfig.provider === 'google') {
                     endpoint += `?key=${apiConfig.apiKey}`;
                 }
-                
+
                 console.log('API Request:', {
                     provider: apiConfig.provider,
                     endpoint: endpoint,
                     headers: requestData.headers,
                     bodySize: requestData.body?.length || 0
                 });
-                
+
                 const response = await fetch(endpoint, requestData);
 
                 hideLoading();
@@ -2589,7 +2615,7 @@
 
                 // Parse OCR result
                 const parsedReadings = parseOcrReadings(ocrText);
-                
+
                 if (parsedReadings) {
                     displayOcrResult(ocrText, parsedReadings);
                 } else {
@@ -2599,15 +2625,15 @@
             } catch (error) {
                 hideLoading();
                 console.error('OCR Error:', error);
-                
+
                 // Show detailed error information
                 let errorMessage = 'Ошибка при распознавании: ' + error.message;
-                
+
                 if (error.message.includes('API Error:')) {
                     const config = JSON.parse(localStorage.getItem('llm_api_config') || '{}');
                     errorMessage = `Ошибка API (${config.provider || 'неизвестно'}): ${error.message}\n\nПроверьте:\n1. Правильность API ключа\n2. Доступность сервиса\n3. Лимиты API\n\nНажмите ⚙️ Настройки API для изменения конфигурации.`;
                 }
-                
+
                 alert(errorMessage);
             }
         }
@@ -2636,11 +2662,11 @@
         function displayOcrResult(ocrText, readings) {
             const ocrResultDiv = document.getElementById('ocr-result');
             const ocrReadingsDiv = document.getElementById('ocr-readings');
-            
+
             ocrReadingsDiv.textContent = `Распознанный текст: ${ocrText}\n\nИзвлеченные значения:\nСистолическое: ${readings.systolic}\nДиастолическое: ${readings.diastolic}\nПульс: ${readings.pulse || 'не определен'}`;
-            
+
             ocrResultDiv.style.display = 'block';
-            
+
             // Store readings for use
             window.recognizedReadings = readings;
         }
@@ -2652,7 +2678,7 @@
             }
 
             const readings = window.recognizedReadings;
-            
+
             // Fill form fields
             document.getElementById('systolic').value = readings.systolic;
             document.getElementById('diastolic').value = readings.diastolic;
@@ -2662,7 +2688,7 @@
 
             // Scroll to form
             document.getElementById('systolic').scrollIntoView({ behavior: 'smooth' });
-            
+
             // Hide OCR result
             document.getElementById('ocr-result').style.display = 'none';
             document.getElementById('captured-image').style.display = 'none';
@@ -2705,7 +2731,7 @@
                 } else {
                     console.warn('Database not available, saving to memory only');
                 }
-                
+
                 // Always add to in-memory array
                 readings.push(reading);
                 readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -2716,7 +2742,7 @@
                 // Hide OCR result and captured image
                 document.getElementById('ocr-result').style.display = 'none';
                 document.getElementById('captured-image').style.display = 'none';
-                
+
                 // Clear OCR readings
                 window.recognizedReadings = null;
 
@@ -2729,34 +2755,34 @@
 
                 // Show success message
                 showToast('Измерение сохранено через сканирование камеры!', 'success');
-                
+
                 // Update form date/time for next entry
                 document.getElementById('date').value = date;
                 document.getElementById('time').value = time;
-                
+
             } catch (error) {
                 console.error('Error saving OCR reading:', error);
-                
+
                 // If IndexedDB fails, still try to save in memory
                 if (!readings.some(r => r.id === reading.id)) {
                     readings.push(reading);
                     readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                     updateDisplay();
-                    
+
                     // Try localStorage backup
                     try {
                         localStorage.setItem('bp_readings_backup', JSON.stringify(readings));
                     } catch (e) {
                         console.warn('Could not save to localStorage:', e);
                     }
-                    
+
                     // Hide UI elements
                     document.getElementById('ocr-result').style.display = 'none';
                     document.getElementById('captured-image').style.display = 'none';
                     window.recognizedReadings = null;
                     document.getElementById('date').value = date;
                     document.getElementById('time').value = time;
-                    
+
                     showToast('Измерение сохранено временно (проблема с базой данных)', 'info');
                 } else {
                     showToast('Ошибка при сохранении', 'error');
@@ -2767,12 +2793,12 @@
         async function getApiConfiguration() {
             // Check for saved configuration
             let config = JSON.parse(localStorage.getItem('llm_api_config') || '{}');
-            
+
             // If no configuration exists, show setup dialog
             if (!config.provider || !config.apiKey) {
                 config = await showApiConfigurationDialog();
             }
-            
+
             return config;
         }
 
@@ -2787,7 +2813,7 @@
             );
 
             let config = {};
-            
+
             switch(provider) {
                 case '1':
                     const openaiModel = prompt(
@@ -2836,10 +2862,10 @@
             }
 
             config.apiKey = apiKey.trim();
-            
+
             // Save configuration
             localStorage.setItem('llm_api_config', JSON.stringify(config));
-            
+
             return config;
         }
 
@@ -2927,13 +2953,13 @@
             switch(provider) {
                 case 'openai':
                     return data.choices[0].message.content;
-                    
+
                 case 'anthropic':
                     return data.content[0].text;
-                    
+
                 case 'google':
                     return data.candidates[0].content.parts[0].text;
-                    
+
                 case 'custom':
                 default:
                     // Try common response formats
@@ -2945,13 +2971,13 @@
             try {
                 // Clear existing configuration
                 localStorage.removeItem('llm_api_config');
-                
+
                 // Show configuration dialog
                 const config = await showApiConfigurationDialog();
-                
+
                 // Update status display
                 updateApiStatus();
-                
+
                 alert(`API настроен: ${config.provider.toUpperCase()}\nМодель: ${config.model}`);
             } catch (error) {
                 console.error('Configuration error:', error);
@@ -2964,7 +2990,7 @@
                 const config = JSON.parse(localStorage.getItem('llm_api_config') || '{}');
                 const statusElement = document.getElementById('api-status');
                 const currentApiElement = document.getElementById('current-api');
-                
+
                 if (config.provider && config.apiKey) {
                     currentApiElement.textContent = `${config.provider.toUpperCase()} (${config.model})`;
                     statusElement.style.display = 'block';
@@ -2980,7 +3006,7 @@
         async function testApiConnection() {
             try {
                 const config = JSON.parse(localStorage.getItem('llm_api_config') || '{}');
-                
+
                 if (!config.provider || !config.apiKey) {
                     alert('Сначала настройте API через ⚙️ Настройки API');
                     return;
@@ -2992,16 +3018,16 @@
                 const testImage = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/wA';
 
                 const requestData = prepareApiRequest(config, testImage);
-                
+
                 let endpoint = config.endpoint;
                 if (config.provider === 'google') {
                     endpoint += `?key=${config.apiKey}`;
                 }
 
                 console.log('Testing API connection to:', config.provider);
-                
+
                 const response = await fetch(endpoint, requestData);
-                
+
                 hideLoading();
 
                 if (response.ok) {
@@ -3061,7 +3087,7 @@
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
-                
+
                 recognition.lang = 'ru-RU';
                 recognition.continuous = true;
                 recognition.interimResults = true;
@@ -3071,19 +3097,19 @@
                     isListening = true;
                     isProcessingVoiceInput = false;
                     lastTranscriptTime = Date.now();
-                    
+
                     // Clear any existing timers
                     if (autoStopTimer) {
                         clearTimeout(autoStopTimer);
                         autoStopTimer = null;
                     }
-                    
+
                     document.getElementById('voice-btn').style.display = 'none';
                     document.getElementById('stop-voice-btn').style.display = 'inline-block';
                     document.getElementById('voice-feedback').style.display = 'block';
                     document.getElementById('voice-result').style.display = 'none';
                     document.getElementById('voice-status').textContent = 'Слушаю...';
-                    
+
                     // Start silence detection timer
                     startSilenceDetection();
                 };
@@ -3110,14 +3136,14 @@
                             clearTimeout(autoStopTimer);
                             autoStopTimer = null;
                         }
-                        
+
                         // Try to parse the final transcript
                         const parsedReadings = parseVoiceTranscript(finalTranscript);
                         if (parsedReadings && parsedReadings.systolic && parsedReadings.diastolic) {
                             // Always wait 4 seconds after getting valid BP readings with countdown
                             let countdown = 4;
                             document.getElementById('voice-status').textContent = `Получено давление... Можете добавить пульс и симптомы (${countdown} сек)`;
-                            
+
                             // Update countdown every second
                             const countdownInterval = setInterval(() => {
                                 countdown--;
@@ -3125,7 +3151,7 @@
                                     document.getElementById('voice-status').textContent = `Получено давление... Можете добавить пульс и симптомы (${countdown} сек)`;
                                 }
                             }, 1000);
-                            
+
                             // Set a timer to process after 4 seconds
                             autoStopTimer = setTimeout(() => {
                                 clearInterval(countdownInterval);
@@ -3138,7 +3164,7 @@
                         }
                     } else if (interimTranscript) {
                         document.getElementById('voice-status').textContent = 'Слушаю: ' + interimTranscript;
-                        
+
                         // Check if we have valid BP in interim results to show countdown
                         const parsedReadings = parseVoiceTranscript(interimTranscript);
                         if (parsedReadings && parsedReadings.systolic && parsedReadings.diastolic) {
@@ -3150,7 +3176,7 @@
                 recognition.onerror = (event) => {
                     console.error('Speech recognition error:', event.error);
                     let errorMessage = 'Ошибка распознавания';
-                    
+
                     switch(event.error) {
                         case 'no-speech':
                             errorMessage = 'Речь не обнаружена';
@@ -3162,7 +3188,7 @@
                             errorMessage = 'Доступ к микрофону запрещен';
                             break;
                     }
-                    
+
                     document.getElementById('voice-status').textContent = errorMessage;
                     setTimeout(() => stopVoiceInput(), 2000);
                 };
@@ -3170,7 +3196,7 @@
                 recognition.onend = () => {
                     isListening = false;
                     clearSilenceDetection();
-                    
+
                     // Only reset UI if we're not processing valid input
                     if (!isProcessingVoiceInput) {
                         document.getElementById('voice-btn').style.display = 'inline-block';
@@ -3210,7 +3236,7 @@
                 recognition.stop();
                 document.getElementById('voice-feedback').style.display = 'none';
                 clearSilenceDetection();
-                
+
                 // Clear auto-stop timer
                 if (autoStopTimer) {
                     clearTimeout(autoStopTimer);
@@ -3222,11 +3248,11 @@
         function startSilenceDetection() {
             // Clear any existing timer
             clearSilenceDetection();
-            
+
             // Check for silence every second
             silenceTimer = setInterval(() => {
                 const timeSinceLastTranscript = Date.now() - lastTranscriptTime;
-                
+
                 // If no speech for 6 seconds, stop listening (backup timeout)
                 if (timeSinceLastTranscript > 6000 && isListening) {
                     document.getElementById('voice-status').textContent = 'Тишина... Завершаю запись';
@@ -3249,20 +3275,20 @@
         function processVoiceInput(transcript) {
             // Clear silence detection
             clearSilenceDetection();
-            
+
             // Display the transcript
             document.getElementById('voice-transcript').textContent = transcript;
-            
+
             // Parse the transcript to extract blood pressure readings
             const parsedReadings = parseVoiceTranscript(transcript);
-            
+
             if (parsedReadings && parsedReadings.systolic && parsedReadings.diastolic) {
                 // Valid readings found
                 voiceReadings = parsedReadings;
                 displayVoiceReadings(parsedReadings);
                 document.getElementById('voice-result').style.display = 'block';
                 document.getElementById('voice-feedback').style.display = 'none';
-                
+
                 // Reset UI
                 document.getElementById('voice-btn').style.display = 'inline-block';
                 document.getElementById('stop-voice-btn').style.display = 'none';
@@ -3271,7 +3297,7 @@
                 // No valid readings found
                 document.getElementById('voice-status').textContent = 'Не удалось распознать показания. Попробуйте еще раз.';
                 isProcessingVoiceInput = false;
-                
+
                 // Reset UI if recognition has ended
                 if (!isListening) {
                     document.getElementById('voice-btn').style.display = 'inline-block';
@@ -3284,7 +3310,7 @@
         function parseVoiceTranscript(transcript) {
             // Normalize the transcript
             const normalized = transcript.toLowerCase().replace(/[,\.]/g, ' ');
-            
+
             // Pattern matching for blood pressure readings
             // Common patterns: "120 на 80", "давление 120 80", "систолическое 120 диастолическое 80"
             let systolic = null;
@@ -3344,12 +3370,12 @@
             }
 
             // Validate readings
-            if (systolic && diastolic && systolic > diastolic && 
-                systolic >= 50 && systolic <= 300 && 
+            if (systolic && diastolic && systolic > diastolic &&
+                systolic >= 50 && systolic <= 300 &&
                 diastolic >= 30 && diastolic <= 200) {
-                
+
                 console.log('Parsed voice symptoms:', symptoms);
-                
+
                 return {
                     systolic,
                     diastolic,
@@ -3363,7 +3389,7 @@
 
         function displayVoiceReadings(readings) {
             console.log('Voice readings symptoms:', readings.symptoms);
-            
+
             const symptomsText = readings.symptoms && readings.symptoms.length > 0
                 ? readings.symptoms.map(s => {
                     const label = symptomLabels[s];
@@ -3371,7 +3397,7 @@
                     return label || s; // Fallback to symptom key if label not found
                 }).filter(Boolean).join(', ')
                 : 'Не указаны';
-            
+
             const readingsText = `
 Систолическое: ${readings.systolic}
 Диастолическое: ${readings.diastolic}
@@ -3408,10 +3434,10 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
 
             // Hide voice result
             document.getElementById('voice-result').style.display = 'none';
-            
+
             // Scroll to form
             document.getElementById('systolic').scrollIntoView({ behavior: 'smooth' });
-            
+
             showToast('Показания перенесены в форму', 'success');
         }
 
@@ -3449,7 +3475,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                 } else {
                     console.warn('Database not available, saving to memory only');
                 }
-                
+
                 // Always add to in-memory array
                 readings.push(reading);
                 readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -3459,36 +3485,36 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
 
                 // Hide voice result
                 document.getElementById('voice-result').style.display = 'none';
-                
+
                 // Clear voice readings
                 voiceReadings = null;
 
                 // Show success message
                 showToast('Измерение сохранено через голосовой ввод!', 'success');
-                
+
                 // Update form date/time for next entry
                 document.getElementById('date').value = date;
                 document.getElementById('time').value = time;
-                
+
                 // Try to save to localStorage as backup
                 try {
                     localStorage.setItem('bp_readings_backup', JSON.stringify(readings));
                 } catch (e) {
                     console.warn('Could not save to localStorage:', e);
                 }
-                
+
             } catch (error) {
                 console.error('Error saving voice reading:', error);
-                
+
                 // If IndexedDB fails, still try to save in memory
                 if (!readings.some(r => r.id === reading.id)) {
                     readings.push(reading);
                     readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                     updateDisplay();
-                    
+
                     // Show partial success
                     showToast('Измерение сохранено временно (проблема с базой данных)', 'info');
-                    
+
                     // Update form
                     document.getElementById('voice-result').style.display = 'none';
                     voiceReadings = null;
@@ -3556,19 +3582,19 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
 
         function selectBestVoice() {
             const voices = speechSynthesis.getVoices();
-            
+
             // Try to find Russian voice
-            assistantVoice = voices.find(voice => 
-                voice.lang.startsWith('ru') || 
+            assistantVoice = voices.find(voice =>
+                voice.lang.startsWith('ru') ||
                 voice.name.toLowerCase().includes('russian') ||
                 voice.name.toLowerCase().includes('yandex')
             );
-            
+
             // Fallback to any available voice
             if (!assistantVoice && voices.length > 0) {
                 assistantVoice = voices[0];
             }
-            
+
             console.log('Selected voice:', assistantVoice ? assistantVoice.name : 'None available');
         }
 
@@ -3583,7 +3609,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
         function updateAssistantStatus() {
             const statusSpan = document.getElementById('assistant-current-status');
             const statusDiv = document.getElementById('assistant-status');
-            
+
             if (assistantConfig.apiKey && assistantConfig.agentId) {
                 statusDiv.style.display = 'block';
                 statusSpan.textContent = isAssistantActive ? 'Активен' : 'Готов';
@@ -3596,31 +3622,31 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
         function configureAssistant() {
             const currentApiKey = assistantConfig.apiKey || '';
             const currentAgentId = assistantConfig.agentId || '';
-            
+
             const htmlContent = `
                 <div style="padding: 20px; max-width: 500px;">
                     <h3 style="margin-top: 0;">⚙️ Настройки голосового помощника</h3>
                     <p>Настройте ElevenLabs Conversation API для интерактивного голосового помощника</p>
-                    
+
                     <div style="margin: 15px 0;">
                         <label style="display: block; margin-bottom: 5px; font-weight: bold;">API Key:</label>
-                        <input type="password" id="assistant-api-key" value="${currentApiKey}" 
+                        <input type="password" id="assistant-api-key" value="${currentApiKey}"
                                placeholder="sk-..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                         <small style="color: #666;">Получите API ключ в <a href="https://elevenlabs.io/app/conversational-ai" target="_blank">ElevenLabs Dashboard</a></small>
                     </div>
-                    
+
                     <div style="margin: 15px 0;">
                         <label style="display: block; margin-bottom: 5px; font-weight: bold;">Agent ID:</label>
-                        <input type="text" id="assistant-agent-id" value="${currentAgentId}" 
+                        <input type="text" id="assistant-agent-id" value="${currentAgentId}"
                                placeholder="agent_..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                         <small style="color: #666;">ID агента из вашей панели ElevenLabs</small>
                     </div>
-                    
+
                     <div style="margin: 20px 0;">
                         <h4>Настройки голоса (ElevenLabs):</h4>
                         <div style="margin: 10px 0;">
                             <label>Стабильность: <span id="stability-value">${assistantConfig.voiceSettings.stability}</span></label>
-                            <input type="range" id="stability" min="0" max="1" step="0.1" value="${assistantConfig.voiceSettings.stability}" 
+                            <input type="range" id="stability" min="0" max="1" step="0.1" value="${assistantConfig.voiceSettings.stability}"
                                    style="width: 100%;" oninput="document.getElementById('stability-value').textContent = this.value">
                         </div>
                         <div style="margin: 10px 0;">
@@ -3629,7 +3655,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                                    style="width: 100%;" oninput="document.getElementById('similarity-value').textContent = this.value">
                         </div>
                     </div>
-                    
+
                     <div style="margin: 20px 0; border-top: 1px solid #ddd; padding-top: 15px;">
                         <h4>Настройки речи (локальный TTS):</h4>
                         <div style="margin: 10px 0;">
@@ -3640,7 +3666,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                         </div>
                         <div style="margin: 10px 0;">
                             <label>Скорость речи: <span id="tts-rate-value">${assistantConfig.tts.rate}</span></label>
-                            <input type="range" id="tts-rate" min="0.5" max="2" step="0.1" value="${assistantConfig.tts.rate}" 
+                            <input type="range" id="tts-rate" min="0.5" max="2" step="0.1" value="${assistantConfig.tts.rate}"
                                    style="width: 100%;" oninput="document.getElementById('tts-rate-value').textContent = this.value">
                         </div>
                         <div style="margin: 10px 0;">
@@ -3652,12 +3678,12 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                             <button onclick="testTTS()" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px;">🔊 Тест голоса</button>
                         </div>
                     </div>
-                    
+
                     <div style="margin: 20px 0; text-align: center;">
                         <button onclick="saveAssistantSettings()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-right: 10px;">💾 Сохранить</button>
                         <button onclick="closeAssistantConfig()" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 5px;">❌ Отмена</button>
                     </div>
-                    
+
                     <div style="margin-top: 20px; padding: 15px; background: #f3f4f6; border-radius: 8px;">
                         <p style="margin: 0; font-size: 14px; color: #374151;">
                             <strong>Инструкции:</strong><br>
@@ -3678,7 +3704,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             const agentId = document.getElementById('assistant-agent-id').value.trim();
             const stability = parseFloat(document.getElementById('stability').value);
             const similarity = parseFloat(document.getElementById('similarity').value);
-            
+
             // TTS settings
             const ttsEnabled = document.getElementById('tts-enabled').checked;
             const ttsRate = parseFloat(document.getElementById('tts-rate').value);
@@ -3689,25 +3715,25 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             assistantConfig.agentId = agentId;
             assistantConfig.voiceSettings.stability = stability;
             assistantConfig.voiceSettings.similarityBoost = similarity;
-            
+
             // TTS settings
             assistantConfig.tts.enabled = ttsEnabled;
             assistantConfig.tts.rate = ttsRate;
             assistantConfig.tts.volume = ttsVolume;
-            
+
             isSpeechEnabled = ttsEnabled;
 
             saveAssistantConfig();
             updateAssistantStatus();
             closeModal();
-            
+
             showToast('Настройки голосового помощника сохранены', 'success');
         }
 
         function testTTS() {
             const rate = parseFloat(document.getElementById('tts-rate').value);
             const volume = parseFloat(document.getElementById('tts-volume').value);
-            
+
             speakText('Привет! Это тест голосового помощника для трекера артериального давления.', rate, volume);
         }
 
@@ -3729,7 +3755,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                 document.getElementById('assistant-conversation').style.display = 'block';
                 document.getElementById('assistant-btn').style.display = 'none';
                 document.getElementById('stop-assistant-btn').style.display = 'inline-block';
-                
+
                 isAssistantActive = true;
                 updateAssistantStatus();
 
@@ -3737,15 +3763,15 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                 const userContext = generateUserContext();
                 const welcomeMessage = `Голосовой помощник активирован. Говорите или используйте кнопки с примерами вопросов.${assistantConfig.tts.enabled ? ' Ответы будут озвучены.' : ' Звук отключен.'}`;
                 addMessage('system', welcomeMessage);
-                
+
                 // Speak welcome message if TTS enabled
                 if (assistantConfig.tts.enabled && isSpeechEnabled) {
                     speakText('Голосовой помощник активирован. Чем могу помочь?');
                 }
-                
+
                 // Enable speak button
                 document.getElementById('assistant-speak-btn').disabled = false;
-                
+
                 showToast('Голосовой помощник активирован', 'success');
 
             } catch (error) {
@@ -3776,7 +3802,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
 
             // Clear messages
             document.getElementById('conversation-messages').innerHTML = '';
-            
+
             showToast('Голосовой помощник остановлен', 'info');
         }
 
@@ -3788,15 +3814,15 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             const recent = readings.slice(0, 5);
             const avgSystolic = Math.round(readings.reduce((sum, r) => sum + r.systolic, 0) / readings.length);
             const avgDiastolic = Math.round(readings.reduce((sum, r) => sum + r.diastolic, 0) / readings.length);
-            
+
             const readingsWithPulse = readings.filter(r => r.pulse !== null && r.pulse !== undefined);
-            const avgPulse = readingsWithPulse.length > 0 ? 
+            const avgPulse = readingsWithPulse.length > 0 ?
                 Math.round(readingsWithPulse.reduce((sum, r) => sum + r.pulse, 0) / readingsWithPulse.length) : null;
 
             let context = `Контекст пользователя:
 - Всего измерений: ${readings.length}
 - Среднее давление: ${avgSystolic}/${avgDiastolic}`;
-            
+
             if (avgPulse) {
                 context += `
 - Средний пульс: ${avgPulse}`;
@@ -3804,13 +3830,13 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
 
             context += `
 - Последние измерения:`;
-            
+
             recent.forEach((reading, i) => {
                 const category = getBPCategory(reading.systolic, reading.diastolic);
-                const symptomsText = reading.symptoms && reading.symptoms.length > 0 
-                    ? reading.symptoms.map(s => symptomLabels[s]).join(', ') 
+                const symptomsText = reading.symptoms && reading.symptoms.length > 0
+                    ? reading.symptoms.map(s => symptomLabels[s]).join(', ')
                     : 'нет';
-                    
+
                 context += `
   ${i + 1}. ${reading.date} ${reading.time}: ${reading.systolic}/${reading.diastolic} (${category.category})`;
                 if (reading.pulse) context += `, пульс ${reading.pulse}`;
@@ -3824,14 +3850,14 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             const messagesContainer = document.getElementById('conversation-messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}`;
-            
+
             const timeStr = timestamp.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-            
+
             messageDiv.innerHTML = `
                 <div class="message-content">${content}</div>
                 <div class="message-time">${timeStr}</div>
             `;
-            
+
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
@@ -3855,7 +3881,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
 
                 const transcript = await new Promise((resolve, reject) => {
                     let fullTranscript = '';
-                    
+
                     const tempRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
                     tempRecognition.lang = 'ru-RU';
                     tempRecognition.continuous = false;
@@ -3903,7 +3929,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
 
             // Add user message
             addMessage('user', question);
-            
+
             // Process the question
             await processAssistantQuery(question);
         }
@@ -3912,10 +3938,10 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             try {
                 // Use local analysis for immediate functionality
                 const response = await generateLocalResponse(query);
-                
+
                 // Add assistant response
                 addMessage('assistant', response);
-                
+
                 // Speak the response if TTS is enabled
                 if (assistantConfig.tts.enabled && isSpeechEnabled) {
                     speakText(response);
@@ -3925,7 +3951,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                 console.error('Error processing assistant query:', error);
                 const errorMessage = 'Извините, произошла ошибка при обработке вашего запроса.';
                 addMessage('assistant', errorMessage);
-                
+
                 if (assistantConfig.tts.enabled && isSpeechEnabled) {
                     speakText(errorMessage);
                 }
@@ -3952,7 +3978,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             if (!cleanText) return;
 
             const utterance = new SpeechSynthesisUtterance(cleanText);
-            
+
             // Use custom settings or config defaults
             utterance.rate = customRate || assistantConfig.tts.rate;
             utterance.volume = customVolume || assistantConfig.tts.volume;
@@ -3984,7 +4010,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
 
         function generateLocalResponse(query) {
             const lowerQuery = query.toLowerCase();
-            
+
             if (readings.length === 0) {
                 return "У вас пока нет записанных измерений артериального давления. Добавьте первое измерение, чтобы я мог помочь с анализом.";
             }
@@ -3993,19 +4019,19 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             if (lowerQuery.includes('неделю') || lowerQuery.includes('недели')) {
                 return analyzeWeeklyTrend();
             }
-            
+
             if (lowerQuery.includes('фактор') || lowerQuery.includes('влия')) {
                 return analyzeFactors();
             }
-            
+
             if (lowerQuery.includes('рекомендац') || lowerQuery.includes('совет')) {
                 return generateRecommendations();
             }
-            
+
             if (lowerQuery.includes('статистик') || lowerQuery.includes('средн')) {
                 return generateStatistics();
             }
-            
+
             if (lowerQuery.includes('последн') || lowerQuery.includes('сейчас')) {
                 return analyzeLatestReading();
             }
@@ -4017,21 +4043,21 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
         function analyzeWeeklyTrend() {
             const weekAgo = new Date();
             weekAgo.setDate(weekAgo.getDate() - 7);
-            
+
             const weeklyReadings = readings.filter(r => new Date(r.timestamp) >= weekAgo);
-            
+
             if (weeklyReadings.length === 0) {
                 return "За последнюю неделю у вас нет записанных измерений.";
             }
-            
+
             const avgSystolic = Math.round(weeklyReadings.reduce((sum, r) => sum + r.systolic, 0) / weeklyReadings.length);
             const avgDiastolic = Math.round(weeklyReadings.reduce((sum, r) => sum + r.diastolic, 0) / weeklyReadings.length);
-            
-            const trend = weeklyReadings.length >= 2 ? 
+
+            const trend = weeklyReadings.length >= 2 ?
                 (weeklyReadings[0].systolic - weeklyReadings[weeklyReadings.length - 1].systolic) : 0;
-            
+
             let response = `За последнюю неделю у вас ${weeklyReadings.length} измерений. Среднее давление: ${avgSystolic}/${avgDiastolic}. `;
-            
+
             if (trend > 5) {
                 response += "Наблюдается тенденция к снижению давления. ";
             } else if (trend < -5) {
@@ -4039,10 +4065,10 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             } else {
                 response += "Давление относительно стабильно. ";
             }
-            
+
             const category = getBPCategory(avgSystolic, avgDiastolic);
             response += `Ваше давление находится в категории "${category.category}".`;
-            
+
             return response;
         }
 
@@ -4055,23 +4081,23 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                     });
                 }
             });
-            
+
             const topSymptoms = Object.entries(symptomsCount)
                 .sort(([,a], [,b]) => b - a)
                 .slice(0, 3)
                 .map(([symptom, count]) => `${symptomLabels[symptom]} (${count} раз)`);
-            
+
             let response = "Анализ факторов, влияющих на ваше давление:\n\n";
-            
+
             if (topSymptoms.length > 0) {
                 response += `Наиболее частые сопутствующие симптомы: ${topSymptoms.join(', ')}.\n\n`;
             }
-            
+
             response += "Общие рекомендации:\n";
             response += "• Ведите регулярные измерения\n";
             response += "• Отмечайте связь с питанием, сном и стрессом\n";
             response += "• Обратитесь к врачу для детального анализа";
-            
+
             return response;
         }
 
@@ -4079,9 +4105,9 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             const latest = readings[0];
             const avgSystolic = Math.round(readings.reduce((sum, r) => sum + r.systolic, 0) / readings.length);
             const category = getBPCategory(avgSystolic, Math.round(readings.reduce((sum, r) => sum + r.diastolic, 0) / readings.length));
-            
+
             let recommendations = "Рекомендации на основе ваших показаний:\n\n";
-            
+
             if (category.class === 'bp-high') {
                 recommendations += "🔴 Высокое давление:\n";
                 recommendations += "• Срочно обратитесь к врачу\n";
@@ -4098,68 +4124,68 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                 recommendations += "• Продолжайте здоровый образ жизни\n";
                 recommendations += "• Регулярные измерения для контроля\n\n";
             }
-            
+
             recommendations += "Общие советы:\n";
             recommendations += "• Измеряйте давление в одно время\n";
             recommendations += "• Ведите дневник питания и симптомов\n";
             recommendations += "• Достаточный сон (7-8 часов)";
-            
+
             return recommendations;
         }
 
         function generateStatistics() {
             const avgSystolic = Math.round(readings.reduce((sum, r) => sum + r.systolic, 0) / readings.length);
             const avgDiastolic = Math.round(readings.reduce((sum, r) => sum + r.diastolic, 0) / readings.length);
-            
+
             const readingsWithPulse = readings.filter(r => r.pulse !== null && r.pulse !== undefined);
-            const avgPulse = readingsWithPulse.length > 0 ? 
+            const avgPulse = readingsWithPulse.length > 0 ?
                 Math.round(readingsWithPulse.reduce((sum, r) => sum + r.pulse, 0) / readingsWithPulse.length) : null;
-            
+
             const maxSystolic = Math.max(...readings.map(r => r.systolic));
             const minSystolic = Math.min(...readings.map(r => r.systolic));
-            
+
             let stats = `Статистика ваших измерений (всего: ${readings.length}):\n\n`;
             stats += `📊 Среднее давление: ${avgSystolic}/${avgDiastolic}\n`;
             stats += `📈 Максимальное систолическое: ${maxSystolic}\n`;
             stats += `📉 Минимальное систолическое: ${minSystolic}\n`;
-            
+
             if (avgPulse) {
                 stats += `💓 Средний пульс: ${avgPulse}\n`;
             }
-            
+
             const category = getBPCategory(avgSystolic, avgDiastolic);
             stats += `\n🏷️ Средняя категория: ${category.category}`;
-            
+
             return stats;
         }
 
         function analyzeLatestReading() {
             const latest = readings[0];
             const category = getBPCategory(latest.systolic, latest.diastolic);
-            
+
             let analysis = `Ваше последнее измерение (${latest.date} в ${latest.time}):\n\n`;
             analysis += `📊 Давление: ${latest.systolic}/${latest.diastolic}\n`;
             analysis += `🏷️ Категория: ${category.category}\n`;
-            
+
             if (latest.pulse) {
                 analysis += `💓 Пульс: ${latest.pulse}\n`;
             }
-            
+
             if (latest.symptoms && latest.symptoms.length > 0) {
                 const symptomsText = latest.symptoms.map(s => symptomLabels[s]).join(', ');
                 analysis += `⚠️ Симптомы: ${symptomsText}\n`;
             }
-            
+
             if (readings.length > 1) {
                 const previous = readings[1];
                 const systolicDiff = latest.systolic - previous.systolic;
                 const diastolicDiff = latest.diastolic - previous.diastolic;
-                
+
                 analysis += `\n📈 По сравнению с предыдущим измерением:\n`;
                 analysis += `Систолическое: ${systolicDiff > 0 ? '+' : ''}${systolicDiff}\n`;
                 analysis += `Диастолическое: ${diastolicDiff > 0 ? '+' : ''}${diastolicDiff}`;
             }
-            
+
             return analysis;
         }
 
@@ -4167,22 +4193,22 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             if (readings.length < 3) {
                 return "У вас пока мало измерений для полного анализа. Продолжайте регулярно измерять давление, чтобы я мог дать более точные рекомендации.";
             }
-            
+
             const analysis = generateStatistics() + "\n\n" + generateRecommendations();
             return analysis;
         }
 
         function muteAssistant() {
             const muteBtn = document.getElementById('assistant-mute-btn');
-            
+
             // Toggle speech enabled state
             isSpeechEnabled = !isSpeechEnabled;
-            
+
             // Stop any current speech
             if (speechSynthesis.speaking) {
                 speechSynthesis.cancel();
             }
-            
+
             // Update button text and show feedback
             if (isSpeechEnabled) {
                 muteBtn.textContent = '🔇 Отключить звук';
@@ -4191,7 +4217,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                 muteBtn.textContent = '🔊 Включить звук';
                 showToast('Звук помощника отключен', 'info');
             }
-            
+
             // Update config
             assistantConfig.tts.enabled = isSpeechEnabled;
             saveAssistantConfig();
@@ -4201,7 +4227,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
         function showModal(htmlContent) {
             // Remove existing modal if any
             closeModal();
-            
+
             const modalOverlay = document.createElement('div');
             modalOverlay.id = 'modal-overlay';
             modalOverlay.style.cssText = `
@@ -4216,7 +4242,7 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                 align-items: center;
                 z-index: 10000;
             `;
-            
+
             const modalContent = document.createElement('div');
             modalContent.style.cssText = `
                 background: white;
@@ -4227,10 +4253,10 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
                 box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             `;
             modalContent.innerHTML = htmlContent;
-            
+
             modalOverlay.appendChild(modalContent);
             document.body.appendChild(modalOverlay);
-            
+
             // Close modal when clicking overlay
             modalOverlay.addEventListener('click', (e) => {
                 if (e.target === modalOverlay) {

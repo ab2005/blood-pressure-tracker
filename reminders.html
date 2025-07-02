@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication Reminders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        button.delete-btn {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+
+        button.delete-btn:hover {
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .reminders-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .reminder-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .reminder-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-color: #4CAF50;
+        }
+
+        .reminder-card.due {
+            border-color: #ff9800;
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+        }
+
+        .reminder-card.overdue {
+            border-color: #f44336;
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        }
+
+        .reminder-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .medication-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            flex: 1;
+        }
+
+        .reminder-time {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4CAF50;
+            background: #e8f5e8;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .reminder-details {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .reminder-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+        }
+
+        .status-indicator.due {
+            background: #ff9800;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.overdue {
+            background: #f44336;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        .clock {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .reminder-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💊 Medication Reminders</h1>
+            <p>Stay on track with your medication schedule</p>
+        </div>
+
+        <div class="content">
+            <!-- Current Time Display -->
+            <div class="clock" id="current-time"></div>
+
+            <!-- Add New Reminder Section -->
+            <div class="section">
+                <h2>➕ Add New Reminder</h2>
+                <form id="reminder-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="medication">Medication Name</label>
+                            <input type="text" id="medication" name="medication" placeholder="e.g., Aspirin" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Time</label>
+                            <input type="time" id="time" name="time" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="frequency">Frequency</label>
+                            <select id="frequency" name="frequency">
+                                <option value="daily">Daily</option>
+                                <option value="twice daily">Twice Daily</option>
+                                <option value="three times daily">Three Times Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="as needed">As Needed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dosage">Dosage (optional)</label>
+                            <input type="text" id="dosage" name="dosage" placeholder="e.g., 100mg">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Notes (optional)</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="e.g., Take with food"></textarea>
+                    </div>
+
+                    <button type="submit">Add Reminder</button>
+                    <button type="button" onclick="loadDemoData()">Load Demo Data</button>
+                </form>
+            </div>
+
+            <!-- Current Reminders Section -->
+            <div class="section">
+                <h2>📋 Your Reminders</h2>
+                <div id="reminders-container">
+                    <div class="empty-state">
+                        <div style="font-size: 3rem;">💊</div>
+                        <h3>No reminders yet</h3>
+                        <p>Add your first medication reminder above</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Global variables
+        let reminders = [];
+        let notificationTimeout;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReminders();
+            displayReminders();
+            updateClock();
+            setInterval(updateClock, 1000);
+            setInterval(checkDueReminders, 60000); // Check every minute
+            
+            // Set up form submission
+            document.getElementById('reminder-form').addEventListener('submit', addReminder);
+        });
+
+        // Update clock display
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        // Load reminders from localStorage
+        function loadReminders() {
+            try {
+                const stored = localStorage.getItem('medicationReminders');
+                reminders = stored ? JSON.parse(stored) : [];
+            } catch (error) {
+                console.error('Error loading reminders:', error);
+                reminders = [];
+            }
+        }
+
+        // Save reminders to localStorage
+        function saveReminders() {
+            try {
+                localStorage.setItem('medicationReminders', JSON.stringify(reminders));
+            } catch (error) {
+                console.error('Error saving reminders:', error);
+                showNotification('Error saving reminders', 'error');
+            }
+        }
+
+        // Add new reminder
+        function addReminder(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const reminder = {
+                id: Date.now().toString(),
+                medication: formData.get('medication'),
+                time: formData.get('time'),
+                frequency: formData.get('frequency'),
+                dosage: formData.get('dosage'),
+                notes: formData.get('notes'),
+                created: new Date().toISOString(),
+                lastTaken: null,
+                nextDue: calculateNextDue(formData.get('time'), formData.get('frequency'))
+            };
+
+            reminders.push(reminder);
+            saveReminders();
+            displayReminders();
+            event.target.reset();
+            
+            showNotification(`Added reminder for ${reminder.medication} at ${reminder.time}`);
+        }
+
+        // Calculate next due time
+        function calculateNextDue(time, frequency) {
+            const now = new Date();
+            const [hours, minutes] = time.split(':').map(Number);
+            
+            let nextDue = new Date();
+            nextDue.setHours(hours, minutes, 0, 0);
+            
+            // If time has passed today, set for tomorrow
+            if (nextDue <= now) {
+                nextDue.setDate(nextDue.getDate() + 1);
+            }
+            
+            return nextDue.toISOString();
+        }
+
+        // Display reminders
+        function displayReminders() {
+            const container = document.getElementById('reminders-container');
+            
+            if (reminders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 3rem;">💊</div>
+                        <h3>No reminders yet</h3>
+                        <p>Add your first medication reminder above</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort reminders by next due time
+            const sortedReminders = [...reminders].sort((a, b) => 
+                new Date(a.nextDue) - new Date(b.nextDue)
+            );
+
+            container.innerHTML = sortedReminders.map(reminder => {
+                const status = getReminderStatus(reminder);
+                const nextDueDate = new Date(reminder.nextDue);
+                const timeUntil = getTimeUntil(nextDueDate);
+                
+                return `
+                    <div class="reminder-card ${status.class}">
+                        <div class="status-indicator ${status.class}"></div>
+                        <div class="reminder-header">
+                            <div class="medication-name">${reminder.medication}</div>
+                            <div class="reminder-time">${reminder.time}</div>
+                        </div>
+                        <div class="reminder-details">
+                            <strong>Frequency:</strong> ${reminder.frequency}<br>
+                            ${reminder.dosage ? `<strong>Dosage:</strong> ${reminder.dosage}<br>` : ''}
+                            ${reminder.notes ? `<strong>Notes:</strong> ${reminder.notes}<br>` : ''}
+                            <strong>Next due:</strong> ${timeUntil}
+                            ${reminder.lastTaken ? `<br><strong>Last taken:</strong> ${new Date(reminder.lastTaken).toLocaleString()}` : ''}
+                        </div>
+                        <div class="reminder-actions">
+                            <button onclick="markAsTaken('${reminder.id}')">✅ Mark as Taken</button>
+                            <button onclick="snoozeReminder('${reminder.id}')">⏰ Snooze 15min</button>
+                            <button onclick="editReminder('${reminder.id}')">✏️ Edit</button>
+                            <button class="delete-btn" onclick="deleteReminder('${reminder.id}')">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Get reminder status
+        function getReminderStatus(reminder) {
+            const now = new Date();
+            const dueTime = new Date(reminder.nextDue);
+            const timeDiff = dueTime - now;
+            
+            if (timeDiff < 0) {
+                return { class: 'overdue', text: 'Overdue' };
+            } else if (timeDiff < 15 * 60 * 1000) { // 15 minutes
+                return { class: 'due', text: 'Due soon' };
+            } else {
+                return { class: '', text: 'Scheduled' };
+            }
+        }
+
+        // Get time until next dose
+        function getTimeUntil(dueTime) {
+            const now = new Date();
+            const diff = dueTime - now;
+            
+            if (diff < 0) {
+                const overdue = Math.abs(diff);
+                const hours = Math.floor(overdue / (1000 * 60 * 60));
+                const minutes = Math.floor((overdue % (1000 * 60 * 60)) / (1000 * 60));
+                return `Overdue by ${hours}h ${minutes}m`;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (days > 0) {
+                return `in ${days}d ${hours}h ${minutes}m`;
+            } else if (hours > 0) {
+                return `in ${hours}h ${minutes}m`;
+            } else {
+                return `in ${minutes}m`;
+            }
+        }
+
+        // Mark reminder as taken
+        function markAsTaken(id) {
+            const reminder = reminders.find(r => r.id === id);
+            if (reminder) {
+                reminder.lastTaken = new Date().toISOString();
+                
+                // Calculate next due time based on frequency
+                const nextDue = new Date();
+                const [hours, minutes] = reminder.time.split(':').map(Number);
+                
+                switch (reminder.frequency) {
+                    case 'daily':
+                        nextDue.setDate(nextDue.getDate() + 1);
+                        break;
+                    case 'twice daily':
+                        nextDue.setHours(nextDue.getHours() + 12);
+                        break;
+                    case 'three times daily':
+                        nextDue.setHours(nextDue.getHours() + 8);
+                        break;
+                    case 'weekly':
+                        nextDue.setDate(nextDue.getDate() + 7);
+                        break;
+                    default:
+                        nextDue.setDate(nextDue.getDate() + 1);
+                }
+                
+                nextDue.setHours(hours, minutes, 0, 0);
+                reminder.nextDue = nextDue.toISOString();
+                
+                saveReminders();
+                displayReminders();
+                showNotification(`Marked ${reminder.medication} as taken`);
+            }
+        }
+
+        // Snooze reminder
+        function snoozeReminder(id) {
+            const reminder = reminders.find(r => r.id === id);
+            if (reminder) {
+                const nextDue = new Date(reminder.nextDue);
+                nextDue.setMinutes(nextDue.getMinutes() + 15);
+                reminder.nextDue = nextDue.toISOString();
+                
+                saveReminders();
+                displayReminders();
+                showNotification(`Snoozed ${reminder.medication} for 15 minutes`);
+            }
+        }
+
+        // Delete reminder
+        function deleteReminder(id) {
+            const reminder = reminders.find(r => r.id === id);
+            if (reminder && confirm(`Delete reminder for ${reminder.medication}?`)) {
+                reminders = reminders.filter(r => r.id !== id);
+                saveReminders();
+                displayReminders();
+                showNotification(`Deleted reminder for ${reminder.medication}`);
+            }
+        }
+
+        // Edit reminder (simplified - just allows changing time)
+        function editReminder(id) {
+            const reminder = reminders.find(r => r.id === id);
+            if (reminder) {
+                const newTime = prompt(`Enter new time for ${reminder.medication}:`, reminder.time);
+                if (newTime && newTime.match(/^\d{2}:\d{2}$/)) {
+                    reminder.time = newTime;
+                    reminder.nextDue = calculateNextDue(newTime, reminder.frequency);
+                    saveReminders();
+                    displayReminders();
+                    showNotification(`Updated time for ${reminder.medication}`);
+                }
+            }
+        }
+
+        // Check for due reminders
+        function checkDueReminders() {
+            const now = new Date();
+            const dueReminders = reminders.filter(reminder => {
+                const dueTime = new Date(reminder.nextDue);
+                const timeDiff = dueTime - now;
+                return timeDiff >= 0 && timeDiff < 60000; // Due within next minute
+            });
+
+            dueReminders.forEach(reminder => {
+                showNotification(`Time to take ${reminder.medication}!`, 'info', 10000);
+                
+                // Browser notification if supported
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification('Medication Reminder', {
+                        body: `Time to take ${reminder.medication}`,
+                        icon: '💊',
+                        tag: reminder.id
+                    });
+                }
+            });
+        }
+
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success', duration = 3000) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            clearTimeout(notificationTimeout);
+            notificationTimeout = setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
+
+        // Load demo data
+        function loadDemoData() {
+            const demoReminders = [
+                {
+                    id: Date.now().toString(),
+                    medication: 'Aspirin',
+                    time: '08:00',
+                    frequency: 'daily',
+                    dosage: '100mg',
+                    notes: 'Take with breakfast',
+                    created: new Date().toISOString(),
+                    lastTaken: null,
+                    nextDue: calculateNextDue('08:00', 'daily')
+                },
+                {
+                    id: (Date.now() + 1).toString(),
+                    medication: 'Lisinopril',
+                    time: '20:00',
+                    frequency: 'daily',
+                    dosage: '10mg',
+                    notes: 'For blood pressure',
+                    created: new Date().toISOString(),
+                    lastTaken: null,
+                    nextDue: calculateNextDue('20:00', 'daily')
+                },
+                {
+                    id: (Date.now() + 2).toString(),
+                    medication: 'Metformin',
+                    time: '12:00',
+                    frequency: 'twice daily',
+                    dosage: '500mg',
+                    notes: 'Take with lunch',
+                    created: new Date().toISOString(),
+                    lastTaken: null,
+                    nextDue: calculateNextDue('12:00', 'twice daily')
+                }
+            ];
+
+            reminders = [...reminders, ...demoReminders];
+            saveReminders();
+            displayReminders();
+            showNotification('Demo data loaded!');
+        }
+
+        // Request notification permission on load
+        requestNotificationPermission();
+    </script>
+</body>
+</html>

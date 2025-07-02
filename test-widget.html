@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Reminder Widget</title>
+</head>
+<body>
+    <h1>Reminder Widget Test</h1>
+    <p>Check the bottom-right corner for the reminder widget.</p>
+    
+    <script>
+        // Add test reminder data
+        const testReminders = [
+            {
+                id: Date.now().toString(),
+                medication: 'Test Medicine',
+                time: new Date(Date.now() + 60000).toTimeString().slice(0,5), // 1 minute from now
+                frequency: 'daily',
+                notes: 'Test reminder'
+            }
+        ];
+        localStorage.setItem('medicationReminders', JSON.stringify(testReminders));
+    </script>
+    
+    <script src="reminder-widget.js"></script>
+</body>
+</html>
