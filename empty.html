@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empty Page</title>
+</head>
+<body>
+    <script src="client-tools.js"></script>
+    <script src="el-widget.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, injecting widget...');
+            injectElevenLabsWidget();
+
+            // Debug: Check if widget was created
+            setTimeout(() => {
+                const widget = document.querySelector('elevenlabs-convai');
+                console.log('Widget element:', widget);
+                if (widget) {
+                    console.log('Widget attributes:', widget.attributes);
+                } else {
+                    console.log('Widget not found in DOM');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

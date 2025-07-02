@@ -1,0 +1,307 @@
+{
+  "tools": [
+    {
+      "type": "client",
+      "name": "logBloodPressure",
+      "description": "Записать показания артериального давления с систолическим, диастолическим давлением, пульсом и заметками",
+      "parameters": [
+        {
+          "id": "systolic",
+          "type": "number",
+          "description": "Систолическое давление (верхнее число)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "diastolic",
+          "type": "number",
+          "description": "Диастолическое давление (нижнее число)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "pulse",
+          "type": "number",
+          "description": "Частота пульса в ударах в минуту (необязательно)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": false,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "notes",
+          "type": "string",
+          "description": "Дополнительные заметки о измерении",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": false,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "timestamp",
+          "type": "string",
+          "description": "Время измерения в формате ISO (необязательно)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": false,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": true,
+      "response_timeout_secs": 5,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    },
+    {
+      "type": "client",
+      "name": "getBloodPressureHistory",
+      "description": "Получить историю показаний давления за указанное количество дней",
+      "parameters": [
+        {
+          "id": "days",
+          "type": "number",
+          "description": "Количество дней для просмотра истории (по умолчанию 7)",
+          "dynamic_variable": "",
+          "constant_value": "7",
+          "required": false,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": true,
+      "response_timeout_secs": 3,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    },
+    {
+      "type": "client",
+      "name": "analyzeBloodPressure",
+      "description": "Анализировать показания давления и предоставить медицинскую категорию с рекомендациями",
+      "parameters": [
+        {
+          "id": "systolic",
+          "type": "number",
+          "description": "Систолическое давление для анализа",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "diastolic",
+          "type": "number",
+          "description": "Диастолическое давление для анализа",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": true,
+      "response_timeout_secs": 3,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    },
+    {
+      "type": "client",
+      "name": "setMedicationReminder",
+      "description": "Установить напоминание о приеме лекарств с расписанием и заметками",
+      "parameters": [
+        {
+          "id": "medication",
+          "type": "string",
+          "description": "Название лекарства",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "time",
+          "type": "string",
+          "description": "Время приема лекарства (например, '08:00', '14:30')",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "frequency",
+          "type": "string",
+          "description": "Частота приема лекарства (например, 'ежедневно', 'два раза в день')",
+          "dynamic_variable": "",
+          "constant_value": "ежедневно",
+          "required": false,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "notes",
+          "type": "string",
+          "description": "Дополнительные заметки о лекарстве",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": false,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": true,
+      "response_timeout_secs": 3,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    },
+    {
+      "type": "client",
+      "name": "getCustomerDetails",
+      "description": "Получить данные аккаунта пользователя и информацию о подписке",
+      "parameters": [],
+      "expects_response": true,
+      "response_timeout_secs": 5,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    },
+    {
+      "type": "client",
+      "name": "redirectToDocs",
+      "description": "Перенаправить пользователя к документации или страницам помощи",
+      "parameters": [
+        {
+          "id": "path",
+          "type": "string",
+          "description": "Путь к странице документации",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": false,
+      "response_timeout_secs": 1,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    },
+    {
+      "type": "client",
+      "name": "redirectToEmailSupport",
+      "description": "Отправить емейл в группу поддержки",
+      "parameters": [
+        {
+          "id": "subject",
+          "type": "string",
+          "description": "Тема письма",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "body",
+          "type": "string",
+          "description": "Текст письма",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": false,
+      "response_timeout_secs": 1,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    },
+    {
+      "type": "client",
+      "name": "redirectToSupportForm",
+      "description": "Открыть форму обращения в поддержку с предзаполненной информацией",
+      "parameters": [
+        {
+          "id": "subject",
+          "type": "string",
+          "description": "Тема обращения",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "description",
+          "type": "string",
+          "description": "Подробное описание проблемы",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "extraInfo",
+          "type": "string",
+          "description": "Дополнительная техническая информация",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": false,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": false,
+      "response_timeout_secs": 1,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    },
+    {
+      "type": "client",
+      "name": "redirectToExternalURL",
+      "description": "Открыть внешнюю ссылку в новой вкладке",
+      "parameters": [
+        {
+          "id": "url",
+          "type": "string",
+          "description": "URL для открытия (должен быть валидной HTTP/HTTPS ссылкой)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": false,
+      "response_timeout_secs": 1,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Blood pressure tracking assistant tools for ElevenLabs Conversational AI",
+    "category": "health",
+    "tags": ["blood-pressure", "health-tracking", "medication", "medical"],
+    "author": "Blood Pressure Tracker App",
+    "created": "2025-01-21",
+    "updated": "2025-01-21"
+  },
+  "configuration": {
+    "agent_prompt_instructions": [
+      "You are a helpful blood pressure tracking assistant.",
+      "Help users log their blood pressure readings, analyze their health data, and set medication reminders.",
+      "Always provide encouragement and remind users to consult healthcare professionals for medical advice.",
+      "When analyzing blood pressure, provide the medical category but emphasize that this is for informational purposes only.",
+      "Be supportive and understanding when discussing health concerns."
+    ],
+    "safety_guidelines": [
+      "Never provide specific medical diagnosis or treatment recommendations",
+      "Always encourage users to consult healthcare professionals for medical advice",
+      "Handle health data with appropriate sensitivity and privacy",
+      "Provide educational information but clarify it's not medical advice",
+      "In case of emergency readings (hypertensive crisis), strongly urge immediate medical attention"
+    ]
+  }
+}
