@@ -289,6 +289,132 @@ const ClientTools = {
         options
       );
     });
+  },
+
+  // ==========================================
+  // EVENT MANAGEMENT TOOLS (New)
+  // ==========================================
+
+  /**
+   * Add a new health event or reminder
+   */
+  addEvent: async ({ title, datetime, description, category, recurring, notifications }) => {
+    if (!window.AgentEventTools) {
+      return 'Error: Event management system not loaded. Please refresh the page.';
+    }
+    return await window.AgentEventTools.addEvent({ title, datetime, description, category, recurring, notifications });
+  },
+
+  /**
+   * Remove an event by description or details
+   */
+  removeEvent: async ({ eventDescription, datetime, eventId }) => {
+    if (!window.AgentEventTools) {
+      return 'Error: Event management system not loaded. Please refresh the page.';
+    }
+    return await window.AgentEventTools.removeEvent({ eventDescription, datetime, eventId });
+  },
+
+  /**
+   * List all pending events
+   */
+  listPendingEvents: async ({ timeframe, category, limit }) => {
+    if (!window.AgentEventTools) {
+      return 'Error: Event management system not loaded. Please refresh the page.';
+    }
+    return await window.AgentEventTools.listPendingEvents({ timeframe, category, limit });
+  },
+
+  /**
+   * Update an existing event
+   */
+  updateEvent: async ({ eventDescription, newDateTime, newTitle, newDescription, newRecurring }) => {
+    if (!window.AgentEventTools) {
+      return 'Error: Event management system not loaded. Please refresh the page.';
+    }
+    return await window.AgentEventTools.updateEvent({ eventDescription, newDateTime, newTitle, newDescription, newRecurring });
+  },
+
+  /**
+   * Configure notification settings
+   */
+  configureNotifications: async ({ setting, value, category }) => {
+    if (!window.AgentEventTools) {
+      return 'Error: Event management system not loaded. Please refresh the page.';
+    }
+    return await window.AgentEventTools.configureNotifications({ setting, value, category });
+  },
+
+  /**
+   * Snooze a pending event
+   */
+  snoozeEvent: async ({ eventDescription, duration }) => {
+    if (!window.AgentEventTools) {
+      return 'Error: Event management system not loaded. Please refresh the page.';
+    }
+    return await window.AgentEventTools.snoozeEvent({ eventDescription, duration });
+  },
+
+  /**
+   * Mark an event as completed
+   */
+  markEventComplete: async ({ eventDescription }) => {
+    if (!window.AgentEventTools) {
+      return 'Error: Event management system not loaded. Please refresh the page.';
+    }
+    return await window.AgentEventTools.markEventComplete({ eventDescription });
+  },
+
+  /**
+   * Test the notification system
+   */
+  testNotifications: async ({ priority, methods }) => {
+    if (!window.notificationManager) {
+      return 'Error: Notification system not loaded. Please refresh the page.';
+    }
+
+    try {
+      await window.notificationManager.testNotifications();
+      return '✅ Test notification sent successfully! Check if you received it via system notification, vibration, or visual alert.';
+    } catch (error) {
+      return `❌ Failed to send test notification: ${error.message}`;
+    }
+  },
+
+  /**
+   * Get event system statistics
+   */
+  getEventStatistics: async () => {
+    if (!window.eventScheduler) {
+      return 'Error: Event system not loaded. Please refresh the page.';
+    }
+
+    try {
+      const stats = await window.eventScheduler.getStatistics();
+      const notificationStats = window.notificationManager ? window.notificationManager.getStatistics() : null;
+
+      let response = `📊 Event System Statistics:\n\n`;
+      response += `• Total Events: ${stats.total}\n`;
+      response += `• Pending: ${stats.pending}\n`;
+      response += `• Completed: ${stats.completed}\n`;
+      response += `• Recurring: ${stats.recurring}\n\n`;
+
+      response += `Categories:\n`;
+      Object.entries(stats.categories).forEach(([category, count]) => {
+        response += `• ${category}: ${count}\n`;
+      });
+
+      if (notificationStats) {
+        response += `\n🔔 Notification System:\n`;
+        response += `• Permissions: ${JSON.stringify(notificationStats.permissions)}\n`;
+        response += `• Active Notifications: ${notificationStats.activeNotifications}\n`;
+        response += `• Queued Notifications: ${notificationStats.queuedNotifications}\n`;
+      }
+
+      return response;
+    } catch (error) {
+      return `❌ Failed to get statistics: ${error.message}`;
+    }
   }
 };
 

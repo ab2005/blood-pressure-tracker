@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Notification System Test</title>
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+
+        button.warning {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+
+        .status.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #2196f3;
+        }
+
+        .log {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .log-entry.success {
+            background: #e8f5e8;
+        }
+
+        .log-entry.error {
+            background: #ffebee;
+        }
+
+        .log-entry.info {
+            background: #e3f2fd;
+        }
+
+        .system-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .status-card.active {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .status-card.inactive {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .voice-test {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .test-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .system-status {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔔 Event Notification System Test</h1>
+            <p>Comprehensive testing for voice-controlled health event management</p>
+        </div>
+
+        <div class="content">
+            <!-- System Status -->
+            <div class="test-section">
+                <h2>🔧 System Status</h2>
+                <div class="system-status" id="system-status">
+                    <div class="status-card" id="event-scheduler-status">
+                        <h3>Event Scheduler</h3>
+                        <p id="event-scheduler-text">Loading...</p>
+                    </div>
+                    <div class="status-card" id="notification-manager-status">
+                        <h3>Notification Manager</h3>
+                        <p id="notification-manager-text">Loading...</p>
+                    </div>
+                    <div class="status-card" id="agent-tools-status">
+                        <h3>Agent Tools</h3>
+                        <p id="agent-tools-text">Loading...</p>
+                    </div>
+                    <div class="status-card" id="service-worker-status">
+                        <h3>Service Worker</h3>
+                        <p id="service-worker-text">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Tests -->
+            <div class="test-section">
+                <h2>🧪 Basic Functionality Tests</h2>
+                <div class="test-buttons">
+                    <button onclick="testNotificationSystem()">Test Notifications</button>
+                    <button onclick="testEventCreation()" class="secondary">Create Test Event</button>
+                    <button onclick="testEventListing()" class="secondary">List Events</button>
+                    <button onclick="getSystemStatistics()" class="secondary">Get Statistics</button>
+                </div>
+                <div id="basic-test-status"></div>
+            </div>
+
+            <!-- Event Management Tests -->
+            <div class="test-section">
+                <h2>📅 Event Management Tests</h2>
+                <div class="test-buttons">
+                    <button onclick="testMedicationReminder()">Medication Reminder</button>
+                    <button onclick="testBloodPressureReminder()" class="secondary">BP Check Reminder</button>
+                    <button onclick="testRecurringEvent()" class="secondary">Recurring Event</button>
+                    <button onclick="testEventUpdate()" class="warning">Update Event</button>
+                    <button onclick="testEventSnooze()" class="warning">Snooze Event</button>
+                    <button onclick="cleanupTestEvents()" class="danger">Cleanup Test Events</button>
+                </div>
+                <div id="event-test-status"></div>
+            </div>
+
+            <!-- Notification Tests -->
+            <div class="test-section">
+                <h2>🔔 Notification Method Tests</h2>
+                <div class="test-buttons">
+                    <button onclick="testSystemNotification()">System Notification</button>
+                    <button onclick="testVibration()" class="secondary">Vibration Test</button>
+                    <button onclick="testAudioNotification()" class="secondary">Audio Alert</button>
+                    <button onclick="testVisualNotification()" class="secondary">Visual Alert</button>
+                    <button onclick="testHighPriorityNotification()" class="warning">High Priority Alert</button>
+                </div>
+                <div id="notification-test-status"></div>
+            </div>
+
+            <!-- Voice Assistant Tests -->
+            <div class="test-section voice-test">
+                <h2>🎤 Voice Assistant Integration</h2>
+                <p style="margin-bottom: 15px;">Test voice commands with the ElevenLabs agent:</p>
+                <div class="test-buttons">
+                    <button onclick="startVoiceTest()" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2);">Start Voice Test</button>
+                    <button onclick="showVoiceCommands()" style="background: linear-gradient(135deg, #673ab7, #512da8);">Show Voice Commands</button>
+                </div>
+                <div id="voice-test-status"></div>
+            </div>
+
+            <!-- Test Log -->
+            <div class="test-section">
+                <h2>📋 Test Log</h2>
+                <button onclick="clearLog()" class="danger" style="margin-bottom: 10px;">Clear Log</button>
+                <div id="test-log" class="log"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Event System -->
+    <script src="event-scheduler.js"></script>
+    <script src="notification-manager.js"></script>
+    <script src="agent-event-tools.js"></script>
+    <script src="client-tools.js"></script>
+
+    <!-- Test Script -->
+    <script>
+        // Global test state
+        let testLog = [];
+        let eventScheduler = null;
+        let notificationManager = null;
+
+        // Initialize test system
+        async function initializeTestSystem() {
+            try {
+                logTest('info', 'Initializing test system...');
+
+                // Initialize event scheduler
+                if (window.EventScheduler) {
+                    eventScheduler = new EventScheduler();
+                    window.eventScheduler = eventScheduler;
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for init
+                    updateSystemStatus('event-scheduler', true, 'Active');
+                } else {
+                    updateSystemStatus('event-scheduler', false, 'Not Loaded');
+                }
+
+                // Initialize notification manager
+                if (window.NotificationManager) {
+                    notificationManager = new NotificationManager();
+                    window.notificationManager = notificationManager;
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for init
+                    updateSystemStatus('notification-manager', true, 'Active');
+                } else {
+                    updateSystemStatus('notification-manager', false, 'Not Loaded');
+                }
+
+                // Check agent tools
+                if (window.AgentEventTools) {
+                    updateSystemStatus('agent-tools', true, 'Active');
+                } else {
+                    updateSystemStatus('agent-tools', false, 'Not Loaded');
+                }
+
+                // Register service worker
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registration = await navigator.serviceWorker.register('sw-notifications.js');
+                        updateSystemStatus('service-worker', true, 'Registered');
+                        logTest('success', 'Service worker registered successfully');
+                    } catch (error) {
+                        updateSystemStatus('service-worker', false, 'Registration Failed');
+                        logTest('error', 'Service worker registration failed: ' + error.message);
+                    }
+                } else {
+                    updateSystemStatus('service-worker', false, 'Not Supported');
+                }
+
+                logTest('success', 'Test system initialized successfully');
+
+            } catch (error) {
+                logTest('error', 'Failed to initialize test system: ' + error.message);
+            }
+        }
+
+        // Update system status display
+        function updateSystemStatus(component, isActive, statusText) {
+            const statusElement = document.getElementById(`${component}-status`);
+            const textElement = document.getElementById(`${component}-text`);
+            
+            if (isActive) {
+                statusElement.className = 'status-card active';
+            } else {
+                statusElement.className = 'status-card inactive';
+            }
+            
+            textElement.textContent = statusText;
+        }
+
+        // Log test results
+        function logTest(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = {
+                type,
+                message,
+                timestamp
+            };
+            
+            testLog.push(logEntry);
+            
+            const logContainer = document.getElementById('test-log');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log-entry ${type}`;
+            logDiv.textContent = `[${timestamp}] ${message}`;
+            
+            logContainer.appendChild(logDiv);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Show status message
+        function showStatus(containerId, type, message) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Test Functions
+        async function testNotificationSystem() {
+            try {
+                logTest('info', 'Testing notification system...');
+                
+                if (!notificationManager) {
+                    throw new Error('Notification manager not initialized');
+                }
+                
+                await notificationManager.testNotifications();
+                showStatus('basic-test-status', 'success', '✅ Notification test sent successfully!');
+                logTest('success', 'Notification system test completed');
+            } catch (error) {
+                showStatus('basic-test-status', 'error', `❌ Notification test failed: ${error.message}`);
+                logTest('error', 'Notification system test failed: ' + error.message);
+            }
+        }
+
+        async function testEventCreation() {
+            try {
+                logTest('info', 'Creating test event...');
+                
+                if (!eventScheduler) {
+                    throw new Error('Event scheduler not initialized');
+                }
+                
+                const testEvent = {
+                    title: 'Test Event',
+                    description: 'This is a test event created by the test system',
+                    category: 'test',
+                    datetime: new Date(Date.now() + 60000).toISOString(), // 1 minute from now
+                    notifications: {
+                        enabled: true,
+                        methods: ['system', 'visual'],
+                        priority: 'normal'
+                    }
+                };
+                
+                const event = await eventScheduler.createEvent(testEvent);
+                showStatus('basic-test-status', 'success', `✅ Test event created: ${event.title}`);
+                logTest('success', `Event created with ID: ${event.id}`);
+            } catch (error) {
+                showStatus('basic-test-status', 'error', `❌ Event creation failed: ${error.message}`);
+                logTest('error', 'Event creation failed: ' + error.message);
+            }
+        }
+
+        async function testEventListing() {
+            try {
+                logTest('info', 'Listing events...');
+                
+                if (!eventScheduler) {
+                    throw new Error('Event scheduler not initialized');
+                }
+                
+                const events = await eventScheduler.getPendingEvents();
+                showStatus('basic-test-status', 'info', `📋 Found ${events.length} pending events`);
+                logTest('success', `Retrieved ${events.length} pending events`);
+                
+                events.forEach((event, index) => {
+                    logTest('info', `Event ${index + 1}: ${event.title} - ${new Date(event.nextOccurrence || event.datetime).toLocaleString()}`);
+                });
+            } catch (error) {
+                showStatus('basic-test-status', 'error', `❌ Event listing failed: ${error.message}`);
+                logTest('error', 'Event listing failed: ' + error.message);
+            }
+        }
+
+        async function getSystemStatistics() {
+            try {
+                logTest('info', 'Getting system statistics...');
+                
+                if (!eventScheduler) {
+                    throw new Error('Event scheduler not initialized');
+                }
+                
+                const stats = await eventScheduler.getStatistics();
+                const notificationStats = notificationManager ? notificationManager.getStatistics() : null;
+                
+                let message = `📊 Events: ${stats.total} total, ${stats.pending} pending, ${stats.completed} completed`;
+                if (notificationStats) {
+                    message += ` | 🔔 Notifications: ${notificationStats.activeNotifications} active`;
+                }
+                
+                showStatus('basic-test-status', 'info', message);
+                logTest('success', 'System statistics retrieved');
+                logTest('info', `Event statistics: ${JSON.stringify(stats)}`);
+                
+                if (notificationStats) {
+                    logTest('info', `Notification statistics: ${JSON.stringify(notificationStats)}`);
+                }
+            } catch (error) {
+                showStatus('basic-test-status', 'error', `❌ Statistics failed: ${error.message}`);
+                logTest('error', 'Statistics retrieval failed: ' + error.message);
+            }
+        }
+
+        async function testMedicationReminder() {
+            try {
+                logTest('info', 'Creating medication reminder...');
+                
+                const result = await window.ClientTools.addEvent({
+                    title: 'Take Aspirin',
+                    datetime: new Date(Date.now() + 30000).toISOString(), // 30 seconds from now
+                    description: '100mg with food',
+                    category: 'medication',
+                    notifications: {
+                        enabled: true,
+                        methods: ['system', 'vibration', 'visual'],
+                        priority: 'high'
+                    }
+                });
+                
+                showStatus('event-test-status', 'success', result);
+                logTest('success', 'Medication reminder created: ' + result);
+            } catch (error) {
+                showStatus('event-test-status', 'error', `❌ Medication reminder failed: ${error.message}`);
+                logTest('error', 'Medication reminder failed: ' + error.message);
+            }
+        }
+
+        async function testBloodPressureReminder() {
+            try {
+                logTest('info', 'Creating blood pressure reminder...');
+                
+                const result = await window.ClientTools.addEvent({
+                    title: 'Blood Pressure Check',
+                    datetime: new Date(Date.now() + 45000).toISOString(), // 45 seconds from now
+                    description: 'Morning BP measurement',
+                    category: 'blood-pressure',
+                    notifications: {
+                        enabled: true,
+                        methods: ['system', 'visual'],
+                        priority: 'normal'
+                    }
+                });
+                
+                showStatus('event-test-status', 'success', result);
+                logTest('success', 'BP reminder created: ' + result);
+            } catch (error) {
+                showStatus('event-test-status', 'error', `❌ BP reminder failed: ${error.message}`);
+                logTest('error', 'BP reminder failed: ' + error.message);
+            }
+        }
+
+        async function testRecurringEvent() {
+            try {
+                logTest('info', 'Creating recurring event...');
+                
+                const result = await window.ClientTools.addEvent({
+                    title: 'Daily Exercise',
+                    datetime: new Date(Date.now() + 60000).toISOString(), // 1 minute from now
+                    description: '30-minute walk',
+                    category: 'exercise',
+                    recurring: 'daily',
+                    notifications: {
+                        enabled: true,
+                        methods: ['system'],
+                        priority: 'normal'
+                    }
+                });
+                
+                showStatus('event-test-status', 'success', result);
+                logTest('success', 'Recurring event created: ' + result);
+            } catch (error) {
+                showStatus('event-test-status', 'error', `❌ Recurring event failed: ${error.message}`);
+                logTest('error', 'Recurring event failed: ' + error.message);
+            }
+        }
+
+        async function testEventUpdate() {
+            try {
+                logTest('info', 'Testing event update...');
+                
+                const result = await window.ClientTools.updateEvent({
+                    eventDescription: 'Test Event',
+                    newDateTime: new Date(Date.now() + 120000).toISOString() // 2 minutes from now
+                });
+                
+                showStatus('event-test-status', 'success', result);
+                logTest('success', 'Event update: ' + result);
+            } catch (error) {
+                showStatus('event-test-status', 'error', `❌ Event update failed: ${error.message}`);
+                logTest('error', 'Event update failed: ' + error.message);
+            }
+        }
+
+        async function testEventSnooze() {
+            try {
+                logTest('info', 'Testing event snooze...');
+                
+                const result = await window.ClientTools.snoozeEvent({
+                    eventDescription: 'Aspirin',
+                    duration: '5'
+                });
+                
+                showStatus('event-test-status', 'success', result);
+                logTest('success', 'Event snooze: ' + result);
+            } catch (error) {
+                showStatus('event-test-status', 'error', `❌ Event snooze failed: ${error.message}`);
+                logTest('error', 'Event snooze failed: ' + error.message);
+            }
+        }
+
+        async function cleanupTestEvents() {
+            try {
+                logTest('info', 'Cleaning up test events...');
+                
+                const events = await eventScheduler.searchEvents({ query: 'test' });
+                let cleaned = 0;
+                
+                for (const event of events) {
+                    if (event.category === 'test' || event.title.toLowerCase().includes('test')) {
+                        await eventScheduler.deleteEvent(event.id);
+                        cleaned++;
+                    }
+                }
+                
+                showStatus('event-test-status', 'info', `🧹 Cleaned up ${cleaned} test events`);
+                logTest('success', `Cleaned up ${cleaned} test events`);
+            } catch (error) {
+                showStatus('event-test-status', 'error', `❌ Cleanup failed: ${error.message}`);
+                logTest('error', 'Cleanup failed: ' + error.message);
+            }
+        }
+
+        // Notification method tests
+        async function testSystemNotification() {
+            try {
+                if (!notificationManager) throw new Error('Notification manager not available');
+                
+                await notificationManager.showNotification({
+                    title: 'System Notification Test',
+                    description: 'This is a test system notification',
+                    category: 'test'
+                });
+                
+                showStatus('notification-test-status', 'success', '✅ System notification sent');
+                logTest('success', 'System notification test completed');
+            } catch (error) {
+                showStatus('notification-test-status', 'error', `❌ System notification failed: ${error.message}`);
+                logTest('error', 'System notification failed: ' + error.message);
+            }
+        }
+
+        async function testVibration() {
+            try {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([200, 100, 200, 100, 200]);
+                    showStatus('notification-test-status', 'success', '✅ Vibration test completed');
+                    logTest('success', 'Vibration test completed');
+                } else {
+                    throw new Error('Vibration not supported');
+                }
+            } catch (error) {
+                showStatus('notification-test-status', 'error', `❌ Vibration failed: ${error.message}`);
+                logTest('error', 'Vibration failed: ' + error.message);
+            }
+        }
+
+        async function testAudioNotification() {
+            try {
+                if (!notificationManager) throw new Error('Notification manager not available');
+                
+                await notificationManager.playSystemBeep('normal');
+                showStatus('notification-test-status', 'success', '✅ Audio notification sent');
+                logTest('success', 'Audio notification test completed');
+            } catch (error) {
+                showStatus('notification-test-status', 'error', `❌ Audio notification failed: ${error.message}`);
+                logTest('error', 'Audio notification failed: ' + error.message);
+            }
+        }
+
+        async function testVisualNotification() {
+            try {
+                if (!notificationManager) throw new Error('Notification manager not available');
+                
+                await notificationManager.showVisualAlert({
+                    title: 'Visual Alert Test',
+                    body: 'This is a test visual notification overlay',
+                    methods: ['visual'],
+                    actions: [
+                        { action: 'ok', title: 'OK' },
+                        { action: 'dismiss', title: 'Dismiss' }
+                    ]
+                });
+                
+                showStatus('notification-test-status', 'success', '✅ Visual notification displayed');
+                logTest('success', 'Visual notification test completed');
+            } catch (error) {
+                showStatus('notification-test-status', 'error', `❌ Visual notification failed: ${error.message}`);
+                logTest('error', 'Visual notification failed: ' + error.message);
+            }
+        }
+
+        async function testHighPriorityNotification() {
+            try {
+                if (!notificationManager) throw new Error('Notification manager not available');
+                
+                await notificationManager.showNotification({
+                    title: '⚠️ High Priority Alert',
+                    description: 'This is a high priority test notification with all alert methods',
+                    category: 'test',
+                    notifications: {
+                        methods: ['system', 'vibration', 'sound', 'visual'],
+                        priority: 'high'
+                    }
+                });
+                
+                showStatus('notification-test-status', 'success', '✅ High priority notification sent');
+                logTest('success', 'High priority notification test completed');
+            } catch (error) {
+                showStatus('notification-test-status', 'error', `❌ High priority notification failed: ${error.message}`);
+                logTest('error', 'High priority notification failed: ' + error.message);
+            }
+        }
+
+        function startVoiceTest() {
+            showStatus('voice-test-status', 'info', '🎤 Voice test mode activated. Try these commands with your ElevenLabs agent.');
+            logTest('info', 'Voice test mode activated');
+        }
+
+        function showVoiceCommands() {
+            const commands = [
+                'Set a medication reminder for aspirin at 8 AM daily',
+                'Remind me to check my blood pressure at 9 PM',
+                'What are my pending reminders?',
+                'Cancel my aspirin reminder',
+                'Snooze my blood pressure check for 15 minutes',
+                'Mark my medication as taken',
+                'Test my notifications',
+                'Show my event statistics'
+            ];
+            
+            showStatus('voice-test-status', 'info', '📋 Voice Commands:<br>' + commands.map(cmd => `• "${cmd}"`).join('<br>'));
+            logTest('info', 'Voice commands displayed');
+        }
+
+        function clearLog() {
+            testLog = [];
+            document.getElementById('test-log').innerHTML = '';
+            logTest('info', 'Test log cleared');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeTestSystem);
+    </script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+{
+  "name": "Health Tracker - Blood Pressure & Medication Manager",
+  "short_name": "HealthTracker",
+  "description": "Comprehensive health tracking app with voice-controlled event scheduling, blood pressure monitoring, medication reminders, and intelligent notifications",
+  "version": "1.0.0",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#4CAF50",
+  "background_color": "#ffffff",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%234CAF50'/><path d='M256 64c-35.3 0-64 28.7-64 64v32h-32c-17.7 0-32 14.3-32 32v256c0 17.7 14.3 32 32 32h192c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32h-32v-32c0-35.3-28.7-64-64-64zm0 32c17.7 0 32 14.3 32 32v32h-64v-32c0-17.7 14.3-32 32-32z' fill='white'/><circle cx='256' cy='300' r='20' fill='%234CAF50'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%234CAF50'/><path d='M256 64c-35.3 0-64 28.7-64 64v32h-32c-17.7 0-32 14.3-32 32v256c0 17.7 14.3 32 32 32h192c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32h-32v-32c0-35.3-28.7-64-64-64zm0 32c17.7 0 32 14.3 32 32v32h-64v-32c0-17.7 14.3-32 32-32z' fill='white'/><circle cx='256' cy='300' r='20' fill='%234CAF50'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  
+  "categories": [
+    "health",
+    "medical",
+    "wellness",
+    "lifestyle",
+    "productivity"
+  ],
+  
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'><rect width='1280' height='720' fill='%23f5f5f5'/><rect x='100' y='100' width='1080' height='520' rx='20' fill='white' stroke='%23ddd'/><text x='640' y='200' text-anchor='middle' font-family='Arial' font-size='48' fill='%234CAF50'>Health Tracker</text><text x='640' y='280' text-anchor='middle' font-family='Arial' font-size='24' fill='%23666'>Voice-controlled health management</text><rect x='200' y='350' width='300' height='100' rx='10' fill='%234CAF50'/><text x='350' y='410' text-anchor='middle' font-family='Arial' font-size='20' fill='white'>Blood Pressure</text><rect x='550' y='350' width='300' height='100' rx='10' fill='%23ff9800'/><text x='700' y='410' text-anchor='middle' font-family='Arial' font-size='20' fill='white'>Medications</text><rect x='900' y='350' width='300' height='100' rx='10' fill='%232196f3'/><text x='1050' y='410' text-anchor='middle' font-family='Arial' font-size='20' fill='white'>Voice Assistant</text></svg>",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "Health Tracker main interface with voice controls"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'><rect width='390' height='844' fill='%23f5f5f5'/><rect x='20' y='100' width='350' height='644' rx='20' fill='white' stroke='%23ddd'/><text x='195' y='180' text-anchor='middle' font-family='Arial' font-size='24' fill='%234CAF50'>📊 Your Health</text><rect x='40' y='220' width='310' height='80' rx='10' fill='%23e8f5e8'/><text x='195' y='250' text-anchor='middle' font-family='Arial' font-size='16' fill='%23333'>Blood Pressure: 120/80</text><text x='195' y='280' text-anchor='middle' font-family='Arial' font-size='14' fill='%23666'>Normal - Keep it up!</text><rect x='40' y='320' width='310' height='80' rx='10' fill='%23fff3e0'/><text x='195' y='350' text-anchor='middle' font-family='Arial' font-size='16' fill='%23333'>💊 Aspirin - 8:00 AM</text><text x='195' y='380' text-anchor='middle' font-family='Arial' font-size='14' fill='%23666'>Daily reminder</text><circle cx='320' cy='780' r='30' fill='%234CAF50'/><text x='320' y='790' text-anchor='middle' font-family='Arial' font-size='24' fill='white'>🎤</text></svg>",
+      "sizes": "390x844",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Mobile view with health dashboard and voice control"
+    }
+  ],
+  
+  "features": [
+    "voice-assistant",
+    "health-tracking",
+    "medication-reminders",
+    "offline-support",
+    "background-notifications",
+    "data-visualization"
+  ],
+  
+  "iarc_rating_id": "e58c174a-81d2-5c3c-32cc-34b8de4a52e9",
+  
+  "protocol_handlers": [
+    {
+      "protocol": "web+healthtracker",
+      "url": "/?action=%s"
+    }
+  ],
+  
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", ".pdf", ".txt"]
+        }
+      ]
+    }
+  },
+  
+  "shortcuts": [
+    {
+      "name": "Log Blood Pressure",
+      "short_name": "BP Log",
+      "description": "Quickly log a blood pressure reading",
+      "url": "/?action=log-bp",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%234CAF50'/><path d='M48 16c-8.8 0-16 7.2-16 16v8h-8c-4.4 0-8 3.6-8 8v32c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V48c0-4.4-3.6-8-8-8h-8v-8c0-8.8-7.2-16-16-16zm0 8c4.4 0 8 3.6 8 8v8H40v-8c0-4.4 3.6-8 8-8z' fill='white'/><circle cx='48' cy='60' r='4' fill='%234CAF50'/></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Set Medication Reminder",
+      "short_name": "Med Reminder",
+      "description": "Set a new medication reminder",
+      "url": "/?action=set-reminder",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%23ff9800'/><circle cx='48' cy='48' r='32' fill='white'/><rect x='42' y='32' width='12' height='32' rx='6' fill='%23ff9800'/><rect x='32' y='42' width='32' height='12' rx='6' fill='%23ff9800'/></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Voice Assistant",
+      "short_name": "Voice",
+      "description": "Start voice-controlled health assistant",
+      "url": "/?action=voice-assistant",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%232196f3'/><circle cx='48' cy='48' r='24' fill='white'/><circle cx='48' cy='48' r='12' fill='%232196f3'/><circle cx='48' cy='48' r='6' fill='white'/></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "View Reminders",
+      "short_name": "Reminders",
+      "description": "View all medication and health reminders",
+      "url": "/reminders.html",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%239c27b0'/><rect x='24' y='16' width='48' height='64' rx='4' fill='white'/><rect x='32' y='28' width='32' height='4' rx='2' fill='%239c27b0'/><rect x='32' y='40' width='24' height='4' rx='2' fill='%239c27b0'/><rect x='32' y='52' width='28' height='4' rx='2' fill='%239c27b0'/><circle cx='36' cy='64' r='2' fill='%239c27b0'/></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  
+  "permissions": [
+    "notifications",
+    "vibration",
+    "geolocation",
+    "camera",
+    "microphone"
+  ],
+  
+  "prefer_related_applications": false,
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  
+  "handle_links": "preferred",
+  
+  "scope_extensions": [
+    {
+      "origin": "*.elevenlabs.io"
+    }
+  ],
+  
+  "file_handlers": [
+    {
+      "action": "/import",
+      "accept": {
+        "application/json": [".json"],
+        "text/csv": [".csv"],
+        "application/pdf": [".pdf"]
+      }
+    }
+  ],
+  
+  "display_override": [
+    "window-controls-overlay",
+    "minimal-ui",
+    "standalone",
+    "browser"
+  ],
+  
+  "capture_links": "existing-client-navigate"
+}

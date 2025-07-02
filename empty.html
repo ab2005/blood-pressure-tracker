@@ -3,27 +3,597 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empty Page</title>
+    <title>Health Tracker - Voice Assistant</title>
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .status-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .status-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .status-card.active {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .status-card.inactive {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .status-card h3 {
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .status-card p {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid #2196f3;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+        }
+
+        button.warning {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+
+        .voice-section {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .voice-section h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .voice-commands {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .voice-commands h3 {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .voice-commands ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .voice-commands li {
+            margin: 8px 0;
+            padding: 5px 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .voice-commands li::before {
+            content: "🎤 ";
+            margin-right: 8px;
+        }
+
+        .log-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid #ff9800;
+        }
+
+        .log {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .log-entry.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .log-entry.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .log-entry.info {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .status-grid,
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Health Tracker <span style="font-size: 1.5rem;">🎤</span></h1>
+            <p>Voice-controlled health event management with intelligent notifications</p>
+        </div>
+
+        <!-- System Status -->
+        <div class="status-section">
+            <h2>🔧 System Status</h2>
+            <div class="status-grid" id="system-status">
+                <div class="status-card" id="event-scheduler-status">
+                    <h3>Event Scheduler</h3>
+                    <p id="event-scheduler-text">Loading...</p>
+                </div>
+                <div class="status-card" id="notification-manager-status">
+                    <h3>Notifications</h3>
+                    <p id="notification-manager-text">Loading...</p>
+                </div>
+                <div class="status-card" id="agent-tools-status">
+                    <h3>Agent Tools</h3>
+                    <p id="agent-tools-text">Loading...</p>
+                </div>
+                <div class="status-card" id="service-worker-status">
+                    <h3>Service Worker</h3>
+                    <p id="service-worker-text">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Controls -->
+        <div class="controls-section">
+            <h2>⚡ Quick Actions</h2>
+            <div class="controls-grid">
+                <button onclick="testNotifications()">🔔 Test Notifications</button>
+                <button onclick="createQuickReminder()" class="secondary">⏰ Quick Reminder</button>
+                <button onclick="listEvents()" class="secondary">📋 List Events</button>
+                <button onclick="getStats()" class="secondary">📊 Statistics</button>
+                <button onclick="requestPermissions()" class="warning">🔐 Enable Permissions</button>
+                <button onclick="clearTestData()" class="danger">🧹 Clear Test Data</button>
+            </div>
+        </div>
+
+        <!-- Voice Commands -->
+        <div class="voice-section">
+            <h2>🎤 Voice Assistant Ready</h2>
+            <p>Start talking to create events, set reminders, and manage your health schedule</p>
+            
+            <div class="voice-commands">
+                <h3>📝 Example Voice Commands:</h3>
+                <ul>
+                    <li>"Set a medication reminder for aspirin at 8 AM daily"</li>
+                    <li>"Remind me to check my blood pressure tomorrow at 9 PM"</li>
+                    <li>"What are my pending reminders?"</li>
+                    <li>"Cancel my aspirin reminder"</li>
+                    <li>"Snooze my blood pressure check for 15 minutes"</li>
+                    <li>"Mark my medication as taken"</li>
+                    <li>"Test my notifications"</li>
+                    <li>"Show my event statistics"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="log-section">
+            <h2>📋 Activity Log</h2>
+            <button onclick="clearLog()" class="danger" style="font-size: 12px; padding: 8px 12px;">Clear Log</button>
+            <div id="activity-log" class="log"></div>
+        </div>
+    </div>
+    <!-- Load Event System Components -->
+    <script src="event-scheduler.js"></script>
+    <script src="notification-manager.js"></script>
+    <script src="agent-event-tools.js"></script>
     <script src="client-tools.js"></script>
     <script src="el-widget.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, injecting widget...');
-            injectElevenLabsWidget();
+        // Global state
+        let eventScheduler = null;
+        let notificationManager = null;
+        let activityLog = [];
 
-            // Debug: Check if widget was created
-            setTimeout(() => {
-                const widget = document.querySelector('elevenlabs-convai');
-                console.log('Widget element:', widget);
-                if (widget) {
-                    console.log('Widget attributes:', widget.attributes);
-                } else {
-                    console.log('Widget not found in DOM');
-                }
-            }, 2000);
+        // Initialize the complete system
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('DOM loaded, initializing health tracker...');
+            
+            try {
+                await initializeHealthSystem();
+                await initializeElevenLabsWidget();
+                
+                // Set up event listeners for system updates
+                setupEventListeners();
+                
+                logActivity('success', 'Health Tracker initialized successfully');
+            } catch (error) {
+                logActivity('error', 'Failed to initialize system: ' + error.message);
+            }
         });
+
+        // Initialize health event system
+        async function initializeHealthSystem() {
+            try {
+                // Initialize event scheduler
+                if (window.EventScheduler) {
+                    eventScheduler = new EventScheduler();
+                    window.eventScheduler = eventScheduler;
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    updateSystemStatus('event-scheduler', true, 'Active');
+                } else {
+                    updateSystemStatus('event-scheduler', false, 'Not Loaded');
+                }
+
+                // Initialize notification manager
+                if (window.NotificationManager) {
+                    notificationManager = new NotificationManager();
+                    window.notificationManager = notificationManager;
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    updateSystemStatus('notification-manager', true, 'Active');
+                } else {
+                    updateSystemStatus('notification-manager', false, 'Not Loaded');
+                }
+
+                // Check agent tools
+                if (window.AgentEventTools) {
+                    updateSystemStatus('agent-tools', true, 'Active');
+                } else {
+                    updateSystemStatus('agent-tools', false, 'Not Loaded');
+                }
+
+                // Register service worker
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registration = await navigator.serviceWorker.register('sw-notifications.js');
+                        updateSystemStatus('service-worker', true, 'Registered');
+                        logActivity('success', 'Service worker registered');
+                    } catch (error) {
+                        updateSystemStatus('service-worker', false, 'Failed');
+                        logActivity('error', 'Service worker registration failed');
+                    }
+                } else {
+                    updateSystemStatus('service-worker', false, 'Not Supported');
+                }
+
+            } catch (error) {
+                logActivity('error', 'Health system initialization failed: ' + error.message);
+                throw error;
+            }
+        }
+
+        // Initialize ElevenLabs widget
+        async function initializeElevenLabsWidget() {
+            try {
+                logActivity('info', 'Injecting ElevenLabs widget...');
+                injectElevenLabsWidget();
+
+                // Debug: Check if widget was created
+                setTimeout(() => {
+                    const widget = document.querySelector('elevenlabs-convai');
+                    if (widget) {
+                        logActivity('success', 'ElevenLabs widget loaded successfully');
+                    } else {
+                        logActivity('error', 'ElevenLabs widget not found in DOM');
+                    }
+                }, 2000);
+            } catch (error) {
+                logActivity('error', 'Widget initialization failed: ' + error.message);
+            }
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Listen for notification events
+            document.addEventListener('notification:notificationClicked', (event) => {
+                logActivity('info', 'Notification clicked: ' + event.detail.notification.title);
+            });
+
+            document.addEventListener('notification:notificationAction', (event) => {
+                logActivity('info', 'Notification action: ' + event.detail.action);
+            });
+
+            // Listen for service worker messages
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data.type === 'SHOW_IN_APP_NOTIFICATION') {
+                        logActivity('info', 'In-app notification: ' + event.data.data.title);
+                    }
+                });
+            }
+        }
+
+        // Update system status display
+        function updateSystemStatus(component, isActive, statusText) {
+            const statusElement = document.getElementById(`${component}-status`);
+            const textElement = document.getElementById(`${component}-text`);
+            
+            if (statusElement && textElement) {
+                statusElement.className = isActive ? 'status-card active' : 'status-card inactive';
+                textElement.textContent = statusText;
+            }
+        }
+
+        // Log activity
+        function logActivity(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = { type, message, timestamp };
+            
+            activityLog.push(logEntry);
+            
+            const logContainer = document.getElementById('activity-log');
+            if (logContainer) {
+                const logDiv = document.createElement('div');
+                logDiv.className = `log-entry ${type}`;
+                logDiv.textContent = `[${timestamp}] ${message}`;
+                
+                logContainer.appendChild(logDiv);
+                logContainer.scrollTop = logContainer.scrollHeight;
+                
+                // Keep only last 50 entries
+                const entries = logContainer.querySelectorAll('.log-entry');
+                if (entries.length > 50) {
+                    entries[0].remove();
+                }
+            }
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Quick action functions
+        async function testNotifications() {
+            try {
+                if (!notificationManager) {
+                    throw new Error('Notification manager not available');
+                }
+                
+                await notificationManager.testNotifications();
+                logActivity('success', 'Test notification sent - check for notification popup');
+            } catch (error) {
+                logActivity('error', 'Notification test failed: ' + error.message);
+            }
+        }
+
+        async function createQuickReminder() {
+            try {
+                if (!window.ClientTools) {
+                    throw new Error('Client tools not available');
+                }
+                
+                const result = await window.ClientTools.addEvent({
+                    title: 'Quick Test Reminder',
+                    datetime: new Date(Date.now() + 60000).toISOString(), // 1 minute from now
+                    description: 'This is a quick test reminder - notification in 1 minute',
+                    category: 'test',
+                    notifications: {
+                        enabled: true,
+                        methods: ['system', 'visual'],
+                        priority: 'normal'
+                    }
+                });
+                
+                logActivity('success', 'Quick reminder created: ' + result);
+                logActivity('info', 'You should receive a notification in 1 minute');
+            } catch (error) {
+                logActivity('error', 'Quick reminder failed: ' + error.message);
+            }
+        }
+
+        async function listEvents() {
+            try {
+                if (!window.ClientTools) {
+                    throw new Error('Client tools not available');
+                }
+                
+                const result = await window.ClientTools.listPendingEvents({ limit: 5 });
+                logActivity('info', 'Events listed: ' + result.split('\n')[0]);
+            } catch (error) {
+                logActivity('error', 'List events failed: ' + error.message);
+            }
+        }
+
+        async function getStats() {
+            try {
+                if (!window.ClientTools) {
+                    throw new Error('Client tools not available');
+                }
+                
+                const result = await window.ClientTools.getEventStatistics();
+                logActivity('info', 'Statistics retrieved: ' + result.split('\n')[2]); // Show summary line
+            } catch (error) {
+                logActivity('error', 'Statistics failed: ' + error.message);
+            }
+        }
+
+        async function requestPermissions() {
+            try {
+                // Request notification permission
+                if ('Notification' in window) {
+                    const permission = await Notification.requestPermission();
+                    logActivity('info', 'Notification permission: ' + permission);
+                }
+                
+                // Test vibration
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(200);
+                    logActivity('success', 'Vibration test successful');
+                } else {
+                    logActivity('info', 'Vibration not supported');
+                }
+                
+                // Update status
+                if (notificationManager) {
+                    await notificationManager.checkPermissions();
+                    logActivity('success', 'Permissions updated');
+                }
+                
+            } catch (error) {
+                logActivity('error', 'Permission request failed: ' + error.message);
+            }
+        }
+
+        async function clearTestData() {
+            try {
+                if (!eventScheduler) {
+                    throw new Error('Event scheduler not available');
+                }
+                
+                const events = await eventScheduler.searchEvents({ query: 'test' });
+                let cleaned = 0;
+                
+                for (const event of events) {
+                    if (event.category === 'test' || event.title.toLowerCase().includes('test')) {
+                        await eventScheduler.deleteEvent(event.id);
+                        cleaned++;
+                    }
+                }
+                
+                logActivity('success', `Cleaned up ${cleaned} test events`);
+            } catch (error) {
+                logActivity('error', 'Cleanup failed: ' + error.message);
+            }
+        }
+
+        function clearLog() {
+            activityLog = [];
+            const logContainer = document.getElementById('activity-log');
+            if (logContainer) {
+                logContainer.innerHTML = '';
+            }
+            logActivity('info', 'Activity log cleared');
+        }
     </script>
 </body>
 </html>
