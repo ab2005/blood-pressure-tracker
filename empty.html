@@ -644,8 +644,16 @@
                 }
                 
                 logActivity('info', `iOS ${iOSVersion} detected - PWA mode: ${isStandalone || isInPWA}`);
-                logActivity('info', `Notification API: ${'Notification' in window ? 'Available' : 'Not available'}`);
-                logActivity('info', `Permission: ${Notification.permission}`);
+                
+                // Safe check for Notification API
+                const hasNotificationAPI = 'Notification' in window;
+                logActivity('info', `Notification API: ${hasNotificationAPI ? 'Available' : 'Not available'}`);
+                
+                if (hasNotificationAPI) {
+                    logActivity('info', `Permission: ${Notification.permission}`);
+                } else {
+                    logActivity('error', 'Notification API not available - using visual fallbacks only');
+                }
                 
                 // Check notification support based on iOS version
                 const majorVersion = parseInt(iOSVersion.split('.')[0]);
@@ -658,7 +666,7 @@
                 }
                 
                 // Force visual + vibration + audio for iOS
-                if (window.eventScheduler) {
+                if (window.eventScheduler && window.notificationManager) {
                     const testEventData = {
                         title: '📱 iOS Test Notification',
                         description: `Testing on iOS ${iOSVersion} - ${isStandalone || isInPWA ? 'PWA' : 'Browser'} mode`,
@@ -666,7 +674,7 @@
                         datetime: new Date(Date.now() + 2000).toISOString(), // 2 seconds
                         notifications: {
                             enabled: true,
-                            methods: ['system', 'visual', 'vibration', 'sound'], // All methods for iOS
+                            methods: hasNotificationAPI ? ['system', 'visual', 'vibration', 'sound'] : ['visual', 'vibration', 'sound'],
                             priority: 'high'
                         },
                         createdBy: 'ios-test'
@@ -675,13 +683,16 @@
                     const testEvent = await window.eventScheduler.createEvent(testEventData);
                     await window.notificationManager.showNotification(testEvent);
                     
-                    logActivity('success', 'iOS test notification sent with all methods');
+                    logActivity('success', 'iOS test notification sent with available methods');
                     
-                    if (isStandalone || isInPWA) {
+                    if (hasNotificationAPI && (isStandalone || isInPWA)) {
                         logActivity('info', 'You should see: system notification + visual popup + vibration');
-                    } else {
-                        logActivity('info', 'You should see: visual popup + vibration (system notification may not work)');
+                    } else if (hasNotificationAPI) {
+                        logActivity('info', 'You should see: visual popup + vibration (system notification may not work in browser mode)');
                         logActivity('info', '💡 Tip: Add to Home Screen for reliable system notifications');
+                    } else {
+                        logActivity('info', 'You should see: visual popup + vibration (Notification API not available)');
+                        logActivity('info', '💡 This iOS version doesn\'t support web notifications');
                     }
                     
                     // Show pending notifications count
@@ -691,7 +702,7 @@
                     }
                     
                 } else {
-                    logActivity('error', 'Event scheduler not available');
+                    logActivity('error', 'Event scheduler or notification manager not available');
                 }
                 
             } catch (error) {
@@ -703,6 +714,12 @@
         async function debugBasicNotification() {
             try {
                 logActivity('info', '🔍 Testing basic browser notification...');
+                
+                // Check if Notification API is available
+                if (!('Notification' in window) || typeof Notification === 'undefined') {
+                    logActivity('error', 'Notification API not available - using visual fallback test');
+                    return testIOSNotifications(); // Fallback to iOS test which handles this case
+                }
                 
                 // Check permission first
                 if (Notification.permission !== 'granted') {
@@ -821,25 +838,41 @@
                     return;
                 }
                 
-                logActivity('info', 'Current notification permission: ' + Notification.permission);
-                
-                // Request notification permission
-                if (Notification.permission === 'default') {
-                    logActivity('info', 'Requesting notification permission...');
-                    const permission = await Notification.requestPermission();
-                    logActivity('info', 'Permission result: ' + permission);
-                    
-                    if (permission === 'granted') {
-                        logActivity('success', '✅ Notification permission granted!');
-                    } else if (permission === 'denied') {
-                        logActivity('error', '❌ Notification permission denied - check browser settings');
-                    } else {
-                        logActivity('info', 'Notification permission dismissed');
-                    }
-                } else if (Notification.permission === 'granted') {
-                    logActivity('success', '✅ Notifications already permitted');
+                // Check current permission status safely
+                if ('Notification' in window && typeof Notification !== 'undefined') {
+                    logActivity('info', 'Current notification permission: ' + Notification.permission);
                 } else {
-                    logActivity('error', '❌ Notifications are blocked - check browser settings');
+                    logActivity('info', 'Current notification permission: Not available');
+                }
+                
+                // Request notification permission with safety checks
+                if ('Notification' in window && typeof Notification !== 'undefined') {
+                    try {
+                        if (Notification.permission === 'default') {
+                            logActivity('info', 'Requesting notification permission...');
+                            const permission = await Notification.requestPermission();
+                            logActivity('info', 'Permission result: ' + permission);
+                            
+                            if (permission === 'granted') {
+                                logActivity('success', '✅ Notification permission granted!');
+                            } else if (permission === 'denied') {
+                                logActivity('error', '❌ Notification permission denied - check browser settings');
+                            } else {
+                                logActivity('info', 'Notification permission dismissed');
+                            }
+                        } else if (Notification.permission === 'granted') {
+                            logActivity('success', '✅ Notifications already permitted');
+                        } else {
+                            logActivity('error', '❌ Notifications are blocked - check browser settings');
+                        }
+                    } catch (error) {
+                        logActivity('error', 'Failed to request notification permission: ' + error.message);
+                        logActivity('info', '💡 Notification API may not be available on this iOS version');
+                    }
+                } else {
+                    logActivity('error', '❌ Notification API not available');
+                    logActivity('info', '💡 This iOS version/browser doesn\'t support web notifications');
+                    logActivity('info', '💡 Visual notifications and vibration will still work');
                 }
                 
                 // Test vibration

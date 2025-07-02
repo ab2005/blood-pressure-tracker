@@ -48,14 +48,22 @@ class NotificationManager {
      * Check and request permissions for notifications
      */
     async checkPermissions() {
-        // Check notification permission
-        if ('Notification' in window) {
-            if (Notification.permission === 'default') {
-                const permission = await Notification.requestPermission();
-                this.permissions.notifications = permission === 'granted';
-            } else {
-                this.permissions.notifications = Notification.permission === 'granted';
+        // Check notification permission with safety check
+        if ('Notification' in window && typeof Notification !== 'undefined') {
+            try {
+                if (Notification.permission === 'default') {
+                    const permission = await Notification.requestPermission();
+                    this.permissions.notifications = permission === 'granted';
+                } else {
+                    this.permissions.notifications = Notification.permission === 'granted';
+                }
+            } catch (error) {
+                console.warn('Failed to check notification permissions:', error);
+                this.permissions.notifications = false;
             }
+        } else {
+            console.warn('Notification API not available');
+            this.permissions.notifications = false;
         }
 
         // Check vibration support
@@ -226,6 +234,12 @@ class NotificationManager {
      */
     async showSystemNotification(notificationData) {
         console.log('🔔 Attempting to show system notification:', notificationData.title);
+        
+        // Check if Notification API is available
+        if (!('Notification' in window) || typeof Notification === 'undefined') {
+            console.error('❌ Notification API not available');
+            throw new Error('Notification API not available on this browser/version');
+        }
         
         if (!this.permissions.notifications) {
             console.error('❌ System notifications not permitted, current permission:', Notification.permission);
