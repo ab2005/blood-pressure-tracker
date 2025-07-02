@@ -280,6 +280,7 @@
             <h2>⚡ Quick Actions</h2>
             <div class="controls-grid">
                 <button onclick="testNotifications()">🔔 Test Notifications</button>
+                <button onclick="debugBasicNotification()" class="warning">🔍 Debug Basic Notification</button>
                 <button onclick="createQuickReminder()" class="secondary">⏰ Quick Reminder</button>
                 <button onclick="listEvents()" class="secondary">📋 List Events</button>
                 <button onclick="getStats()" class="secondary">📊 Statistics</button>
@@ -486,6 +487,46 @@
             }
         }
 
+        // Debug function for basic notification testing
+        async function debugBasicNotification() {
+            try {
+                logActivity('info', '🔍 Testing basic browser notification...');
+                
+                // Check permission first
+                if (Notification.permission !== 'granted') {
+                    logActivity('error', 'Notifications not permitted. Click "Enable Permissions" first.');
+                    return;
+                }
+                
+                // Test basic notification without service worker
+                logActivity('info', 'Creating basic notification...');
+                const notification = new Notification('Debug Test Notification', {
+                    body: 'This is a basic browser notification test',
+                    icon: '/favicon.ico',
+                    tag: 'debug-test',
+                    requireInteraction: false
+                });
+                
+                notification.onclick = () => {
+                    logActivity('success', '✅ Basic notification clicked!');
+                    notification.close();
+                };
+                
+                notification.onshow = () => {
+                    logActivity('success', '✅ Basic notification shown successfully!');
+                };
+                
+                notification.onerror = (error) => {
+                    logActivity('error', '❌ Basic notification error: ' + error);
+                };
+                
+                logActivity('info', 'Basic notification created - should appear now');
+                
+            } catch (error) {
+                logActivity('error', 'Debug notification failed: ' + error.message);
+            }
+        }
+
         async function createQuickReminder() {
             try {
                 if (!window.ClientTools) {
@@ -539,10 +580,33 @@
 
         async function requestPermissions() {
             try {
+                // Detailed permission debugging
+                logActivity('info', 'Checking notification support...');
+                
+                if (!('Notification' in window)) {
+                    logActivity('error', 'This browser does not support notifications');
+                    return;
+                }
+                
+                logActivity('info', 'Current notification permission: ' + Notification.permission);
+                
                 // Request notification permission
-                if ('Notification' in window) {
+                if (Notification.permission === 'default') {
+                    logActivity('info', 'Requesting notification permission...');
                     const permission = await Notification.requestPermission();
-                    logActivity('info', 'Notification permission: ' + permission);
+                    logActivity('info', 'Permission result: ' + permission);
+                    
+                    if (permission === 'granted') {
+                        logActivity('success', '✅ Notification permission granted!');
+                    } else if (permission === 'denied') {
+                        logActivity('error', '❌ Notification permission denied - check browser settings');
+                    } else {
+                        logActivity('info', 'Notification permission dismissed');
+                    }
+                } else if (Notification.permission === 'granted') {
+                    logActivity('success', '✅ Notifications already permitted');
+                } else {
+                    logActivity('error', '❌ Notifications are blocked - check browser settings');
                 }
                 
                 // Test vibration
@@ -551,6 +615,18 @@
                     logActivity('success', 'Vibration test successful');
                 } else {
                     logActivity('info', 'Vibration not supported');
+                }
+                
+                // Service Worker check
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registration = await navigator.serviceWorker.ready;
+                        logActivity('success', 'Service Worker ready for notifications');
+                    } catch (error) {
+                        logActivity('error', 'Service Worker not ready: ' + error.message);
+                    }
+                } else {
+                    logActivity('error', 'Service Worker not supported');
                 }
                 
                 // Update status

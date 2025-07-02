@@ -200,43 +200,76 @@ class NotificationManager {
      * Show system notification
      */
     async showSystemNotification(notificationData) {
+        console.log('🔔 Attempting to show system notification:', notificationData.title);
+        
         if (!this.permissions.notifications) {
-            throw new Error('System notifications not permitted');
+            console.error('❌ System notifications not permitted, current permission:', Notification.permission);
+            throw new Error('System notifications not permitted - current permission: ' + Notification.permission);
         }
+
+        console.log('✅ Notification permission granted, proceeding with notification');
 
         // Check if we have service worker for background notifications
         if ('serviceWorker' in navigator) {
-            const registration = await navigator.serviceWorker.ready;
-            
-            return registration.showNotification(notificationData.title, {
-                body: notificationData.body,
-                icon: notificationData.icon,
-                badge: notificationData.badge,
-                tag: notificationData.tag,
-                requireInteraction: notificationData.requireInteraction,
-                vibrate: this.permissions.vibration ? notificationData.vibrate : undefined,
-                actions: notificationData.actions,
-                data: {
-                    notificationId: notificationData.id,
-                    eventId: notificationData.event.id,
-                    timestamp: notificationData.timestamp
-                }
-            });
+            console.log('🔧 Using service worker for notification');
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                console.log('🔧 Service worker ready, showing notification');
+                
+                const notificationOptions = {
+                    body: notificationData.body,
+                    icon: notificationData.icon,
+                    badge: notificationData.badge,
+                    tag: notificationData.tag,
+                    requireInteraction: notificationData.requireInteraction,
+                    vibrate: this.permissions.vibration ? notificationData.vibrate : undefined,
+                    actions: notificationData.actions,
+                    data: {
+                        notificationId: notificationData.id,
+                        eventId: notificationData.event.id,
+                        timestamp: notificationData.timestamp
+                    }
+                };
+                
+                console.log('🔧 Notification options:', notificationOptions);
+                const result = await registration.showNotification(notificationData.title, notificationOptions);
+                console.log('✅ Service worker notification created successfully');
+                return result;
+            } catch (error) {
+                console.error('❌ Service worker notification failed:', error);
+                throw error;
+            }
         } else {
-            // Fallback to basic notification
-            const notification = new Notification(notificationData.title, {
-                body: notificationData.body,
-                icon: notificationData.icon,
-                tag: notificationData.tag,
-                requireInteraction: notificationData.requireInteraction
-            });
+            console.log('🔧 No service worker, using basic notification');
+            try {
+                // Fallback to basic notification
+                const notification = new Notification(notificationData.title, {
+                    body: notificationData.body,
+                    icon: notificationData.icon,
+                    tag: notificationData.tag,
+                    requireInteraction: notificationData.requireInteraction
+                });
 
-            notification.onclick = () => {
-                this.handleNotificationClick(notificationData.id);
-                notification.close();
-            };
+                notification.onclick = () => {
+                    console.log('🔔 Basic notification clicked');
+                    this.handleNotificationClick(notificationData.id);
+                    notification.close();
+                };
 
-            return notification;
+                notification.onshow = () => {
+                    console.log('✅ Basic notification shown successfully');
+                };
+
+                notification.onerror = (error) => {
+                    console.error('❌ Basic notification error:', error);
+                };
+
+                console.log('✅ Basic notification created successfully');
+                return notification;
+            } catch (error) {
+                console.error('❌ Basic notification failed:', error);
+                throw error;
+            }
         }
     }
 
