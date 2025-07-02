@@ -495,17 +495,17 @@
                 const result = await window.ClientTools.addEvent({
                     title: 'Quick Test Reminder',
                     datetime: new Date(Date.now() + 60000).toISOString(), // 1 minute from now
-                    description: 'This is a quick test reminder - notification in 1 minute',
+                    description: 'This is a quick test reminder - you should receive a system notification with vibration in 1 minute',
                     category: 'test',
                     notifications: {
                         enabled: true,
-                        methods: ['system', 'visual'],
+                        methods: ['system', 'vibration'], // Focus on system notifications
                         priority: 'normal'
                     }
                 });
                 
                 logActivity('success', 'Quick reminder created: ' + result);
-                logActivity('info', 'You should receive a notification in 1 minute');
+                logActivity('info', 'You should receive a system notification with vibration in 1 minute');
             } catch (error) {
                 logActivity('error', 'Quick reminder failed: ' + error.message);
             }

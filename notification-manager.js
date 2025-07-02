@@ -112,7 +112,7 @@ class NotificationManager {
             id: notificationId,
             event: event,
             timestamp: new Date().toISOString(),
-            methods: options.methods || event.notifications?.methods || ['system'],
+            methods: options.methods || event.notifications?.methods || ['system', 'vibration'],
             priority: options.priority || event.notifications?.priority || 'normal',
             title: options.title || event.title,
             body: options.body || event.description || `${event.title} is due`,
@@ -129,13 +129,53 @@ class NotificationManager {
             // Track active notification
             this.activeNotifications.set(notificationId, notificationData);
 
-            // Try multiple notification methods
-            const results = await Promise.allSettled([
-                this.showSystemNotification(notificationData),
-                this.showVibrationAlert(notificationData),
-                this.showAudioAlert(notificationData),
-                this.showVisualAlert(notificationData)
-            ]);
+            // Prioritize system notifications over visual popups
+            const results = [];
+            
+            // Always try system notification first
+            try {
+                await this.showSystemNotification(notificationData);
+                results.push({ status: 'fulfilled', method: 'system' });
+                console.log('✅ System notification sent successfully');
+            } catch (error) {
+                results.push({ status: 'rejected', method: 'system', error });
+                console.warn('⚠️ System notification failed:', error.message);
+            }
+
+            // Always try vibration
+            try {
+                await this.showVibrationAlert(notificationData);
+                results.push({ status: 'fulfilled', method: 'vibration' });
+                console.log('✅ Vibration alert sent successfully');
+            } catch (error) {
+                results.push({ status: 'rejected', method: 'vibration', error });
+                console.warn('⚠️ Vibration failed:', error.message);
+            }
+
+            // Only use audio if specifically requested
+            if (notificationData.methods.includes('sound')) {
+                try {
+                    await this.showAudioAlert(notificationData);
+                    results.push({ status: 'fulfilled', method: 'audio' });
+                    console.log('✅ Audio alert sent successfully');
+                } catch (error) {
+                    results.push({ status: 'rejected', method: 'audio', error });
+                    console.warn('⚠️ Audio alert failed:', error.message);
+                }
+            }
+
+            // Only use visual popup as last resort or if specifically requested
+            if (notificationData.methods.includes('visual') && 
+                !results.some(r => r.status === 'fulfilled' && r.method === 'system')) {
+                try {
+                    await this.showVisualAlert(notificationData);
+                    results.push({ status: 'fulfilled', method: 'visual' });
+                    console.log('✅ Visual alert sent successfully');
+                } catch (error) {
+                    results.push({ status: 'rejected', method: 'visual', error });
+                    console.warn('⚠️ Visual alert failed:', error.message);
+                }
+            }
 
             // Check if at least one method succeeded
             const successful = results.some(result => result.status === 'fulfilled');
@@ -571,13 +611,13 @@ class NotificationManager {
             // Create a proper test event in the event scheduler first
             if (window.eventScheduler) {
                 const testEventData = {
-                    title: 'Test Notification',
-                    description: 'This is a test notification to verify the system is working',
+                    title: 'Test System Notification',
+                    description: 'Testing system notifications with vibration - you should see this in your system notification area',
                     category: 'test',
-                    datetime: new Date(Date.now() + 30000).toISOString(), // 30 seconds from now
+                    datetime: new Date(Date.now() + 5000).toISOString(), // 5 seconds from now
                     notifications: {
                         enabled: true,
-                        methods: ['system', 'vibration', 'visual'],
+                        methods: ['system', 'vibration'], // Focus on system notifications
                         priority: 'normal'
                     },
                     createdBy: 'test'
@@ -585,22 +625,22 @@ class NotificationManager {
                 
                 const testEvent = await window.eventScheduler.createEvent(testEventData);
                 await this.showNotification(testEvent);
-                console.log('🧪 Test notification sent with valid event ID:', testEvent.id);
+                console.log('🧪 System test notification sent with vibration - ID:', testEvent.id);
             } else {
                 // Fallback: create test notification without event scheduler
                 const testEvent = {
                     id: 'test_notification_' + Date.now(),
-                    title: 'Test Notification',
-                    description: 'This is a test notification to verify the system is working',
+                    title: 'Test System Notification',
+                    description: 'Testing system notifications with vibration - you should see this in your system notification area',
                     category: 'test',
                     notifications: {
-                        methods: ['system', 'vibration', 'visual'],
+                        methods: ['system', 'vibration'], // Focus on system notifications
                         priority: 'normal'
                     }
                 };
 
                 await this.showNotification(testEvent);
-                console.log('🧪 Test notification sent (no event scheduler)');
+                console.log('🧪 System test notification sent with vibration (no event scheduler)');
             }
         } catch (error) {
             console.error('❌ Failed to send test notification:', error);
