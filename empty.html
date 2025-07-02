@@ -285,6 +285,7 @@
                 <button onclick="listEvents()" class="secondary">📋 List Events</button>
                 <button onclick="getStats()" class="secondary">📊 Statistics</button>
                 <button onclick="requestPermissions()" class="warning">🔐 Enable Permissions</button>
+                <button onclick="showBrowserInfo()" class="secondary">ℹ️ Browser Info</button>
                 <button onclick="clearTestData()" class="danger">🧹 Clear Test Data</button>
             </div>
         </div>
@@ -583,8 +584,29 @@
                 // Detailed permission debugging
                 logActivity('info', 'Checking notification support...');
                 
+                // Browser and environment detection
+                const userAgent = navigator.userAgent;
+                const isHTTPS = location.protocol === 'https:';
+                const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+                const isFileProtocol = location.protocol === 'file:';
+                
+                logActivity('info', `Browser: ${userAgent.split(' ').pop()}`);
+                logActivity('info', `Protocol: ${location.protocol} (HTTPS: ${isHTTPS}, Localhost: ${isLocalhost})`);
+                
+                if (isFileProtocol) {
+                    logActivity('error', '❌ File:// protocol detected - notifications may not work. Use a web server.');
+                    return;
+                }
+                
+                if (!isHTTPS && !isLocalhost) {
+                    logActivity('error', '❌ Non-HTTPS connection detected - notifications require HTTPS or localhost');
+                    return;
+                }
+                
                 if (!('Notification' in window)) {
-                    logActivity('error', 'This browser does not support notifications');
+                    logActivity('error', '❌ This browser does not support the Notification API');
+                    logActivity('info', 'Supported browsers: Chrome 22+, Firefox 22+, Safari 7+, Edge 14+');
+                    logActivity('info', 'Try updating your browser or use Chrome/Firefox');
                     return;
                 }
                 
@@ -659,6 +681,49 @@
                 logActivity('success', `Cleaned up ${cleaned} test events`);
             } catch (error) {
                 logActivity('error', 'Cleanup failed: ' + error.message);
+            }
+        }
+
+        function showBrowserInfo() {
+            try {
+                const userAgent = navigator.userAgent;
+                const isHTTPS = location.protocol === 'https:';
+                const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+                const isFileProtocol = location.protocol === 'file:';
+                const notificationSupport = 'Notification' in window;
+                const serviceWorkerSupport = 'serviceWorker' in navigator;
+                const vibrationSupport = 'vibrate' in navigator;
+                
+                logActivity('info', '🌐 Browser Environment Information:');
+                logActivity('info', `URL: ${location.href}`);
+                logActivity('info', `Protocol: ${location.protocol} (Secure: ${isHTTPS || isLocalhost})`);
+                logActivity('info', `User Agent: ${userAgent}`);
+                logActivity('info', `Notification API: ${notificationSupport ? '✅ Supported' : '❌ Not supported'}`);
+                logActivity('info', `Service Worker: ${serviceWorkerSupport ? '✅ Supported' : '❌ Not supported'}`);
+                logActivity('info', `Vibration API: ${vibrationSupport ? '✅ Supported' : '❌ Not supported'}`);
+                
+                if (notificationSupport) {
+                    logActivity('info', `Current permission: ${Notification.permission}`);
+                }
+                
+                // Recommendations
+                if (isFileProtocol) {
+                    logActivity('error', '⚠️ File protocol detected - use a web server instead');
+                    logActivity('info', '💡 Try: python -m http.server 8000 or npx serve');
+                }
+                
+                if (!isHTTPS && !isLocalhost) {
+                    logActivity('error', '⚠️ Non-secure connection - notifications require HTTPS');
+                    logActivity('info', '💡 Use localhost or enable HTTPS');
+                }
+                
+                if (!notificationSupport) {
+                    logActivity('error', '⚠️ Notification API not supported');
+                    logActivity('info', '💡 Try Chrome 22+, Firefox 22+, Safari 7+, or Edge 14+');
+                }
+                
+            } catch (error) {
+                logActivity('error', 'Failed to get browser info: ' + error.message);
             }
         }
 
