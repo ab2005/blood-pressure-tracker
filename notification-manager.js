@@ -21,6 +21,10 @@ class NotificationManager {
         this.activeNotifications = new Map();
         this.notificationQueue = [];
         this.isInitialized = false;
+        this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        this.isStandalone = window.navigator.standalone === true;
+        this.isInPWA = window.matchMedia('(display-mode: standalone)').matches;
+        this.pendingIOSNotifications = [];
         
         this.init();
     }
@@ -129,28 +133,36 @@ class NotificationManager {
             // Track active notification
             this.activeNotifications.set(notificationId, notificationData);
 
-            // Check if we're on iOS and adapt strategy
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isStandalone = window.navigator.standalone === true;
-            const isInPWA = window.matchMedia('(display-mode: standalone)').matches;
-            
-            // Prioritize system notifications over visual popups
+            // iOS-specific handling
             const results = [];
             
-            // Try system notification first (but expect it may fail on iOS)
-            try {
-                await this.showSystemNotification(notificationData);
-                results.push({ status: 'fulfilled', method: 'system' });
-                console.log('✅ System notification sent successfully');
-            } catch (error) {
-                results.push({ status: 'rejected', method: 'system', error });
-                console.warn('⚠️ System notification failed:', error.message);
+            // For iOS, try system notifications but be prepared to fallback
+            if (this.isIOS && !this.isStandalone && !this.isInPWA) {
+                console.log('📱 iOS browser mode detected - prioritizing visual notifications');
+                // Add this notification to pending queue for when user installs as PWA
+                this.addToPendingIOSNotifications(notificationData);
                 
-                // On iOS, if system notifications fail, automatically fall back to visual
-                if (isIOS) {
-                    console.log('📱 iOS detected - using visual notification as fallback');
-                    if (!notificationData.methods.includes('visual')) {
-                        notificationData.methods.push('visual');
+                // Skip system notification attempt and go straight to visual
+                if (!notificationData.methods.includes('visual')) {
+                    notificationData.methods = ['visual', 'vibration', 'sound'];
+                }
+                results.push({ status: 'rejected', method: 'system', error: new Error('iOS browser mode - system notifications unreliable') });
+            } else {
+                // Try system notification first for non-iOS or PWA mode
+                try {
+                    await this.showSystemNotification(notificationData);
+                    results.push({ status: 'fulfilled', method: 'system' });
+                    console.log('✅ System notification sent successfully');
+                } catch (error) {
+                    results.push({ status: 'rejected', method: 'system', error });
+                    console.warn('⚠️ System notification failed:', error.message);
+                    
+                    // On iOS, if system notifications fail, automatically fall back to visual
+                    if (this.isIOS) {
+                        console.log('📱 iOS detected - using visual notification as fallback');
+                        if (!notificationData.methods.includes('visual')) {
+                            notificationData.methods.push('visual');
+                        }
                     }
                 }
             }
@@ -838,6 +850,56 @@ class NotificationManager {
     }
 
     /**
+     * Add notification to pending iOS queue for when app is installed as PWA
+     */
+    addToPendingIOSNotifications(notificationData) {
+        if (this.isIOS && !this.isStandalone && !this.isInPWA) {
+            this.pendingIOSNotifications.push({
+                ...notificationData,
+                addedAt: Date.now()
+            });
+            
+            // Keep only last 10 pending notifications
+            if (this.pendingIOSNotifications.length > 10) {
+                this.pendingIOSNotifications = this.pendingIOSNotifications.slice(-10);
+            }
+            
+            // Save to localStorage for persistence
+            try {
+                localStorage.setItem('pending-ios-notifications', JSON.stringify(this.pendingIOSNotifications));
+            } catch (error) {
+                console.warn('Failed to save pending iOS notifications:', error);
+            }
+        }
+    }
+
+    /**
+     * Load and process pending iOS notifications (called when app becomes PWA)
+     */
+    async processPendingIOSNotifications() {
+        try {
+            const stored = localStorage.getItem('pending-ios-notifications');
+            if (stored) {
+                const pending = JSON.parse(stored);
+                console.log(`📱 Processing ${pending.length} pending iOS notifications`);
+                
+                for (const notification of pending) {
+                    // Show notifications that are less than 1 hour old
+                    if (Date.now() - notification.addedAt < 3600000) {
+                        await this.showNotification(notification.event, notification);
+                    }
+                }
+                
+                // Clear the pending queue
+                localStorage.removeItem('pending-ios-notifications');
+                this.pendingIOSNotifications = [];
+            }
+        } catch (error) {
+            console.error('Failed to process pending iOS notifications:', error);
+        }
+    }
+
+    /**
      * Get notification statistics
      */
     getStatistics() {
@@ -845,6 +907,9 @@ class NotificationManager {
             permissions: this.permissions,
             activeNotifications: this.activeNotifications.size,
             queuedNotifications: this.notificationQueue.length,
+            pendingIOSNotifications: this.pendingIOSNotifications.length,
+            isIOS: this.isIOS,
+            isPWA: this.isStandalone || this.isInPWA,
             settings: this.settings
         };
     }

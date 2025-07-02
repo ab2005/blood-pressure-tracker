@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Health Tracker - Voice Assistant</title>
     <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS-specific meta tags for PWA support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="HealthTracker">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%234CAF50'/><path d='M256 64c-35.3 0-64 28.7-64 64v32h-32c-17.7 0-32 14.3-32 32v256c0 17.7 14.3 32 32 32h192c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32h-32v-32c0-35.3-28.7-64-64-64zm0 32c17.7 0 32 14.3 32 32v32h-64v-32c0-17.7 14.3-32 32-32z' fill='white'/><circle cx='256' cy='300' r='20' fill='%234CAF50'/></svg>">
+    <link rel="apple-touch-startup-image" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'><rect width='390' height='844' fill='%234CAF50'/><text x='195' y='422' text-anchor='middle' font-family='Arial' font-size='48' fill='white'>Health Tracker</text></svg>">
     <style>
         * {
             margin: 0;
@@ -226,6 +234,95 @@
             color: #1565c0;
         }
 
+        .ios-install-banner {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            animation: slideDown 0.5s ease;
+        }
+
+        .banner-content {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .banner-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .banner-text {
+            flex: 1;
+        }
+
+        .banner-text h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .banner-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .banner-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .install-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .install-btn:hover {
+            background: white;
+            color: #ff9800;
+        }
+
+        .dismiss-btn {
+            background: none;
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .dismiss-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -242,6 +339,16 @@
             .controls-grid {
                 grid-template-columns: 1fr;
             }
+
+            .banner-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .banner-actions {
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -250,6 +357,21 @@
         <div class="header">
             <h1>🏥 Health Tracker <span style="font-size: 1.5rem;">🎤</span></h1>
             <p>Voice-controlled health event management with intelligent notifications</p>
+        </div>
+
+        <!-- iOS Installation Banner (hidden by default) -->
+        <div class="ios-install-banner" id="ios-install-banner" style="display: none;">
+            <div class="banner-content">
+                <div class="banner-icon">📱</div>
+                <div class="banner-text">
+                    <h3>Install for Better Notifications</h3>
+                    <p>Add this app to your Home Screen for reliable system notifications on iOS</p>
+                </div>
+                <div class="banner-actions">
+                    <button onclick="showIOSInstallInstructions()" class="install-btn">Install App</button>
+                    <button onclick="hideIOSBanner()" class="dismiss-btn">✕</button>
+                </div>
+            </div>
         </div>
 
         <!-- System Status -->
@@ -341,6 +463,9 @@
                 // Set up event listeners for system updates
                 setupEventListeners();
                 
+                // Check if we should show iOS installation banner
+                checkAndShowIOSBanner();
+                
                 logActivity('success', 'Health Tracker initialized successfully');
             } catch (error) {
                 logActivity('error', 'Failed to initialize system: ' + error.message);
@@ -365,6 +490,13 @@
                     notificationManager = new NotificationManager();
                     window.notificationManager = notificationManager;
                     await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // If we're in PWA mode on iOS, process any pending notifications
+                    if (notificationManager.isIOS && (notificationManager.isStandalone || notificationManager.isInPWA)) {
+                        await notificationManager.processPendingIOSNotifications();
+                        logActivity('success', 'Processed pending iOS notifications');
+                    }
+                    
                     updateSystemStatus('notification-manager', true, 'Active');
                 } else {
                     updateSystemStatus('notification-manager', false, 'Not Loaded');
@@ -503,13 +635,33 @@
                     return testNotifications();
                 }
                 
-                logActivity('info', `iOS detected - PWA mode: ${isStandalone || isInPWA}`);
+                // Detailed iOS diagnostics
+                const userAgent = navigator.userAgent;
+                let iOSVersion = 'Unknown';
+                const match = userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
+                if (match) {
+                    iOSVersion = `${match[1]}.${match[2]}.${match[3] || 0}`;
+                }
+                
+                logActivity('info', `iOS ${iOSVersion} detected - PWA mode: ${isStandalone || isInPWA}`);
+                logActivity('info', `Notification API: ${'Notification' in window ? 'Available' : 'Not available'}`);
+                logActivity('info', `Permission: ${Notification.permission}`);
+                
+                // Check notification support based on iOS version
+                const majorVersion = parseInt(iOSVersion.split('.')[0]);
+                if (majorVersion < 16) {
+                    logActivity('error', '❌ iOS version too old for web notifications (requires iOS 16.4+)');
+                    logActivity('info', '💡 Will use visual + vibration fallbacks only');
+                } else if (!isStandalone && !isInPWA) {
+                    logActivity('error', '⚠️ Browser mode - system notifications unreliable');
+                    logActivity('info', '💡 Install as PWA for reliable system notifications');
+                }
                 
                 // Force visual + vibration + audio for iOS
                 if (window.eventScheduler) {
                     const testEventData = {
                         title: '📱 iOS Test Notification',
-                        description: 'Testing iOS-optimized notification with visual popup, vibration, and audio',
+                        description: `Testing on iOS ${iOSVersion} - ${isStandalone || isInPWA ? 'PWA' : 'Browser'} mode`,
                         category: 'test',
                         datetime: new Date(Date.now() + 2000).toISOString(), // 2 seconds
                         notifications: {
@@ -524,11 +676,20 @@
                     await window.notificationManager.showNotification(testEvent);
                     
                     logActivity('success', 'iOS test notification sent with all methods');
-                    logActivity('info', 'You should see: visual popup + vibration + system notification (if supported)');
                     
-                    if (!isStandalone && !isInPWA) {
-                        logActivity('info', '💡 Tip: Add to Home Screen for better notification support');
+                    if (isStandalone || isInPWA) {
+                        logActivity('info', 'You should see: system notification + visual popup + vibration');
+                    } else {
+                        logActivity('info', 'You should see: visual popup + vibration (system notification may not work)');
+                        logActivity('info', '💡 Tip: Add to Home Screen for reliable system notifications');
                     }
+                    
+                    // Show pending notifications count
+                    const stats = window.notificationManager.getStatistics();
+                    if (stats.pendingIOSNotifications > 0) {
+                        logActivity('info', `📋 ${stats.pendingIOSNotifications} notifications pending for PWA mode`);
+                    }
+                    
                 } else {
                     logActivity('error', 'Event scheduler not available');
                 }
@@ -832,6 +993,68 @@
                 logContainer.innerHTML = '';
             }
             logActivity('info', 'Activity log cleared');
+        }
+
+        // iOS Installation Banner Management
+        function checkAndShowIOSBanner() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isStandalone = window.navigator.standalone === true;
+            const isInPWA = window.matchMedia('(display-mode: standalone)').matches;
+            const bannerDismissed = localStorage.getItem('ios-banner-dismissed') === 'true';
+            
+            // Show banner if: iOS device + not in PWA mode + not dismissed + notifications not working
+            if (isIOS && !isStandalone && !isInPWA && !bannerDismissed) {
+                // Check if notifications might not work
+                setTimeout(() => {
+                    if (Notification.permission !== 'granted' || !('Notification' in window)) {
+                        showIOSBanner();
+                    }
+                }, 2000); // Wait 2 seconds after page load
+            }
+        }
+
+        function showIOSBanner() {
+            const banner = document.getElementById('ios-install-banner');
+            if (banner) {
+                banner.style.display = 'block';
+                logActivity('info', 'Showing iOS installation banner');
+            }
+        }
+
+        function hideIOSBanner() {
+            const banner = document.getElementById('ios-install-banner');
+            if (banner) {
+                banner.style.display = 'none';
+                localStorage.setItem('ios-banner-dismissed', 'true');
+                logActivity('info', 'iOS banner dismissed');
+            }
+        }
+
+        function showIOSInstallInstructions() {
+            logActivity('info', '📱 iOS Installation Instructions:');
+            logActivity('info', '1. Tap the Share button (📤) at the bottom of Safari');
+            logActivity('info', '2. Scroll down and tap "Add to Home Screen"');
+            logActivity('info', '3. Tap "Add" to confirm');
+            logActivity('info', '4. Open the app from your Home Screen');
+            logActivity('info', '5. Grant notification permissions when prompted');
+            logActivity('success', 'After installation, system notifications will work reliably!');
+            
+            // Also show visual instructions in a modal-like format
+            const instructions = `
+📱 How to Install on iOS:
+
+1️⃣ Tap the Share button (📤) at the bottom of Safari
+2️⃣ Scroll down and tap "Add to Home Screen" 
+3️⃣ Tap "Add" to confirm
+4️⃣ Open the app from your Home Screen
+5️⃣ Grant notification permissions when prompted
+
+✅ System notifications will then work reliably!
+            `;
+            
+            if (confirm(instructions + '\n\nWould you like to hide this banner?')) {
+                hideIOSBanner();
+            }
         }
     </script>
 </body>
