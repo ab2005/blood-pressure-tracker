@@ -280,6 +280,7 @@
             <h2>⚡ Quick Actions</h2>
             <div class="controls-grid">
                 <button onclick="testNotifications()">🔔 Test Notifications</button>
+                <button onclick="testIOSNotifications()" class="warning">📱 Test iOS Notifications</button>
                 <button onclick="debugBasicNotification()" class="warning">🔍 Debug Basic Notification</button>
                 <button onclick="createQuickReminder()" class="secondary">⏰ Quick Reminder</button>
                 <button onclick="listEvents()" class="secondary">📋 List Events</button>
@@ -485,6 +486,55 @@
                 logActivity('success', 'Test notification sent - check for notification popup');
             } catch (error) {
                 logActivity('error', 'Notification test failed: ' + error.message);
+            }
+        }
+
+        // iOS-specific notification testing
+        async function testIOSNotifications() {
+            try {
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                const isStandalone = window.navigator.standalone === true;
+                const isInPWA = window.matchMedia('(display-mode: standalone)').matches;
+                
+                logActivity('info', '📱 Testing iOS-optimized notifications...');
+                
+                if (!isIOS) {
+                    logActivity('info', 'Not an iOS device - using standard notification test');
+                    return testNotifications();
+                }
+                
+                logActivity('info', `iOS detected - PWA mode: ${isStandalone || isInPWA}`);
+                
+                // Force visual + vibration + audio for iOS
+                if (window.eventScheduler) {
+                    const testEventData = {
+                        title: '📱 iOS Test Notification',
+                        description: 'Testing iOS-optimized notification with visual popup, vibration, and audio',
+                        category: 'test',
+                        datetime: new Date(Date.now() + 2000).toISOString(), // 2 seconds
+                        notifications: {
+                            enabled: true,
+                            methods: ['system', 'visual', 'vibration', 'sound'], // All methods for iOS
+                            priority: 'high'
+                        },
+                        createdBy: 'ios-test'
+                    };
+                    
+                    const testEvent = await window.eventScheduler.createEvent(testEventData);
+                    await window.notificationManager.showNotification(testEvent);
+                    
+                    logActivity('success', 'iOS test notification sent with all methods');
+                    logActivity('info', 'You should see: visual popup + vibration + system notification (if supported)');
+                    
+                    if (!isStandalone && !isInPWA) {
+                        logActivity('info', '💡 Tip: Add to Home Screen for better notification support');
+                    }
+                } else {
+                    logActivity('error', 'Event scheduler not available');
+                }
+                
+            } catch (error) {
+                logActivity('error', 'iOS notification test failed: ' + error.message);
             }
         }
 
@@ -694,10 +744,49 @@
                 const serviceWorkerSupport = 'serviceWorker' in navigator;
                 const vibrationSupport = 'vibrate' in navigator;
                 
+                // iOS detection
+                const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+                const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
+                const isIOSChrome = /CriOS/.test(userAgent);
+                const isIOSFirefox = /FxiOS/.test(userAgent);
+                const isStandalone = window.navigator.standalone === true;
+                const isInPWA = window.matchMedia('(display-mode: standalone)').matches;
+                
+                // Extract iOS version if available
+                let iOSVersion = null;
+                if (isIOS) {
+                    const match = userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
+                    if (match) {
+                        iOSVersion = `${match[1]}.${match[2]}.${match[3] || 0}`;
+                    }
+                }
+                
                 logActivity('info', '🌐 Browser Environment Information:');
                 logActivity('info', `URL: ${location.href}`);
                 logActivity('info', `Protocol: ${location.protocol} (Secure: ${isHTTPS || isLocalhost})`);
                 logActivity('info', `User Agent: ${userAgent}`);
+                
+                // iOS-specific information
+                if (isIOS) {
+                    logActivity('info', `📱 iOS Device Detected (Version: ${iOSVersion || 'Unknown'})`);
+                    logActivity('info', `Browser: ${isSafari ? 'Safari' : isIOSChrome ? 'Chrome' : isIOSFirefox ? 'Firefox' : 'Other'}`);
+                    logActivity('info', `PWA Mode: ${isStandalone || isInPWA ? '✅ Yes' : '❌ No (Add to Home Screen recommended)'}`);
+                    
+                    // iOS notification compatibility
+                    if (iOSVersion) {
+                        const majorVersion = parseInt(iOSVersion.split('.')[0]);
+                        if (majorVersion >= 16) {
+                            logActivity('info', '✅ iOS 16.4+ detected - web notifications may be supported');
+                            if (!isStandalone && !isInPWA) {
+                                logActivity('error', '⚠️ For best results, add this app to Home Screen (PWA mode)');
+                            }
+                        } else {
+                            logActivity('error', '❌ iOS version too old for web notifications (requires iOS 16.4+)');
+                            logActivity('info', '💡 Update iOS or use alternative notification methods');
+                        }
+                    }
+                }
+                
                 logActivity('info', `Notification API: ${notificationSupport ? '✅ Supported' : '❌ Not supported'}`);
                 logActivity('info', `Service Worker: ${serviceWorkerSupport ? '✅ Supported' : '❌ Not supported'}`);
                 logActivity('info', `Vibration API: ${vibrationSupport ? '✅ Supported' : '❌ Not supported'}`);
@@ -719,7 +808,16 @@
                 
                 if (!notificationSupport) {
                     logActivity('error', '⚠️ Notification API not supported');
-                    logActivity('info', '💡 Try Chrome 22+, Firefox 22+, Safari 7+, or Edge 14+');
+                    if (isIOS) {
+                        logActivity('info', '💡 iOS: Update to iOS 16.4+ and add to Home Screen');
+                    } else {
+                        logActivity('info', '💡 Try Chrome 22+, Firefox 22+, Safari 7+, or Edge 14+');
+                    }
+                }
+                
+                // iOS-specific recommendations
+                if (isIOS && notificationSupport && !isStandalone && !isInPWA) {
+                    logActivity('info', '💡 iOS Tip: For better notifications, tap Share → Add to Home Screen');
                 }
                 
             } catch (error) {

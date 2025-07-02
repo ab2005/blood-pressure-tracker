@@ -129,10 +129,15 @@ class NotificationManager {
             // Track active notification
             this.activeNotifications.set(notificationId, notificationData);
 
+            // Check if we're on iOS and adapt strategy
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isStandalone = window.navigator.standalone === true;
+            const isInPWA = window.matchMedia('(display-mode: standalone)').matches;
+            
             // Prioritize system notifications over visual popups
             const results = [];
             
-            // Always try system notification first
+            // Try system notification first (but expect it may fail on iOS)
             try {
                 await this.showSystemNotification(notificationData);
                 results.push({ status: 'fulfilled', method: 'system' });
@@ -140,6 +145,14 @@ class NotificationManager {
             } catch (error) {
                 results.push({ status: 'rejected', method: 'system', error });
                 console.warn('⚠️ System notification failed:', error.message);
+                
+                // On iOS, if system notifications fail, automatically fall back to visual
+                if (isIOS) {
+                    console.log('📱 iOS detected - using visual notification as fallback');
+                    if (!notificationData.methods.includes('visual')) {
+                        notificationData.methods.push('visual');
+                    }
+                }
             }
 
             // Always try vibration
@@ -164,9 +177,9 @@ class NotificationManager {
                 }
             }
 
-            // Only use visual popup as last resort or if specifically requested
+            // Use visual popup when system notifications fail or if specifically requested
             if (notificationData.methods.includes('visual') && 
-                !results.some(r => r.status === 'fulfilled' && r.method === 'system')) {
+                (!results.some(r => r.status === 'fulfilled' && r.method === 'system') || isIOS)) {
                 try {
                     await this.showVisualAlert(notificationData);
                     results.push({ status: 'fulfilled', method: 'visual' });
