@@ -20,7 +20,7 @@ function injectElevenLabsWidget() {
 
   const widget = document.createElement('elevenlabs-convai');
   widget.id = ID;
-  widget.setAttribute('agent-id', 'agent_01jya9mcwzfyergjnaja2atc7m');
+  widget.setAttribute('agent-id', 'agent_01jym7aznqegga4knns1xsxp3y');
   widget.setAttribute('variant', 'full');
 
   // Pre-register client tools BEFORE any events

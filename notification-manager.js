@@ -21,10 +21,6 @@ class NotificationManager {
         this.activeNotifications = new Map();
         this.notificationQueue = [];
         this.isInitialized = false;
-        this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        this.isStandalone = window.navigator.standalone === true;
-        this.isInPWA = window.matchMedia('(display-mode: standalone)').matches;
-        this.pendingIOSNotifications = [];
         
         this.init();
     }
@@ -48,22 +44,14 @@ class NotificationManager {
      * Check and request permissions for notifications
      */
     async checkPermissions() {
-        // Check notification permission with safety check
-        if ('Notification' in window && typeof Notification !== 'undefined') {
-            try {
-                if (Notification.permission === 'default') {
-                    const permission = await Notification.requestPermission();
-                    this.permissions.notifications = permission === 'granted';
-                } else {
-                    this.permissions.notifications = Notification.permission === 'granted';
-                }
-            } catch (error) {
-                console.warn('Failed to check notification permissions:', error);
-                this.permissions.notifications = false;
+        // Check notification permission
+        if ('Notification' in window) {
+            if (Notification.permission === 'default') {
+                const permission = await Notification.requestPermission();
+                this.permissions.notifications = permission === 'granted';
+            } else {
+                this.permissions.notifications = Notification.permission === 'granted';
             }
-        } else {
-            console.warn('Notification API not available');
-            this.permissions.notifications = false;
         }
 
         // Check vibration support
@@ -141,38 +129,17 @@ class NotificationManager {
             // Track active notification
             this.activeNotifications.set(notificationId, notificationData);
 
-            // iOS-specific handling
+            // Prioritize system notifications over visual popups
             const results = [];
             
-            // For iOS, try system notifications but be prepared to fallback
-            if (this.isIOS && !this.isStandalone && !this.isInPWA) {
-                console.log('📱 iOS browser mode detected - prioritizing visual notifications');
-                // Add this notification to pending queue for when user installs as PWA
-                this.addToPendingIOSNotifications(notificationData);
-                
-                // Skip system notification attempt and go straight to visual
-                if (!notificationData.methods.includes('visual')) {
-                    notificationData.methods = ['visual', 'vibration', 'sound'];
-                }
-                results.push({ status: 'rejected', method: 'system', error: new Error('iOS browser mode - system notifications unreliable') });
-            } else {
-                // Try system notification first for non-iOS or PWA mode
-                try {
-                    await this.showSystemNotification(notificationData);
-                    results.push({ status: 'fulfilled', method: 'system' });
-                    console.log('✅ System notification sent successfully');
-                } catch (error) {
-                    results.push({ status: 'rejected', method: 'system', error });
-                    console.warn('⚠️ System notification failed:', error.message);
-                    
-                    // On iOS, if system notifications fail, automatically fall back to visual
-                    if (this.isIOS) {
-                        console.log('📱 iOS detected - using visual notification as fallback');
-                        if (!notificationData.methods.includes('visual')) {
-                            notificationData.methods.push('visual');
-                        }
-                    }
-                }
+            // Always try system notification first
+            try {
+                await this.showSystemNotification(notificationData);
+                results.push({ status: 'fulfilled', method: 'system' });
+                console.log('✅ System notification sent successfully');
+            } catch (error) {
+                results.push({ status: 'rejected', method: 'system', error });
+                console.warn('⚠️ System notification failed:', error.message);
             }
 
             // Always try vibration
@@ -197,9 +164,9 @@ class NotificationManager {
                 }
             }
 
-            // Use visual popup when system notifications fail or if specifically requested
+            // Only use visual popup as last resort or if specifically requested
             if (notificationData.methods.includes('visual') && 
-                (!results.some(r => r.status === 'fulfilled' && r.method === 'system') || isIOS)) {
+                !results.some(r => r.status === 'fulfilled' && r.method === 'system')) {
                 try {
                     await this.showVisualAlert(notificationData);
                     results.push({ status: 'fulfilled', method: 'visual' });
@@ -233,82 +200,43 @@ class NotificationManager {
      * Show system notification
      */
     async showSystemNotification(notificationData) {
-        console.log('🔔 Attempting to show system notification:', notificationData.title);
-        
-        // Check if Notification API is available
-        if (!('Notification' in window) || typeof Notification === 'undefined') {
-            console.error('❌ Notification API not available');
-            throw new Error('Notification API not available on this browser/version');
-        }
-        
         if (!this.permissions.notifications) {
-            console.error('❌ System notifications not permitted, current permission:', Notification.permission);
-            throw new Error('System notifications not permitted - current permission: ' + Notification.permission);
+            throw new Error('System notifications not permitted');
         }
-
-        console.log('✅ Notification permission granted, proceeding with notification');
 
         // Check if we have service worker for background notifications
         if ('serviceWorker' in navigator) {
-            console.log('🔧 Using service worker for notification');
-            try {
-                const registration = await navigator.serviceWorker.ready;
-                console.log('🔧 Service worker ready, showing notification');
-                
-                const notificationOptions = {
-                    body: notificationData.body,
-                    icon: notificationData.icon,
-                    badge: notificationData.badge,
-                    tag: notificationData.tag,
-                    requireInteraction: notificationData.requireInteraction,
-                    vibrate: this.permissions.vibration ? notificationData.vibrate : undefined,
-                    actions: notificationData.actions,
-                    data: {
-                        notificationId: notificationData.id,
-                        eventId: notificationData.event.id,
-                        timestamp: notificationData.timestamp
-                    }
-                };
-                
-                console.log('🔧 Notification options:', notificationOptions);
-                const result = await registration.showNotification(notificationData.title, notificationOptions);
-                console.log('✅ Service worker notification created successfully');
-                return result;
-            } catch (error) {
-                console.error('❌ Service worker notification failed:', error);
-                throw error;
-            }
+            const registration = await navigator.serviceWorker.ready;
+            
+            return registration.showNotification(notificationData.title, {
+                body: notificationData.body,
+                icon: notificationData.icon,
+                badge: notificationData.badge,
+                tag: notificationData.tag,
+                requireInteraction: notificationData.requireInteraction,
+                vibrate: this.permissions.vibration ? notificationData.vibrate : undefined,
+                actions: notificationData.actions,
+                data: {
+                    notificationId: notificationData.id,
+                    eventId: notificationData.event.id,
+                    timestamp: notificationData.timestamp
+                }
+            });
         } else {
-            console.log('🔧 No service worker, using basic notification');
-            try {
-                // Fallback to basic notification
-                const notification = new Notification(notificationData.title, {
-                    body: notificationData.body,
-                    icon: notificationData.icon,
-                    tag: notificationData.tag,
-                    requireInteraction: notificationData.requireInteraction
-                });
+            // Fallback to basic notification
+            const notification = new Notification(notificationData.title, {
+                body: notificationData.body,
+                icon: notificationData.icon,
+                tag: notificationData.tag,
+                requireInteraction: notificationData.requireInteraction
+            });
 
-                notification.onclick = () => {
-                    console.log('🔔 Basic notification clicked');
-                    this.handleNotificationClick(notificationData.id);
-                    notification.close();
-                };
+            notification.onclick = () => {
+                this.handleNotificationClick(notificationData.id);
+                notification.close();
+            };
 
-                notification.onshow = () => {
-                    console.log('✅ Basic notification shown successfully');
-                };
-
-                notification.onerror = (error) => {
-                    console.error('❌ Basic notification error:', error);
-                };
-
-                console.log('✅ Basic notification created successfully');
-                return notification;
-            } catch (error) {
-                console.error('❌ Basic notification failed:', error);
-                throw error;
-            }
+            return notification;
         }
     }
 
@@ -864,56 +792,6 @@ class NotificationManager {
     }
 
     /**
-     * Add notification to pending iOS queue for when app is installed as PWA
-     */
-    addToPendingIOSNotifications(notificationData) {
-        if (this.isIOS && !this.isStandalone && !this.isInPWA) {
-            this.pendingIOSNotifications.push({
-                ...notificationData,
-                addedAt: Date.now()
-            });
-            
-            // Keep only last 10 pending notifications
-            if (this.pendingIOSNotifications.length > 10) {
-                this.pendingIOSNotifications = this.pendingIOSNotifications.slice(-10);
-            }
-            
-            // Save to localStorage for persistence
-            try {
-                localStorage.setItem('pending-ios-notifications', JSON.stringify(this.pendingIOSNotifications));
-            } catch (error) {
-                console.warn('Failed to save pending iOS notifications:', error);
-            }
-        }
-    }
-
-    /**
-     * Load and process pending iOS notifications (called when app becomes PWA)
-     */
-    async processPendingIOSNotifications() {
-        try {
-            const stored = localStorage.getItem('pending-ios-notifications');
-            if (stored) {
-                const pending = JSON.parse(stored);
-                console.log(`📱 Processing ${pending.length} pending iOS notifications`);
-                
-                for (const notification of pending) {
-                    // Show notifications that are less than 1 hour old
-                    if (Date.now() - notification.addedAt < 3600000) {
-                        await this.showNotification(notification.event, notification);
-                    }
-                }
-                
-                // Clear the pending queue
-                localStorage.removeItem('pending-ios-notifications');
-                this.pendingIOSNotifications = [];
-            }
-        } catch (error) {
-            console.error('Failed to process pending iOS notifications:', error);
-        }
-    }
-
-    /**
      * Get notification statistics
      */
     getStatistics() {
@@ -921,9 +799,6 @@ class NotificationManager {
             permissions: this.permissions,
             activeNotifications: this.activeNotifications.size,
             queuedNotifications: this.notificationQueue.length,
-            pendingIOSNotifications: this.pendingIOSNotifications.length,
-            isIOS: this.isIOS,
-            isPWA: this.isStandalone || this.isInPWA,
             settings: this.settings
         };
     }

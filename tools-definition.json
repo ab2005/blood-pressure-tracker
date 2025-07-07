@@ -277,6 +277,84 @@
       "dynamic_variables": {
         "dynamic_variable_placeholders": {}
       }
+    },
+    {
+      "type": "client",
+      "name": "makeEmergencyCall",
+      "description": "Инициировать экстренный звонок через голосового помощника при критических показателях здоровья",
+      "parameters": [
+        {
+          "id": "phoneNumber",
+          "type": "string",
+          "description": "Номер телефона для звонка в формате E.164 (например, +79161234567)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "reason",
+          "type": "string",
+          "description": "Причина экстренного звонка (например, 'гипертонический криз', 'критическое давление')",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "bloodPressure",
+          "type": "string",
+          "description": "Текущие показатели давления для передачи (например, '180/120')",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": false,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": true,
+      "response_timeout_secs": 10,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
+    },
+    {
+      "type": "client",
+      "name": "scheduleCheckInCall",
+      "description": "Запланировать проверочный звонок для напоминания о приеме лекарств или мониторинге здоровья",
+      "parameters": [
+        {
+          "id": "phoneNumber",
+          "type": "string",
+          "description": "Номер телефона для звонка в формате E.164 (например, +79161234567)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "message",
+          "type": "string",
+          "description": "Сообщение для передачи во время звонка",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "required": true,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "scheduledTime",
+          "type": "string",
+          "description": "Время запланированного звонка (например, '14:30' или 'сейчас')",
+          "dynamic_variable": "",
+          "constant_value": "сейчас",
+          "required": false,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "expects_response": true,
+      "response_timeout_secs": 10,
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      }
     }
   ],
   "metadata": {
@@ -286,7 +364,7 @@
     "tags": ["blood-pressure", "health-tracking", "medication", "medical"],
     "author": "Blood Pressure Tracker App",
     "created": "2025-01-21",
-    "updated": "2025-01-21"
+    "updated": "2025-01-03"
   },
   "configuration": {
     "agent_prompt_instructions": [
@@ -294,7 +372,9 @@
       "Help users log their blood pressure readings, analyze their health data, and set medication reminders.",
       "Always provide encouragement and remind users to consult healthcare professionals for medical advice.",
       "When analyzing blood pressure, provide the medical category but emphasize that this is for informational purposes only.",
-      "Be supportive and understanding when discussing health concerns."
+      "Be supportive and understanding when discussing health concerns.",
+      "In emergency situations (BP >180/120), offer to make emergency calls to family members or healthcare providers.",
+      "You can also schedule check-in calls for medication reminders and health monitoring."
     ],
     "safety_guidelines": [
       "Never provide specific medical diagnosis or treatment recommendations",

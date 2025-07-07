@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Phone Calls - Blood Pressure Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .test-section h3 {
+            color: #495057;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .emergency-btn {
+            background: #dc3545 !important;
+        }
+        .emergency-btn:hover {
+            background: #c82333 !important;
+        }
+        .success-btn {
+            background: #28a745 !important;
+        }
+        .success-btn:hover {
+            background: #218838 !important;
+        }
+        .test-result {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Phone Call Functionality</h1>
+        
+        <div class="test-section">
+            <h3>🚨 Emergency Call Test</h3>
+            <div class="form-group">
+                <label for="emergency-phone-test">Emergency Phone Number:</label>
+                <input type="tel" id="emergency-phone-test" placeholder="+79161234567" value="+79161234567">
+            </div>
+            <button class="emergency-btn" onclick="testEmergencyCall()">📞 Test Emergency Call</button>
+            <div id="emergency-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📞 Check-in Call Test</h3>
+            <div class="form-group">
+                <label for="checkin-phone-test">Phone Number:</label>
+                <input type="tel" id="checkin-phone-test" placeholder="+79161234567" value="+79161234567">
+            </div>
+            <div class="form-group">
+                <label for="checkin-message-test">Message:</label>
+                <textarea id="checkin-message-test" rows="3" placeholder="Test message...">This is a test check-in call from the Blood Pressure Tracker app.</textarea>
+            </div>
+            <div class="form-group">
+                <label for="checkin-time-test">Scheduled Time:</label>
+                <select id="checkin-time-test">
+                    <option value="сейчас">Now</option>
+                    <option value="08:00">08:00</option>
+                    <option value="12:00">12:00</option>
+                    <option value="18:00">18:00</option>
+                </select>
+            </div>
+            <button class="success-btn" onclick="testCheckInCall()">📅 Test Check-in Call</button>
+            <div id="checkin-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 System Status</h3>
+            <button onclick="checkSystemStatus()">🔍 Check Status</button>
+            <div id="status-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Call History</h3>
+            <button onclick="showCallHistory()">📜 Show History</button>
+            <div id="history-result" class="test-result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="notification-manager.js"></script>
+    <script src="event-scheduler.js"></script>
+    <script src="client-tools.js"></script>
+
+    <script>
+        // Initialize notification manager
+        let notificationManager;
+        let eventScheduler;
+
+        window.addEventListener('load', async () => {
+            try {
+                // Initialize notification manager
+                if (typeof NotificationManager !== 'undefined') {
+                    notificationManager = new NotificationManager();
+                    window.notificationManager = notificationManager;
+                    console.log('✅ NotificationManager initialized');
+                }
+
+                // Initialize event scheduler
+                if (typeof EventScheduler !== 'undefined') {
+                    eventScheduler = new EventScheduler();
+                    window.eventScheduler = eventScheduler;
+                    console.log('✅ EventScheduler initialized');
+                }
+
+                console.log('✅ Test page initialized');
+                checkSystemStatus();
+            } catch (error) {
+                console.error('❌ Initialization error:', error);
+            }
+        });
+
+        async function testEmergencyCall() {
+            const phoneNumber = document.getElementById('emergency-phone-test').value.trim();
+            const resultDiv = document.getElementById('emergency-result');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'test-result';
+            resultDiv.textContent = 'Testing emergency call...';
+
+            try {
+                if (!window.ClientTools || !window.ClientTools.makeEmergencyCall) {
+                    throw new Error('ClientTools.makeEmergencyCall not available');
+                }
+
+                const result = await window.ClientTools.makeEmergencyCall({
+                    phoneNumber: phoneNumber,
+                    reason: 'Test emergency call',
+                    bloodPressure: '180/120'
+                });
+
+                resultDiv.className = 'test-result success';
+                resultDiv.textContent = `✅ Emergency call test successful:\n\n${result}`;
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = `❌ Emergency call test failed:\n\n${error.message}`;
+                console.error('Emergency call test failed:', error);
+            }
+        }
+
+        async function testCheckInCall() {
+            const phoneNumber = document.getElementById('checkin-phone-test').value.trim();
+            const message = document.getElementById('checkin-message-test').value.trim();
+            const scheduledTime = document.getElementById('checkin-time-test').value;
+            const resultDiv = document.getElementById('checkin-result');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'test-result';
+            resultDiv.textContent = 'Testing check-in call...';
+
+            try {
+                if (!window.ClientTools || !window.ClientTools.scheduleCheckInCall) {
+                    throw new Error('ClientTools.scheduleCheckInCall not available');
+                }
+
+                const result = await window.ClientTools.scheduleCheckInCall({
+                    phoneNumber: phoneNumber,
+                    message: message,
+                    scheduledTime: scheduledTime
+                });
+
+                resultDiv.className = 'test-result success';
+                resultDiv.textContent = `✅ Check-in call test successful:\n\n${result}`;
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = `❌ Check-in call test failed:\n\n${error.message}`;
+                console.error('Check-in call test failed:', error);
+            }
+        }
+
+        function checkSystemStatus() {
+            const resultDiv = document.getElementById('status-result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'test-result';
+
+            let status = 'System Status Check:\n\n';
+            
+            // Check ClientTools
+            status += `ClientTools loaded: ${window.ClientTools ? '✅ Yes' : '❌ No'}\n`;
+            if (window.ClientTools) {
+                status += `- makeEmergencyCall: ${typeof window.ClientTools.makeEmergencyCall === 'function' ? '✅' : '❌'}\n`;
+                status += `- scheduleCheckInCall: ${typeof window.ClientTools.scheduleCheckInCall === 'function' ? '✅' : '❌'}\n`;
+            }
+
+            // Check NotificationManager
+            status += `\nNotificationManager: ${window.notificationManager ? '✅ Loaded' : '❌ Not loaded'}\n`;
+            
+            // Check EventScheduler
+            status += `EventScheduler: ${window.eventScheduler ? '✅ Loaded' : '❌ Not loaded'}\n`;
+
+            // Check localStorage data
+            const emergencyLog = localStorage.getItem('emergencyCallLog');
+            const checkInLog = localStorage.getItem('checkInCallLog');
+            status += `\nLocalStorage:\n`;
+            status += `- Emergency call log: ${emergencyLog ? `${JSON.parse(emergencyLog).length} entries` : 'Empty'}\n`;
+            status += `- Check-in call log: ${checkInLog ? `${JSON.parse(checkInLog).length} entries` : 'Empty'}\n`;
+
+            // Check ElevenLabs config
+            status += `\nElevenLabs Config:\n`;
+            status += `- Agent ID: ${window.elevenlabsConfig?.agentId || 'agent_01jya9mcwzfyergjnaja2atc7m (default)'}\n`;
+            status += `- Phone Number ID: ${window.elevenlabsConfig?.phoneNumberId || 'Not configured'}\n`;
+
+            resultDiv.textContent = status;
+        }
+
+        function showCallHistory() {
+            const resultDiv = document.getElementById('history-result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'test-result';
+
+            let history = 'Call History:\n\n';
+
+            // Emergency calls
+            const emergencyLog = JSON.parse(localStorage.getItem('emergencyCallLog') || '[]');
+            history += `🚨 Emergency Calls (${emergencyLog.length}):\n`;
+            if (emergencyLog.length > 0) {
+                emergencyLog.slice(-3).forEach((call, index) => {
+                    history += `${index + 1}. ${call.phoneNumber} - ${new Date(call.timestamp).toLocaleString()}\n`;
+                    history += `   Reason: ${call.reason}\n`;
+                    if (call.bloodPressure) history += `   BP: ${call.bloodPressure}\n`;
+                    history += '\n';
+                });
+            } else {
+                history += '   No emergency calls recorded\n\n';
+            }
+
+            // Check-in calls
+            const checkInLog = JSON.parse(localStorage.getItem('checkInCallLog') || '[]');
+            history += `📞 Check-in Calls (${checkInLog.length}):\n`;
+            if (checkInLog.length > 0) {
+                checkInLog.slice(-3).forEach((call, index) => {
+                    history += `${index + 1}. ${call.phoneNumber} - ${new Date(call.timestamp).toLocaleString()}\n`;
+                    history += `   Time: ${call.scheduledTime}\n`;
+                    history += `   Message: ${call.message.substring(0, 50)}${call.message.length > 50 ? '...' : ''}\n\n`;
+                });
+            } else {
+                history += '   No check-in calls recorded\n';
+            }
+
+            resultDiv.textContent = history;
+        }
+
+        // Utility function for testing
+        function clearCallHistory() {
+            localStorage.removeItem('emergencyCallLog');
+            localStorage.removeItem('checkInCallLog');
+            alert('Call history cleared!');
+            showCallHistory();
+        }
+    </script>
+</body>
+</html>

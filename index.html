@@ -1304,6 +1304,254 @@
             background: #e2e8f0;
             transform: translateY(-1px);
         }
+
+        /* Emergency Call Styles */
+        .emergency-call-section {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 24px;
+            border: 2px solid #fca5a5;
+        }
+
+        .emergency-call-section h3 {
+            color: #dc2626;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+
+        .call-instruction {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .emergency-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .phone-input-group {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .phone-input-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .phone-input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s ease;
+        }
+
+        .phone-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .phone-input-group small {
+            display: block;
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        #emergency-call-btn {
+            background: #dc2626 !important;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 50px;
+            min-width: 200px;
+        }
+
+        #emergency-call-btn:hover {
+            background: #b91c1c !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        /* Check-in Call Styles */
+        .checkin-call-section {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 24px;
+            border: 2px solid #86efac;
+        }
+
+        .checkin-call-section h3 {
+            color: #059669;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+
+        .checkin-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message-input-group {
+            width: 100%;
+        }
+
+        .message-input-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .message-input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s ease;
+        }
+
+        .message-input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .time-input-group {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .time-input-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .time-input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .time-input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #checkin-call-btn {
+            background: #059669 !important;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 50px;
+            align-self: center;
+        }
+
+        #checkin-call-btn:hover {
+            background: #047857 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+
+        /* Call History Styles */
+        .emergency-log, .checkin-log {
+            margin-top: 20px;
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .emergency-log h4, .checkin-log h4 {
+            color: #374151;
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        #emergency-call-history, #checkin-call-history {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .call-history-item {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .call-history-item.emergency {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+
+        .call-history-item.checkin {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        @media (min-width: 480px) {
+            .emergency-controls {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: end;
+            }
+
+            .checkin-controls {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                align-items: end;
+            }
+
+            .message-input-group {
+                grid-column: span 2;
+            }
+
+            #checkin-call-btn {
+                grid-column: span 2;
+                justify-self: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1476,6 +1724,63 @@
                 </div>
             </div>
 
+            <!-- Emergency Call Section -->
+            <div class="emergency-call-section">
+                <h3>🚨 Экстренная связь</h3>
+                <p class="call-instruction">Автоматический звонок через голосового помощника при критических показателях здоровья</p>
+                
+                <div class="emergency-controls">
+                    <div class="phone-input-group">
+                        <label for="emergency-phone">Экстренный номер:</label>
+                        <input type="tel" id="emergency-phone" placeholder="+79161234567" pattern="^\+[1-9]\d{1,14}$">
+                        <small>Формат: +79161234567</small>
+                    </div>
+                    
+                    <button id="emergency-call-btn" onclick="makeEmergencyCall()" style="background: #dc2626; color: white;">📞 Экстренный звонок</button>
+                </div>
+
+                <div class="emergency-log" id="emergency-log" style="display: none;">
+                    <h4>История экстренных звонков:</h4>
+                    <div id="emergency-call-history"></div>
+                </div>
+            </div>
+
+            <!-- Check-in Call Section -->
+            <div class="checkin-call-section">
+                <h3>📞 Проверочные звонки</h3>
+                <p class="call-instruction">Запланируйте автоматические звонки для напоминаний о приеме лекарств или проверки самочувствия</p>
+                
+                <div class="checkin-controls">
+                    <div class="phone-input-group">
+                        <label for="checkin-phone">Номер телефона:</label>
+                        <input type="tel" id="checkin-phone" placeholder="+79161234567" pattern="^\+[1-9]\d{1,14}$">
+                    </div>
+                    
+                    <div class="message-input-group">
+                        <label for="checkin-message">Сообщение:</label>
+                        <textarea id="checkin-message" placeholder="Привет! Это напоминание о приеме лекарства..." rows="3"></textarea>
+                    </div>
+                    
+                    <div class="time-input-group">
+                        <label for="checkin-time">Время звонка:</label>
+                        <select id="checkin-time">
+                            <option value="сейчас">Сейчас</option>
+                            <option value="08:00">08:00</option>
+                            <option value="12:00">12:00</option>
+                            <option value="18:00">18:00</option>
+                            <option value="20:00">20:00</option>
+                        </select>
+                    </div>
+                    
+                    <button id="checkin-call-btn" onclick="scheduleCheckInCall()" style="background: #059669;">📅 Запланировать звонок</button>
+                </div>
+
+                <div class="checkin-log" id="checkin-log" style="display: none;">
+                    <h4>Запланированные звонки:</h4>
+                    <div id="checkin-call-history"></div>
+                </div>
+            </div>
+
             <!-- Camera Section -->
             <div class="camera-section">
                 <h3>📷 Сканировать показания тонометра</h3>
@@ -1559,6 +1864,9 @@
             </div>
         </div>
 
+        <!-- Load Client Tools -->
+        <script src="client-tools.js"></script>
+        
         <elevenlabs-convai agent-id="agent_01jy58kznwf6ct6g8j0mvwmxh3">
 
         </elevenlabs-convai>
@@ -4272,10 +4580,157 @@ ${readings.pulse ? `Пульс: ${readings.pulse}` : 'Пульс: не указ�
             }
         }
 
+        // Phone Call Functions
+        async function makeEmergencyCall() {
+            const phoneNumber = document.getElementById('emergency-phone').value.trim();
+            
+            if (!phoneNumber) {
+                showToast('❌ Введите номер телефона для экстренного звонка', 'error');
+                return;
+            }
+
+            if (!phoneNumber.match(/^\+[1-9]\d{1,14}$/)) {
+                showToast('❌ Неверный формат номера. Используйте E.164 (+79161234567)', 'error');
+                return;
+            }
+
+            try {
+                // Get latest blood pressure reading for context
+                const readings = JSON.parse(localStorage.getItem('bpReadings') || '[]');
+                const latestReading = readings[0];
+                const bloodPressure = latestReading ? `${latestReading.systolic}/${latestReading.diastolic}` : null;
+
+                // Call the client tool
+                if (window.ClientTools && window.ClientTools.makeEmergencyCall) {
+                    const result = await window.ClientTools.makeEmergencyCall({
+                        phoneNumber: phoneNumber,
+                        reason: 'Критические показатели давления',
+                        bloodPressure: bloodPressure
+                    });
+                    
+                    showToast('📞 Экстренный звонок инициирован', 'success');
+                    updateEmergencyCallHistory();
+                    
+                    // Show detailed result
+                    showModal(`
+                        <div style="padding: 20px; text-align: center;">
+                            <h3>🚨 Экстренный звонок</h3>
+                            <p style="margin: 20px 0; white-space: pre-line;">${result}</p>
+                            <button onclick="closeModal()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Закрыть</button>
+                        </div>
+                    `);
+                } else {
+                    throw new Error('Client tools not available');
+                }
+            } catch (error) {
+                console.error('Emergency call failed:', error);
+                showToast('❌ Не удалось инициировать звонок: ' + error.message, 'error');
+            }
+        }
+
+        async function scheduleCheckInCall() {
+            const phoneNumber = document.getElementById('checkin-phone').value.trim();
+            const message = document.getElementById('checkin-message').value.trim();
+            const scheduledTime = document.getElementById('checkin-time').value;
+            
+            if (!phoneNumber) {
+                showToast('❌ Введите номер телефона', 'error');
+                return;
+            }
+
+            if (!message) {
+                showToast('❌ Введите сообщение для звонка', 'error');
+                return;
+            }
+
+            if (!phoneNumber.match(/^\+[1-9]\d{1,14}$/)) {
+                showToast('❌ Неверный формат номера. Используйте E.164 (+79161234567)', 'error');
+                return;
+            }
+
+            try {
+                // Call the client tool
+                if (window.ClientTools && window.ClientTools.scheduleCheckInCall) {
+                    const result = await window.ClientTools.scheduleCheckInCall({
+                        phoneNumber: phoneNumber,
+                        message: message,
+                        scheduledTime: scheduledTime
+                    });
+                    
+                    showToast('📅 Проверочный звонок запланирован', 'success');
+                    updateCheckInCallHistory();
+                    
+                    // Clear form
+                    document.getElementById('checkin-message').value = '';
+                    document.getElementById('checkin-time').value = 'сейчас';
+                    
+                    // Show detailed result
+                    showModal(`
+                        <div style="padding: 20px; text-align: center;">
+                            <h3>📞 Проверочный звонок</h3>
+                            <p style="margin: 20px 0; white-space: pre-line;">${result}</p>
+                            <button onclick="closeModal()" style="background: #059669; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Закрыть</button>
+                        </div>
+                    `);
+                } else {
+                    throw new Error('Client tools not available');
+                }
+            } catch (error) {
+                console.error('Check-in call scheduling failed:', error);
+                showToast('❌ Не удалось запланировать звонок: ' + error.message, 'error');
+            }
+        }
+
+        function updateEmergencyCallHistory() {
+            const emergencyLog = JSON.parse(localStorage.getItem('emergencyCallLog') || '[]');
+            const historyDiv = document.getElementById('emergency-call-history');
+            const logDiv = document.getElementById('emergency-log');
+            
+            if (emergencyLog.length > 0) {
+                logDiv.style.display = 'block';
+                historyDiv.innerHTML = emergencyLog
+                    .slice(-5) // Show last 5 calls
+                    .reverse()
+                    .map(call => `
+                        <div class="call-history-item emergency">
+                            <strong>📞 ${call.phoneNumber}</strong><br>
+                            <small>${new Date(call.timestamp).toLocaleString('ru-RU')}</small><br>
+                            Причина: ${call.reason}<br>
+                            ${call.bloodPressure ? `Давление: ${call.bloodPressure}` : ''}
+                        </div>
+                    `).join('');
+            }
+        }
+
+        function updateCheckInCallHistory() {
+            const checkInLog = JSON.parse(localStorage.getItem('checkInCallLog') || '[]');
+            const historyDiv = document.getElementById('checkin-call-history');
+            const logDiv = document.getElementById('checkin-log');
+            
+            if (checkInLog.length > 0) {
+                logDiv.style.display = 'block';
+                historyDiv.innerHTML = checkInLog
+                    .slice(-5) // Show last 5 calls
+                    .reverse()
+                    .map(call => `
+                        <div class="call-history-item checkin">
+                            <strong>📞 ${call.phoneNumber}</strong><br>
+                            <small>${new Date(call.timestamp).toLocaleString('ru-RU')}</small><br>
+                            Время: ${call.scheduledTime}<br>
+                            Сообщение: ${call.message.substring(0, 50)}${call.message.length > 50 ? '...' : ''}
+                        </div>
+                    `).join('');
+            }
+        }
+
         // Initialize speech recognition on page load
         window.addEventListener('load', () => {
             initSpeechRecognition();
             loadAssistantConfig();
+            
+            // Update call histories on load
+            updateEmergencyCallHistory();
+            updateCheckInCallHistory();
         });
     </script>
 </body>

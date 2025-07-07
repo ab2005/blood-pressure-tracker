@@ -1,0 +1,261 @@
+{
+  "tools": [
+    {
+      "type": "webhook",
+      "name": "makeEmergencyCall",
+      "description": "Initiate an emergency phone call using Telnyx API for critical health situations. The call will include voice message with emergency details and blood pressure readings.",
+      "url": "https://your-server-domain.com/api/webhook/emergency-call",
+      "method": "POST",
+      "parameters": [
+        {
+          "id": "phoneNumber",
+          "type": "string",
+          "description": "Phone number to call in E.164 format (e.g., +19995551234)",
+          "required": true,
+          "validation": {
+            "pattern": "^\\+[1-9]\\d{1,14}$",
+            "message": "Phone number must be in E.164 format"
+          }
+        },
+        {
+          "id": "reason",
+          "type": "string",
+          "description": "Reason for the emergency call (e.g., 'Hypertensive crisis', 'Critical blood pressure')",
+          "required": true,
+          "validation": {
+            "minLength": 1,
+            "maxLength": 200,
+            "message": "Reason must be between 1 and 200 characters"
+          }
+        },
+        {
+          "id": "bloodPressure",
+          "type": "string",
+          "description": "Current blood pressure reading in format 'systolic/diastolic' (e.g., '180/120')",
+          "required": false,
+          "validation": {
+            "pattern": "^\\d{2,3}\\/\\d{2,3}$",
+            "message": "Blood pressure must be in format '120/80'"
+          }
+        },
+        {
+          "id": "patientName",
+          "type": "string",
+          "description": "Name of the patient for personalized emergency message",
+          "required": false,
+          "validation": {
+            "maxLength": 100,
+            "message": "Patient name must be 100 characters or less"
+          }
+        },
+        {
+          "id": "location",
+          "type": "string",
+          "description": "Patient location for emergency services",
+          "required": false,
+          "validation": {
+            "maxLength": 200,
+            "message": "Location must be 200 characters or less"
+          }
+        }
+      ],
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Tool-Type": "emergency-call"
+      },
+      "timeout_ms": 30000,
+      "retry_count": 2,
+      "response_mapping": {
+        "success_field": "success",
+        "message_field": "message",
+        "call_id_field": "callId"
+      }
+    },
+    {
+      "type": "webhook",
+      "name": "scheduleCheckInCall",
+      "description": "Schedule or initiate a health check-in call using Telnyx API for medication reminders, appointment notifications, or general health monitoring.",
+      "url": "https://your-server-domain.com/api/webhook/checkin-call",
+      "method": "POST",
+      "parameters": [
+        {
+          "id": "phoneNumber",
+          "type": "string",
+          "description": "Phone number to call in E.164 format (e.g., +19995551234)",
+          "required": true,
+          "validation": {
+            "pattern": "^\\+[1-9]\\d{1,14}$",
+            "message": "Phone number must be in E.164 format"
+          }
+        },
+        {
+          "id": "message",
+          "type": "string",
+          "description": "Message to deliver during the call (e.g., 'Time to take your blood pressure medication')",
+          "required": true,
+          "validation": {
+            "minLength": 1,
+            "maxLength": 500,
+            "message": "Message must be between 1 and 500 characters"
+          }
+        },
+        {
+          "id": "scheduledTime",
+          "type": "string",
+          "description": "When to make the call. Use 'now' for immediate call, or time format like '14:30' for scheduled calls",
+          "required": false,
+          "default": "now",
+          "validation": {
+            "pattern": "^(now|сейчас|\\d{1,2}:\\d{2})$",
+            "message": "Use 'now' or time format '14:30'"
+          }
+        },
+        {
+          "id": "patientName",
+          "type": "string",
+          "description": "Name of the patient for personalized check-in message",
+          "required": false,
+          "validation": {
+            "maxLength": 100,
+            "message": "Patient name must be 100 characters or less"
+          }
+        },
+        {
+          "id": "reminderType",
+          "type": "string",
+          "description": "Type of reminder: 'medication', 'appointment', 'checkup', or 'general'",
+          "required": false,
+          "default": "general",
+          "validation": {
+            "enum": ["medication", "appointment", "checkup", "general"],
+            "message": "Reminder type must be one of: medication, appointment, checkup, general"
+          }
+        }
+      ],
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Tool-Type": "checkin-call"
+      },
+      "timeout_ms": 30000,
+      "retry_count": 2,
+      "response_mapping": {
+        "success_field": "success",
+        "message_field": "message",
+        "call_id_field": "callId",
+        "scheduled_time_field": "scheduledTime"
+      }
+    },
+    {
+      "type": "webhook",
+      "name": "getCallStatus",
+      "description": "Get the status of a previously initiated call using the call ID",
+      "url": "https://your-server-domain.com/api/webhook/call-status",
+      "method": "GET",
+      "parameters": [
+        {
+          "id": "callId",
+          "type": "string",
+          "description": "The call control ID returned from a previous call initiation",
+          "required": true,
+          "validation": {
+            "minLength": 1,
+            "message": "Call ID is required"
+          }
+        }
+      ],
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Tool-Type": "call-status"
+      },
+      "timeout_ms": 10000,
+      "retry_count": 1,
+      "response_mapping": {
+        "success_field": "success",
+        "status_field": "status",
+        "call_data_field": "callData"
+      }
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Server-side webhook tools for ElevenLabs integration with Telnyx voice API",
+    "category": "health-communication",
+    "tags": ["telnyx", "voice-calls", "health-monitoring", "emergency", "medication-reminders"],
+    "author": "Blood Pressure Tracker Team",
+    "created": "2025-01-07",
+    "updated": "2025-01-07"
+  },
+  "configuration": {
+    "server_requirements": {
+      "node_version": ">=16.0.0",
+      "required_env_vars": [
+        "TELNYX_API_KEY",
+        "TELNYX_CONNECTION_ID", 
+        "TELNYX_FROM_NUMBER",
+        "ELEVENLABS_API_KEY"
+      ],
+      "optional_env_vars": [
+        "SECRET_KEY",
+        "ALLOWED_ORIGINS",
+        "LOG_LEVEL"
+      ]
+    },
+    "webhook_security": {
+      "signature_validation": true,
+      "rate_limiting": true,
+      "cors_enabled": true,
+      "https_required": true
+    },
+    "telnyx_setup": {
+      "required_services": ["Voice API", "Media Library"],
+      "webhook_url": "https://your-server-domain.com/api/webhook/call-status",
+      "connection_type": "Outbound Voice Profile"
+    },
+    "elevenlabs_setup": {
+      "required_subscription": "Starter tier or higher",
+      "voices_used": ["Adam (default)", "Bella (emergency)"],
+      "model": "eleven_multilingual_v2"
+    },
+    "deployment_notes": [
+      "Deploy server to a public HTTPS endpoint",
+      "Configure environment variables with API keys",
+      "Set up Telnyx webhook URL in Telnyx portal",
+      "Test with emergency and check-in call scenarios",
+      "Monitor logs for call success/failure rates"
+    ]
+  },
+  "usage_examples": {
+    "emergency_call": {
+      "description": "Initiate emergency call for hypertensive crisis",
+      "request": {
+        "phoneNumber": "+19995551234",
+        "reason": "Hypertensive crisis detected",
+        "bloodPressure": "185/125",
+        "patientName": "John Smith",
+        "location": "123 Main St, Anytown USA"
+      },
+      "expected_response": {
+        "success": true,
+        "message": "Emergency call initiated successfully",
+        "callId": "call_abc123",
+        "estimatedDuration": "45 seconds"
+      }
+    },
+    "medication_reminder": {
+      "description": "Schedule medication reminder call",
+      "request": {
+        "phoneNumber": "+19995551234",
+        "message": "This is your daily medication reminder. Please take your blood pressure medication as prescribed.",
+        "scheduledTime": "08:00",
+        "patientName": "Jane Doe",
+        "reminderType": "medication"
+      },
+      "expected_response": {
+        "success": true,
+        "message": "Check-in call scheduled successfully",
+        "callId": "call_def456",
+        "scheduledTime": "08:00"
+      }
+    }
+  }
+}

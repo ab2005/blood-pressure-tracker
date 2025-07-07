@@ -84,6 +84,11 @@ self.addEventListener('fetch', (event) => {
                     if (event.request.destination === 'document') {
                         return caches.match('/index.html');
                     }
+                    // Return a proper Response for other failed requests
+                    return new Response('', {
+                        status: 200,
+                        statusText: 'OK'
+                    });
                 });
             })
     );

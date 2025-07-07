@@ -415,6 +415,209 @@ const ClientTools = {
     } catch (error) {
       return `❌ Failed to get statistics: ${error.message}`;
     }
+  },
+
+  /**
+   * Make Emergency Call - Initiate urgent phone call for critical health situations
+   */
+  makeEmergencyCall: async ({ phoneNumber, reason, bloodPressure }) => {
+    console.log('📞 Making emergency call:', { phoneNumber, reason, bloodPressure });
+
+    try {
+      // Validate phone number format
+      if (!phoneNumber || !phoneNumber.match(/^\+[1-9]\d{1,14}$/)) {
+        return `❌ Invalid phone number format. Please use E.164 format (e.g., +79161234567)`;
+      }
+
+      // Check if ElevenLabs API is available (this would be configured elsewhere)
+      const agentId = window.elevenlabsConfig?.agentId || 'agent_01jya9mcwzfyergjnaja2atc7m';
+      const phoneNumberId = window.elevenlabsConfig?.phoneNumberId;
+
+      if (!phoneNumberId) {
+        return `❌ Phone service not configured. Please contact support to enable emergency calling.`;
+      }
+
+      // Log emergency call attempt
+      const emergencyData = {
+        timestamp: new Date().toISOString(),
+        phoneNumber: phoneNumber,
+        reason: reason,
+        bloodPressure: bloodPressure,
+        status: 'initiated'
+      };
+
+      // Save emergency call log
+      const emergencyLog = JSON.parse(localStorage.getItem('emergencyCallLog') || '[]');
+      emergencyLog.push(emergencyData);
+      localStorage.setItem('emergencyCallLog', JSON.stringify(emergencyLog));
+
+      // Try to make actual API call if Claude MCP tools are available
+      let callMessage;
+      if (window.claudeMCP && window.claudeMCP.elevenlabs && window.claudeMCP.elevenlabs.makeOutboundCall) {
+        try {
+          const apiResult = await window.claudeMCP.elevenlabs.makeOutboundCall({
+            agent_id: agentId,
+            agent_phone_number_id: phoneNumberId,
+            to_number: phoneNumber
+          });
+          callMessage = `✅ Emergency call successfully initiated to ${phoneNumber}
+          
+API Response: ${JSON.stringify(apiResult, null, 2)}
+
+Reason: ${reason}
+${bloodPressure ? `Blood Pressure: ${bloodPressure}` : ''}
+
+The AI assistant will contact the specified number and communicate the emergency situation.`;
+        } catch (apiError) {
+          console.warn('API call failed, using simulation mode:', apiError);
+          callMessage = `📞 Emergency call simulated for ${phoneNumber} (API unavailable)
+          
+Reason: ${reason}
+${bloodPressure ? `Blood Pressure: ${bloodPressure}` : ''}
+
+Note: This is a simulation. To enable real calls, configure ElevenLabs phone service.
+The AI assistant would contact the specified number and communicate the emergency situation.`;
+        }
+      } else {
+        // Fallback simulation mode
+        callMessage = `📞 Emergency call simulated for ${phoneNumber}
+        
+Reason: ${reason}
+${bloodPressure ? `Blood Pressure: ${bloodPressure}` : ''}
+
+Note: This is a simulation. To enable real calls, configure ElevenLabs phone service.
+The AI assistant would contact the specified number and communicate the emergency situation.`;
+      }
+
+      // Store emergency notification for UI display
+      if (window.notificationManager) {
+        await window.notificationManager.showNotification({
+          title: '🚨 Emergency Call Initiated',
+          body: `Calling ${phoneNumber} for: ${reason}`,
+          tag: 'emergency-call',
+          priority: 'urgent',
+          methods: ['system', 'visual', 'audio', 'vibration']
+        });
+      }
+
+      return callMessage;
+
+    } catch (error) {
+      console.error('❌ Emergency call failed:', error);
+      return `❌ Failed to initiate emergency call: ${error.message}`;
+    }
+  },
+
+  /**
+   * Schedule Check-in Call - Plan routine health monitoring calls
+   */
+  scheduleCheckInCall: async ({ phoneNumber, message, scheduledTime = 'сейчас' }) => {
+    console.log('📅 Scheduling check-in call:', { phoneNumber, message, scheduledTime });
+
+    try {
+      // Validate phone number format
+      if (!phoneNumber || !phoneNumber.match(/^\+[1-9]\d{1,14}$/)) {
+        return `❌ Invalid phone number format. Please use E.164 format (e.g., +79161234567)`;
+      }
+
+      // Check if ElevenLabs API is available
+      const agentId = window.elevenlabsConfig?.agentId || 'agent_01jya9mcwzfyergjnaja2atc7m';
+      const phoneNumberId = window.elevenlabsConfig?.phoneNumberId;
+
+      if (!phoneNumberId) {
+        return `❌ Phone service not configured. Please contact support to enable check-in calling.`;
+      }
+
+      // Create check-in call data
+      const checkInData = {
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        phoneNumber: phoneNumber,
+        message: message,
+        scheduledTime: scheduledTime,
+        status: scheduledTime === 'сейчас' ? 'initiated' : 'scheduled',
+        type: 'check-in'
+      };
+
+      // Save to check-in call log
+      const checkInLog = JSON.parse(localStorage.getItem('checkInCallLog') || '[]');
+      checkInLog.push(checkInData);
+      localStorage.setItem('checkInCallLog', JSON.stringify(checkInLog));
+
+      let responseMessage;
+      
+      if (scheduledTime === 'сейчас') {
+        // Immediate call - try API call if available
+        if (window.claudeMCP && window.claudeMCP.elevenlabs && window.claudeMCP.elevenlabs.makeOutboundCall) {
+          try {
+            const apiResult = await window.claudeMCP.elevenlabs.makeOutboundCall({
+              agent_id: agentId,
+              agent_phone_number_id: phoneNumberId,
+              to_number: phoneNumber
+            });
+            responseMessage = `✅ Check-in call successfully initiated to ${phoneNumber}
+            
+API Response: ${JSON.stringify(apiResult, null, 2)}
+
+Message to deliver: "${message}"
+
+The AI assistant will contact the specified number now.`;
+          } catch (apiError) {
+            console.warn('API call failed, using simulation mode:', apiError);
+            responseMessage = `📞 Check-in call simulated for ${phoneNumber} (API unavailable)
+            
+Message to deliver: "${message}"
+
+Note: This is a simulation. To enable real calls, configure ElevenLabs phone service.`;
+          }
+        } else {
+          responseMessage = `📞 Check-in call simulated for ${phoneNumber}
+          
+Message to deliver: "${message}"
+
+Note: This is a simulation. To enable real calls, configure ElevenLabs phone service.`;
+        }
+
+        // Show immediate notification
+        if (window.notificationManager) {
+          await window.notificationManager.showNotification({
+            title: '📞 Check-in Call Started',
+            body: `Calling ${phoneNumber}`,
+            tag: 'checkin-call'
+          });
+        }
+      } else {
+        // Scheduled call
+        responseMessage = `📅 Check-in call scheduled for ${scheduledTime}.
+        
+        Phone: ${phoneNumber}
+        Message: "${message}"
+        
+        You will receive a notification when the call is initiated.`;
+
+        // Schedule the call using event scheduler
+        if (window.eventScheduler) {
+          await window.eventScheduler.scheduleEvent({
+            title: `Check-in call to ${phoneNumber}`,
+            description: message,
+            category: 'health-call',
+            time: scheduledTime,
+            recurring: false,
+            metadata: {
+              phoneNumber: phoneNumber,
+              message: message,
+              type: 'check-in-call'
+            }
+          });
+        }
+      }
+
+      return responseMessage;
+
+    } catch (error) {
+      console.error('❌ Check-in call scheduling failed:', error);
+      return `❌ Failed to schedule check-in call: ${error.message}`;
+    }
   }
 };
 

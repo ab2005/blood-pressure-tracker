@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  elevenlabs-telnyx-server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: elevenlabs-telnyx-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - LOG_LEVEL=info
+      - LOG_FILE=/app/logs/server.log
+    env_file:
+      - ../.env
+    volumes:
+      - ../logs:/app/logs
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - elevenlabs-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+
+  # Optional: Redis for job queue (if implementing scheduled calls)
+  redis:
+    image: redis:7-alpine
+    container_name: elevenlabs-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - elevenlabs-network
+    command: redis-server --appendonly yes
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.5'
+
+  # Optional: Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: elevenlabs-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ../logs/nginx:/var/log/nginx
+    networks:
+      - elevenlabs-network
+    depends_on:
+      - elevenlabs-telnyx-server
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.25'
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  elevenlabs-network:
+    driver: bridge
